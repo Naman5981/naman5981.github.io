@@ -1,0 +1,45 @@
+/* Skills Section Styling */
+.skills-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.skills-container h2 {
+  margin-bottom: 15px;
+  color: #64ffda;
+}
+
+.skills-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap */
+  gap: 10px;
+  width: 100%;
+}
+
+/* Styling for each skill box */
+.skills-container li {
+  background-color: #233554;
+  padding: 5px 10px; /* Adjusted padding for tighter fit */
+  border-radius: 8px;
+  color: #a8b2d1;
+  text-align: center;
+  cursor: default;
+  border: none;
+  box-shadow: none;
+  transition: none;
+  display: inline-flex; /* Ensure items fit content size */
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Remove hover effect */
+.skills-container li:hover {
+  transform: none;
+  box-shadow: none;
+}

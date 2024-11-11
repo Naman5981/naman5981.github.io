@@ -1,19 +1,32 @@
 import React from 'react';
-import About from '../src/components/About';
-import Experience from '../src/components/Experience';
-import Projects from '../src/components/Projects';
-import Skills from '../src/components/Skills';
-import Contact from '../src/components/Contact';
+import About from './components/About';
+import Experience from './components/Experience';
+import Projects from './components/Projects';
+import Skills from './components/Skills';
 import './styles/App.css';
 
 function App() {
   return (
-    <div className="App">
-      <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Contact />
+    <div className="app-container">
+      {/* Left Section with About and Experience */}
+      <div className="left-section">
+        <div className="section-wrapper">
+          <About />
+        </div>
+        <div className="section-wrapper">
+          <Experience />
+        </div>
+      </div>
+
+      {/* Right Section with Skills and Projects */}
+      <div className="right-section">
+        <div className="section-wrapper">
+          <Skills />
+        </div>
+        <div className="section-wrapper">
+          <Projects />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,21 @@
+/* Projects.css */
+
+.projects {
+    padding: 20px;
+  }
+  
+  .projects .project {
+    margin-bottom: 30px;
+  }
+  
+  .projects h4 {
+    font-size: 1.2rem;
+    color: #64ffda;
+    margin-bottom: 10px;
+  }
+  
+  .projects p {
+    color: #a8b2d1;
+    line-height: 1.6;
+  }
+  

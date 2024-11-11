@@ -1,175 +1,68 @@
-/* Reset some default styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Helvetica', sans-serif;
+/* Global Styles */
+body {
     background-color: #0a192f;
     color: #ccd6f6;
-    line-height: 1.6;
+    font-family: 'Helvetica', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  /* Main App container with increased width */
+  .app-container {
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  /* Left section (About & Experience) */
+  .left-section {
+    flex: 2;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
+    gap: 30px;
   }
   
-  /* Container for the entire app */
-  .App {
-    max-width: 1000px;
-    width: 100%;
-    padding: 20px;
+  /* Right section (Skills & Projects) */
+  .right-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
   }
   
-  /* Section styles */
-  section {
-    margin-bottom: 60px;
-    padding: 20px;
-    border-radius: 8px;
+  /* General Card Styling */
+  .section-wrapper {
     background-color: #112240;
+    padding: 20px;
+    border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h1, h2, h3, h4 {
-    color: #64ffda;
     margin-bottom: 20px;
   }
   
-  /* About Section */
-  .about {
-    text-align: center;
-  }
-  
-  .about h1 {
-    font-size: 2.5rem;
-  }
-  
-  .about h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-  }
-  
-  .about p {
-    margin-bottom: 15px;
-  }
-  
-  /* Experience Section */
-  .experience {
-    padding: 20px;
-  }
-  
-  .experience .job {
-    margin-bottom: 30px;
-  }
-  
-  .experience h3 {
-    font-size: 1.3rem;
-  }
-  
-  .experience p {
-    font-style: italic;
-    color: #a8b2d1;
-    margin-bottom: 10px;
-  }
-  
-  .experience ul {
-    list-style-type: disc;
-    margin-left: 20px;
-  }
-  
-  .experience ul li {
-    margin-bottom: 8px;
-  }
-  
-  /* Projects Section */
-  .projects {
-    padding: 20px;
-  }
-  
-  .projects .project {
-    margin-bottom: 30px;
-  }
-  
-  .projects h4 {
-    font-size: 1.2rem;
-  }
-  
-  .projects p {
-    color: #a8b2d1;
-  }
-  
-  /* Skills Section */
-  .skills {
-    padding: 20px;
-  }
-  
-  .skills ul {
-    list-style-type: none;
+  /* Projects Section Styling */
+  .projects-section {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-direction: column;
   }
   
-  .skills ul li {
+  .projects-section .project {
     background-color: #233554;
-    padding: 8px 12px;
-    border-radius: 5px;
-    color: #64ffda;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    color: #a8b2d1;
+    box-shadow: none;
+    transition: none;
   }
   
-  /* Contact Section */
-  .contact {
-    text-align: center;
-  }
-  
-  .contact h2 {
-    margin-bottom: 20px;
-  }
-  
-  .contact p {
-    margin-bottom: 10px;
-  }
-  
-  /* Social Media Links */
-  .social-icons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .social-icons img {
-    width: 30px;
-    height: 30px;
-    filter: brightness(0) invert(1);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .social-icons img:hover {
-    transform: translateY(-5px);
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .App {
-      padding: 10px;
-    }
-    
-    section {
-      padding: 15px;
-    }
-    
-    h1 {
-      font-size: 2rem;
-    }
-    
-    h2 {
-      font-size: 1.2rem;
-    }
+  .projects-section .project:hover {
+    transform: none;
+    box-shadow: none;
   }
   

@@ -10,9 +10,9 @@ const Experience = () => {
             duration: "May 2022 - Present",
             designation: "Systems Engineer",
             description: [
-                "Improved system performance by 40% with Java and Spring Boot.",
-                "Reduced project delivery time by 25% by partnering with stakeholders.",
-                "Resolved critical production issues, reducing downtime by 20%."
+                "Improved system performance by 40% by optimizing Java applications with Spring Boot and REST APIs, enhancing overall user experience and productivity.",
+                "Reduced project delivery time by 25% by partnering with stakeholders to translate high-level business needs into detailed technical specifications, resulting in cost savings and improved project timelines.",
+                "Resolved critical production issues, reducing downtime by 20%, and ensuring uninterrupted application availability, resulting in improved overall system reliability and customer satisfaction"
             ]
         },
         {
@@ -22,9 +22,9 @@ const Experience = () => {
             duration: "Jan 2021 - Apr 2022",
             designation: "Associate Software Engineer",
             description: [
-                "Enhanced user engagement for BCCI and IPL mobile apps by 30%.",
-                "Conducted unit testing and debugging within the Android framework.",
-                "Participated in code reviews to optimize the Android codebase."
+                "Enhanced user engagement of BCCI and IPL mobile applications by 30%, while reducing post-release bugs by 25%, leading to increased customer satisfaction and retention.",
+                "Conducted unit testing and assisted in debugging complex application issues within the Android framework, showcasing strong analytical and problem-solving skills.",
+                "Participated in code reviews, providing valuable feedback for code optimization and improvement within the Android codebase, highlighting a commitment to quality and continuous improvement."
             ]
         },
         {
@@ -33,9 +33,9 @@ const Experience = () => {
             duration: "Aug 2019 - Nov 2020",
             designation: "Android Developer and Marketing",
             description: [
-                "Integrated custom features and resolved critical bugs in Android source code.",
-                "Suggested optimizations leading to a 25% improvement in app performance.",
-                "Led marketing campaigns to increase app downloads."
+                "Improved Android app functionality by integrating custom features and resolving critical bugs in the Android source code.",
+                "Resolved critical application bugs by analysing code, debugging, and implementing patches, ensuring smooth operation and optimal performance.",
+                "Suggested 10+ potential optimizations for the codebase, leading to a '25%' improvement in app performance and user experience."
             ]
         }
     ];

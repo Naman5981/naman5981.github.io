@@ -1,5 +1,5 @@
 import React from 'react';
-import './Projects.css';
+import '../styles/Projects.css';
 
 const Projects = () => (
   <section className="projects">

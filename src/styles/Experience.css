@@ -18,17 +18,17 @@
     background-color: #112240; /* Keeping the existing background color */
     border-radius: 12px; /* Rounded corners */
     padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), 0 -4px 10px rgba(0, 0, 0, 0.05),
-                -4px 0 10px rgba(0, 0, 0, 0.05), 4px 0 10px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s ease;
+    margin-bottom: 10px; /* Reduced margin for tighter spacing */
+    transition: box-shadow 0.3s ease; /* Only transition the shadow effect */
   }
-  
-  .experience-block:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), 0 -6px 15px rgba(0, 0, 0, 0.08),
-                -6px 0 15px rgba(0, 0, 0, 0.08), 6px 0 15px rgba(0, 0, 0, 0.08);
-  }
-  
+
+    /* Hover effect for the entire block */
+    .experience-block:hover {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2), 
+                    0 -6px 15px rgba(0, 0, 0, 0.1), 
+                    -6px 0 15px rgba(0, 0, 0, 0.1), 
+                    6px 0 15px rgba(0, 0, 0, 0.1);
+      }
 
     .experience-block h3 {
         color: #64ffda;

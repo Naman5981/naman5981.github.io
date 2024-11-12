@@ -1,8 +1,9 @@
 import React from 'react';
 import About from './components/About';
+import Education from './components/Education';
 import Experience from './components/Experience';
-import Projects from './components/Projects';
 import Skills from './components/Skills';
+import Projects from './components/Projects';
 import './styles/App.css';
 
 function App() {
@@ -18,8 +19,11 @@ function App() {
         </div>
       </div>
 
-      {/* Right Section with Skills and Projects */}
+      {/* Right Section with Education, Skills, and Projects */}
       <div className="right-section">
+        <div className="section-wrapper">
+          <Education />
+        </div>
         <div className="section-wrapper">
           <Skills />
         </div>

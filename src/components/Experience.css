@@ -15,19 +15,20 @@
 
 /* Styling for the experience block */
 .experience-block {
-    background-color: #112240;
-    border-radius: 12px;
+    background-color: #112240; /* Keeping the existing background color */
+    border-radius: 12px; /* Rounded corners */
     padding: 20px;
     margin-bottom: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-    /* Hover effect for the entire block */
-    .experience-block:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-    }
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), 0 -4px 10px rgba(0, 0, 0, 0.05),
+                -4px 0 10px rgba(0, 0, 0, 0.05), 4px 0 10px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .experience-block:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), 0 -6px 15px rgba(0, 0, 0, 0.08),
+                -6px 0 15px rgba(0, 0, 0, 0.08), 6px 0 15px rgba(0, 0, 0, 0.08);
+  }
+  
 
     .experience-block h3 {
         color: #64ffda;

@@ -1,67 +1,69 @@
+@import './colors.css';
+
 /* Global Styles */
 body {
-    background-color: #0a192f;
-    color: #ccd6f6;
-    font-family: 'Helvetica', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-  
-  /* Main App container with increased width */
-  .app-container {
-    display: flex;
-    gap: 30px;
-    max-width: 1400px;
-    margin: 20px auto;
-    padding: 20px;
-  }
-  
-  /* Left section (About & Experience) */
-  .left-section {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
-  
-  /* Right section (Skills & Projects) */
-  .right-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
-  
-  /* General Card Styling */
-  .section-wrapper {
-    background-color: #112240; /* Keeping the existing background color */
-    padding: 20px;
-    border-radius: 12px; /* Rounded corners */
-    margin-bottom: 5px;
-    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.2), -10px -10px 30px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  /* Projects Section Styling */
-  .projects-section {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .projects-section .project {
-    background-color: #233554;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    color: #a8b2d1;
-  }
-  
-  .projects-section .project:hover {
-    transform: none;
-    box-shadow: none;
-  }
-  
+  background-color: var(--dark-background-color); /* Updated to use centralized color */
+  color: var(--primary-text-color); /* Updated to use centralized color */
+  font-family: 'Helvetica', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Main App container with increased width */
+.app-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* Left section (About & Experience) */
+.left-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Right section (Skills & Projects) */
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* General Card Styling */
+.section-wrapper {
+  background-color: var(--background-color); /* Updated to use centralized color */
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 5px;
+  box-shadow: 10px 10px 30px var(--box-shadow-color), 
+              -10px -10px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Projects Section Styling */
+.projects-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.projects-section .project {
+  background-color: var(--card-background-color); /* Updated to use centralized color */
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  color: var(--secondary-text-color); /* Updated to use centralized color */
+}
+
+.projects-section .project:hover {
+  transform: none;
+  box-shadow: none;
+}

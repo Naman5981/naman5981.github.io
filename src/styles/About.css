@@ -1,101 +1,102 @@
+@import './colors.css';
+
 .about {
-    display: flex;
-    justify-content: center;
-    align-items: center; /* Center content vertically */
-    margin-bottom: 25px;
-    padding: 20px;
-    background-color: #112240;
-    border-radius: 12px;
-  }
-  
-  .about-container {
-    display: flex;
-    gap: 30px;
-    align-items: center; /* Center content vertically within the container */
-    justify-content: space-between;
-  }
-  
-  .about-content {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  
-  .profile-image {
-    flex-shrink: 0;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    overflow: hidden;
-  }
-  
-  .profile-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .about-text {
-    max-width: 400px;
-  }
-  
-  .about-text h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    color: #64ffda;
-  }
-  
-  .about-text h2 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-  }
-  
-  .about-text p {
-    margin-bottom: 20px;
-    color: #a8b2d1;
-  }
-  
-  .contact-card {
-    background-color: #0a192f;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center the content vertically */
-    align-items: center; /* Center content horizontally */
-    height: 100%;
-  }
-  
-  .contact-card h3 {
-    margin-bottom: 15px;
-    color: #64ffda;
-  }
-  
-  .contact-card p {
-    margin-bottom: 10px;
-  }
-  
-  .contact-card a {
-    color: #64ffda;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  .social-icons {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .icon-link {
-    color: #64ffda;
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  .icon-link:hover {
-    transform: scale(1.2);
-    color: #0ef;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center content vertically */
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: var(--background-color); /* Updated to use centralized color */
+  border-radius: 12px;
+}
+
+.about-container {
+  display: flex;
+  gap: 30px;
+  align-items: center; /* Center content vertically within the container */
+  justify-content: space-between;
+}
+
+.about-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-image {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-text {
+  max-width: 400px;
+}
+
+.about-text h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: var(--highlight-text-color); /* Updated to use centralized color */
+}
+
+.about-text h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.about-text p {
+  margin-bottom: 20px;
+  color: var(--secondary-text-color); /* Updated to use centralized color */
+}
+
+.contact-card {
+  background-color: var(--dark-background-color); /* Updated to use centralized color */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px var(--box-shadow-color); /* Updated to use centralized color */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center the content vertically */
+  align-items: center; /* Center content horizontally */
+  height: 100%;
+}
+
+.contact-card h3 {
+  margin-bottom: 15px;
+  color: var(--highlight-text-color); /* Updated to use centralized color */
+}
+
+.contact-card p {
+  margin-bottom: 10px;
+}
+
+.contact-card a {
+  color: var(--highlight-text-color); /* Updated to use centralized color */
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.social-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.icon-link {
+  color: var(--highlight-text-color); /* Updated to use centralized color */
+  transition: transform 0.2s ease-in-out;
+}
+
+.icon-link:hover {
+  transform: scale(1.2);
+  color: var(--link-hover-color); /* Updated to use centralized color */
+}

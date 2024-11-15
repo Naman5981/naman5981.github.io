@@ -1,13 +1,14 @@
+@import './colors.css';
 
 .education-container {
-  background-color: #112240;
+  background-color: var(--background-color); /* Updated to use centralized color */
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 30px;
 }
 
 .education-container h2 {
-  color: #64ffda;
+  color: var(--highlight-text-color); /* Updated to use centralized color */
   margin-bottom: 20px;
 }
 
@@ -16,16 +17,16 @@
 }
 
 .education-block h3 {
-  color: #ccd6f6;
+  color: var(--primary-text-color); /* Updated to use centralized color */
   font-weight: bold;
 }
 
 .education-block p {
-  color: #a8b2d1;
+  color: var(--secondary-text-color); /* Updated to use centralized color */
   margin: 5px 0;
 }
 
 .duration {
   font-style: italic;
-  color: #a8b2d1;
+  color: var(--secondary-text-color); /* Updated to use centralized color */
 }

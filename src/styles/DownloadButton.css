@@ -1,25 +1,25 @@
-/* DownloadButton.css with Pulse Effect and Consistent Border */
+@import './colors.css';
+
 .floating-download-button {
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   padding: 14px 28px;
-  background: rgba(30, 41, 59, 0.6); /* Background color matching your theme */
-  color: rgba(144, 202, 249, 0.9); /* Softer blue text */
+  background: var(--button-background-color); /* Updated to use button background color */
+  color: var(--button-text-color); /* Updated to use button text color */
   font-weight: 600;
   text-decoration: none;
-  border-radius: 12px; /* Rounded corners for the button */
+  border-radius: 12px;
   backdrop-filter: blur(6px); /* Frosted glass effect */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow */
+  box-shadow: 0 4px 12px var(--box-shadow-color); /* Using centralized box shadow */
   cursor: pointer;
   z-index: 1000;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
-  border: 2px solid rgba(144, 202, 249, 0.4); /* Added border */
+  border: 2px solid var(--button-border-color); /* Updated to use button border color */
   background-clip: padding-box;
 }
 
-/* Pulse Effect */
 .floating-download-button:hover {
   animation: pulse 1.5s infinite;
 }
@@ -27,21 +27,19 @@
 @keyframes pulse {
   0%, 100% {
     transform: translateX(-50%) scale(1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    border-color: rgba(144, 202, 249, 0.4); /* Maintain border during pulse */
+    box-shadow: 0 4px 12px var(--box-shadow-color);
+    border-color: var(--button-border-color);
   }
   50% {
     transform: translateX(-50%) scale(1.05);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-    border-color: rgba(144, 202, 249, 0.6); /* Slightly brighter border at peak */
+    box-shadow: 0 6px 18px var(--box-shadow-hover-color);
+    border-color: var(--button-border-hover-color);
   }
 }
 
 .floating-download-button:focus {
   outline: none;
-  box-shadow: 
-    0 0 8px rgba(144, 202, 249, 0.5),
-    0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 8px var(--focus-glow-color), 0 4px 12px var(--box-shadow-color);
 }
 
 .floating-download-button:active {

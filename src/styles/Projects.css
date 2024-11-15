@@ -1,21 +1,20 @@
-/* Projects.css */
+@import './colors.css';
 
 .projects {
-    padding: 20px;
-  }
-  
-  .projects .project {
-    margin-bottom: 30px;
-  }
-  
-  .projects h4 {
-    font-size: 1.2rem;
-    color: #64ffda;
-    margin-bottom: 10px;
-  }
-  
-  .projects p {
-    color: #a8b2d1;
-    line-height: 1.6;
-  }
-  
+  padding: 20px;
+}
+
+.projects .project {
+  margin-bottom: 30px;
+}
+
+.projects h4 {
+  font-size: 1.2rem;
+  color: var(--highlight-text-color); /* Updated to use centralized color */
+  margin-bottom: 10px;
+}
+
+.projects p {
+  color: var(--secondary-text-color); /* Updated to use centralized color */
+  line-height: 1.6;
+}

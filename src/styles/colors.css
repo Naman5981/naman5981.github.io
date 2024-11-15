@@ -1,0 +1,27 @@
+/* colors.css */
+:root {
+  /* Background Colors */
+  --background-color: #112240;
+  --dark-background-color: #0a192f;
+  --card-background-color: #233554;
+
+  /* Text Colors */
+  --primary-text-color: #ccd6f6;
+  --secondary-text-color: #a8b2d1;
+  --highlight-text-color: #64ffda;
+  --link-hover-color: #0ef;
+
+  /* Button Colors */
+  --button-background-color: rgba(30, 41, 59, 0.6);
+  --button-text-color: rgba(144, 202, 249, 0.9);
+  --button-hover-text-color: rgba(144, 202, 249, 1);
+  --button-border-color: rgba(144, 202, 249, 0.4);
+  --button-border-hover-color: rgba(144, 202, 249, 0.6);
+
+  /* Box Shadow Colors */
+  --box-shadow-color: rgba(0, 0, 0, 0.2);
+  --box-shadow-hover-color: rgba(0, 0, 0, 0.3);
+
+  /* Focus Glow */
+  --focus-glow-color: rgba(144, 202, 249, 0.5);
+}

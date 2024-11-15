@@ -1,102 +1,104 @@
+@import './colors.css';
+
 /* Experience Section Styling */
 .experience {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .experience h2 {
-    font-size: 2rem;
-    margin-bottom: 30px;
-    color: #64ffda;
-    text-align: center;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: var(--highlight-text-color); /* Updated to use centralized color */
+  text-align: center;
 }
 
 /* Styling for each experience block */
 .experience-block {
-    background-color: #112240;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), /* Shadow effect */
-                0 -4px 8px rgba(0, 0, 0, 0.05),
-                -4px 0 8px rgba(0, 0, 0, 0.05),
-                4px 0 8px rgba(0, 0, 0, 0.05);
-    transition: background-color 0.3s ease;
-    position: relative;
+  background-color: var(--background-color); /* Updated to use centralized color */
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
+              0 -4px 8px rgba(0, 0, 0, 0.05),
+              -4px 0 8px rgba(0, 0, 0, 0.05),
+              4px 0 8px rgba(0, 0, 0, 0.05); /* Shadow effect */
+  transition: background-color 0.3s ease;
+  position: relative;
 }
 
 /* Company Name Styling */
 .experience-block h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    transition: transform 0.3s ease, color 0.3s ease;
-    display: inline-block;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease, color 0.3s ease;
+  display: inline-block;
 }
 
 /* Company Link Styling */
 .experience-block h3 a {
-    color: #64ffda;
-    text-decoration: none;
-    transition: color 0.3s ease;
+  color: var(--highlight-text-color); /* Updated to use centralized color */
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .experience-block h3 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Location, Duration, and Designation */
 .location {
-    font-style: italic;
-    color: #a8b2d1;
-    margin-bottom: 10px;
+  font-style: italic;
+  color: var(--secondary-text-color); /* Updated to use centralized color */
+  margin-bottom: 10px;
 }
 
 .duration {
-    font-weight: bold;
-    color: #ccd6f6;
-    margin-bottom: 10px;
+  font-weight: bold;
+  color: var(--primary-text-color); /* Updated to use centralized color */
+  margin-bottom: 10px;
 }
 
 .designation {
-    color: #ccd6f6;
-    font-size: 1.1rem;
-    margin-bottom: 15px;
+  color: var(--primary-text-color); /* Updated to use centralized color */
+  font-size: 1.1rem;
+  margin-bottom: 15px;
 }
 
 /* List Styling for descriptions */
 ul {
-    list-style-type: disc;
-    padding-left: 20px;
+  list-style-type: disc;
+  padding-left: 20px;
 }
 
 ul li {
-    margin-bottom: 8px;
-    line-height: 1.6;
-    color: #a8b2d1;
+  margin-bottom: 8px;
+  line-height: 1.6;
+  color: var(--secondary-text-color); /* Updated to use centralized color */
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .experience {
-        padding: 15px;
-    }
+  .experience {
+    padding: 15px;
+  }
 
-    .experience-block {
-        padding: 15px;
-    }
+  .experience-block {
+    padding: 15px;
+  }
 }
 
 @media (max-width: 480px) {
-    .experience {
-        padding: 10px;
-    }
+  .experience {
+    padding: 10px;
+  }
 
-    .experience-block {
-        padding: 10px;
-    }
+  .experience-block {
+    padding: 10px;
+  }
 
-    .experience-block h3 {
-        font-size: 1.3rem; /* Adjust company name size for mobile */
-    }
+  .experience-block h3 {
+    font-size: 1.3rem; /* Adjust company name size for mobile */
+  }
 }

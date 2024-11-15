@@ -1,4 +1,5 @@
-/* Skills Section Styling */
+@import './colors.css';
+
 .skills-container {
   padding: 20px;
   display: flex;
@@ -8,7 +9,7 @@
 
 .skills-container h2 {
   margin-bottom: 15px;
-  color: #64ffda;
+  color: var(--highlight-text-color); /* Updated to use centralized color */
 }
 
 .skills-container ul {
@@ -23,10 +24,10 @@
 
 /* Styling for each skill box */
 .skills-container li {
-  background-color: #233554;
+  background-color: var(--card-background-color); /* Updated to use centralized color */
   padding: 5px 10px; /* Adjusted padding for tighter fit */
   border-radius: 8px;
-  color: #a8b2d1;
+  color: var(--secondary-text-color); /* Updated to use centralized color */
   text-align: center;
   cursor: default;
   border: none;

@@ -1,36 +1,36 @@
-/* Contact.css */
+@import './colors.css';
 
 .contact {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .contact h2 {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-  }
-  
-  .contact p {
-    margin-bottom: 15px;
-    color: #a8b2d1;
-  }
-  
-  .social-icons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .social-icons img {
-    width: 30px;
-    height: 30px;
-    filter: brightness(0) invert(1);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .social-icons img:hover {
-    transform: translateY(-5px);
-  }
-  
+  text-align: center;
+  padding: 20px;
+}
+
+.contact h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--highlight-text-color); /* Updated to use centralized color */
+}
+
+.contact p {
+  margin-bottom: 15px;
+  color: var(--secondary-text-color); /* Updated to use centralized color */
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-icons img {
+  width: 30px;
+  height: 30px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.social-icons img:hover {
+  transform: translateY(-5px);
+}

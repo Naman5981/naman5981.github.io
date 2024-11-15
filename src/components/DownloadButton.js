@@ -1,16 +1,16 @@
 import React from 'react';
-import './DownloadButton.css';
+import '../styles/DownloadButton.css';
+import resume from '../assets/Naman_Sanadhya_Resume.pdf';
 
 const DownloadButton = () => {
-  const handleDownload = () => {
-    // Use the relative path based on your project's structure
-    window.open(`${process.env.PUBLIC_URL}/src/assets/Naman_Sanadhya_Resume.pdf`, '_blank');
-  };
-
   return (
-    <button className="floating-button" onClick={handleDownload}>
-      Download Resume
-    </button>
+    <a 
+      href={resume} 
+      download="Naman_Sanadhya_Resume.pdf" 
+      className="floating-download-button"
+    >
+      Download My Resume
+    </a>
   );
 };
 

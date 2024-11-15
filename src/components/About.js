@@ -3,6 +3,7 @@ import '../styles/About.css';
 import profilePic from '../assets/profile.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import DownloadButton from './DownloadButton'; // Importing the download button
 
 const About = () => {
   // Restore the custom cursor functionality
@@ -34,6 +35,8 @@ const About = () => {
               <p>
                 A skilled backend developer with expertise in Java, system optimization, and Android development. Passionate about building efficient and scalable applications.
               </p>
+              {/* Download Resume Button */}
+              <DownloadButton />
             </div>
           </div>
 

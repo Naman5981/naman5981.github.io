@@ -5,11 +5,13 @@ const skills = [
   "Java",
   "Spring Boot",
   "React",
-  "Node.js",
   "Firebase",
   "MySQL",
   "Android Development",
-  "GitHub"
+  "GitHub",
+  "AOSP",
+  "REST API",
+  "Dialogflow"
 ];
 
 const Skills = () => {

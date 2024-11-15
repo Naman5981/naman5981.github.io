@@ -1,50 +1,51 @@
-/* Experience.css */
-
+/* Experience Section Styling */
 .experience {
     padding: 20px;
     max-width: 800px;
     margin: 0 auto;
 }
 
-    .experience h2 {
-        font-size: 2rem;
-        margin-bottom: 30px;
-        color: #64ffda;
-        text-align: center;
-    }
+.experience h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #64ffda;
+    text-align: center;
+}
 
-/* Styling for the experience block */
+/* Styling for each experience block */
 .experience-block {
-    background-color: #112240; /* Keeping the existing background color */
-    border-radius: 12px; /* Rounded corners */
+    background-color: #112240;
+    border-radius: 12px;
     padding: 20px;
-    margin-bottom: 10px; /* Reduced margin for tighter spacing */
-    transition: box-shadow 0.3s ease; /* Only transition the shadow effect */
-  }
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), /* Shadow effect */
+                0 -4px 8px rgba(0, 0, 0, 0.05),
+                -4px 0 8px rgba(0, 0, 0, 0.05),
+                4px 0 8px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease;
+    position: relative;
+}
 
-    /* Hover effect for the entire block */
-    .experience-block:hover {
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2), 
-                    0 -6px 15px rgba(0, 0, 0, 0.1), 
-                    -6px 0 15px rgba(0, 0, 0, 0.1), 
-                    6px 0 15px rgba(0, 0, 0, 0.1);
-      }
+/* Company Name Styling */
+.experience-block h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: inline-block;
+}
 
-    .experience-block h3 {
-        color: #64ffda;
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-    }
+/* Company Link Styling */
+.experience-block h3 a {
+    color: #64ffda;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
 
-        .experience-block h3 a {
-            color: #64ffda; /* Match the theme color */
-            text-decoration: none;
-        }
+.experience-block h3 a:hover {
+    text-decoration: underline;
+}
 
-            .experience-block h3 a:hover {
-                text-decoration: underline;
-            }
-
+/* Location, Duration, and Designation */
 .location {
     font-style: italic;
     color: #a8b2d1;
@@ -63,13 +64,39 @@
     margin-bottom: 15px;
 }
 
+/* List Styling for descriptions */
 ul {
     list-style-type: disc;
     padding-left: 20px;
 }
 
-    ul li {
-        margin-bottom: 8px;
-        line-height: 1.6;
-        color: #a8b2d1;
+ul li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+    color: #a8b2d1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .experience {
+        padding: 15px;
     }
+
+    .experience-block {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .experience {
+        padding: 10px;
+    }
+
+    .experience-block {
+        padding: 10px;
+    }
+
+    .experience-block h3 {
+        font-size: 1.3rem; /* Adjust company name size for mobile */
+    }
+}

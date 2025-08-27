@@ -47,7 +47,7 @@ const About = () => {
             <p>Phone: +91 76651 55815</p>
             <div className="social-icons">
               <a 
-                href="https://github.com/yourusername" 
+                href="https://github.com/naman5981" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="icon-link"
@@ -55,7 +55,7 @@ const About = () => {
                 <FontAwesomeIcon icon={faGithub} size="2x" />
               </a>
               <a 
-                href="https://linkedin.com/in/yourusername" 
+                href="https://linkedin.com/in/namansanadhya" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="icon-link"

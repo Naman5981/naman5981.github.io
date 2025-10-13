@@ -5,7 +5,7 @@ A place where I showcase my skills, projects, experiences, and everything in bet
 
 📸 Preview
 
-Check out the live version: [https://namansanadhya-github.vercel.app](https://namansanadhya.vercel.app)/
+Check out the live version: [https://namansanadhya.vercel.app]
 
 
 ## 🔗 Links

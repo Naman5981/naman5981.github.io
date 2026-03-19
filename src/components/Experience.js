@@ -4,38 +4,56 @@ import '../styles/Experience.css';
 const Experience = () => {
     const experiences = [
         {
-            company: "Infosys",
-            website: "https://www.infosys.com",
-            location: "Jaipur, Rajasthan, India",
-            duration: "May 2022 - Present",
-            designation: "Systems Engineer",
+            company: "Xebia (AU Small Finance Bank)",
+            website: "https://www.xebia.com",
+            location: "Jaipur, RJ",
+            duration: "Jan 2026 – Present",
+            designation: "Java Developer",
             description: [
-                "Improved system performance by 40% by optimizing Java applications with Spring Boot and REST APIs, enhancing overall user experience and productivity.",
-                "Reduced project delivery time by 25% by partnering with stakeholders to translate high-level business needs into detailed technical specifications, resulting in cost savings and improved project timelines.",
-                "Resolved critical production issues, reducing downtime by 20%, and ensuring uninterrupted application availability, resulting in improved overall system reliability and customer satisfaction"
+                "Led backend development of Spring Boot microservices for banking workflows, ensuring scalability, fault tolerance, and clear service boundaries.",
+                "Delivered 5+ production features across transaction and reporting systems, improving workflow efficiency.",
+                "Designed and built a virtual account system enabling merchants to collect payments, handling transaction mapping, validation, and high-volume processing.",
+                "Resolved 10+ critical production issues through root-cause analysis, improving system reliability.",
+                "Enforced validation, error handling, and modular architecture across services."
+            ]
+        },
+        {
+            company: "Infosys Limited",
+            website: "https://www.infosys.com",
+            location: "Jaipur, RJ",
+            duration: "May 2022 – Present",
+            designation: "Java Backend Developer",
+            description: [
+                "Optimized Spring Boot microservices, improving API latency by 40% through efficient service logic.",
+                "Designed REST APIs for high-volume transaction and reporting systems, ensuring performance, validation, and data consistency.",
+                "Resolved 25+ production incidents via debugging, log analysis, and permanent fixes.",
+                "Strengthened transaction workflows by handling edge cases and improving data consistency.",
+                "Partnered with QA and DevOps to support CI/CD pipelines, ensuring smooth releases and production stability."
             ]
         },
         {
             company: "Tech Mahindra",
             website: "https://www.techmahindra.com",
-            location: "Mumbai, Maharashtra, India",
-            duration: "Jan 2021 - Apr 2022",
+            location: "Mumbai, MH",
+            duration: "Jan 2021 – Apr 2022",
             designation: "Associate Software Engineer",
             description: [
-                "Enhanced user engagement of BCCI and IPL mobile applications by 30%, while reducing post-release bugs by 25%, leading to increased customer satisfaction and retention.",
-                "Conducted unit testing and assisted in debugging complex application issues within the Android framework, showcasing strong analytical and problem-solving skills.",
-                "Participated in code reviews, providing valuable feedback for code optimization and improvement within the Android codebase, highlighting a commitment to quality and continuous improvement."
+                "Supported backend systems for high-traffic BCCI/IPL platforms during peak loads.",
+                "Improved API response time by 15% through request optimization and processing improvements.",
+                "Reduced defects by 25% via improved validation and debugging practices.",
+                "Identified performance bottlenecks and implemented fixes to enhance system responsiveness."
             ]
         },
         {
             company: "FoGraph",
-            location: "Udaipur, Rajasthan, India",
-            duration: "Aug 2019 - Nov 2020",
-            designation: "Android Developer and Marketing",
+            location: "Udaipur, RJ",
+            duration: "Nov 2019 – Oct 2020",
+            designation: "Android Developer (Co-founder)",
             description: [
-                "Improved Android app functionality by integrating custom features and resolving critical bugs in the Android source code.",
-                "Resolved critical application bugs by analysing code, debugging, and implementing patches, ensuring smooth operation and optimal performance.",
-                "Suggested 10+ potential optimizations for the codebase, leading to a '25%' improvement in app performance and user experience."
+                "Led product development and technical direction, driving feature delivery across releases.",
+                "Built Android features improving UI flow, navigation, and overall user experience.",
+                "Designed offline-first data layer using Firebase and SQLite for reliable synchronization.",
+                "Reduced crashes by analyzing Crashlytics logs and fixing recurring stability issues."
             ]
         }
     ];

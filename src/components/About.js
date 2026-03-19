@@ -31,9 +31,9 @@ const About = () => {
             </div>
             <div className="about-text">
               <h1>Naman Sanadhya</h1>
-              <h2>Backend Developer</h2>
+              <h2>Backend Engineer</h2>
               <p>
-                A skilled backend developer with expertise in Java, system optimization, and Android development. Passionate about building efficient and scalable applications.
+                Backend Engineer with 5+ years of experience building scalable financial systems using Java, Spring Boot, and microservices. Strong in API design, transaction management, and high-availability systems.
               </p>
               {/* Download Resume Button */}
               <DownloadButton />

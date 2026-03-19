@@ -44,7 +44,7 @@ body {
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 5px;
-  box-shadow: 10px 10px 30px var(--box-shadow-color), 
+  box-shadow: 10px 10px 30px var(--box-shadow-color),
               -10px -10px 30px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -67,3 +67,6 @@ body {
   transform: none;
   box-shadow: none;
 }
+
+
+

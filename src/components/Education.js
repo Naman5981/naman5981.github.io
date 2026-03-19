@@ -1,18 +1,17 @@
-
 import React from 'react';
 import '../styles/Education.css';
 
 const Education = () => {
   const educationData = [
     {
-      degree: "Bachelor Of Technology",
-      institution: "Geetanjali Institute of Technical Studies",
-      duration: "08/2016 - 07/2020"
+      degree: "B.Tech in Computer Science",
+      institution: "Geetanjali Institute of Technical Studies, Udaipur",
+      duration: "2020"
     },
     {
-      degree: "Senior Secondary (XIIth)",
-      institution: "Alok Senior Secondary",
-      duration: "04/2015 - 05/2016"
+      degree: "CBSE (XII)",
+      institution: "Alok Senior Secondary School, Udaipur",
+      duration: "2016"
     }
   ];
 

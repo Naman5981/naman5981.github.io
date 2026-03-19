@@ -1,11 +1,12 @@
 import React from 'react';
 import './App.css';
-import About from './components/About';
-import Experience from './components/Experience';
-import Education from './components/Education';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import DownloadButton from './components/DownloadButton';
+import About from './About';
+import Experience from './Experience';
+import Education from './Education';
+import Skills from './Skills';
+import Projects from './Projects';
+import Achievements from './Achievements';
+import DownloadButton from './DownloadButton';
 
 function App() {
   return (
@@ -27,6 +28,9 @@ function App() {
         </div>
         <div className="section-wrapper">
           <Projects />
+        </div>
+        <div className="section-wrapper">
+          <Achievements />
         </div>
       </div>
       <DownloadButton />

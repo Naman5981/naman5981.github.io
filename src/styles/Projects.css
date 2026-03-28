@@ -1,20 +1,29 @@
 @import './colors.css';
 
 .projects {
-  padding: 20px;
+  padding: 24px;
+}
+
+.projects h2 {
+  color: var(--highlight-text-color);
+  margin-bottom: 20px;
 }
 
 .projects .project {
-  margin-bottom: 30px;
+  margin-bottom: 18px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(35, 53, 84, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .projects h4 {
   font-size: 1.2rem;
-  color: var(--highlight-text-color); /* Updated to use centralized color */
+  color: var(--primary-text-color);
   margin-bottom: 10px;
 }
 
 .projects p {
-  color: var(--secondary-text-color); /* Updated to use centralized color */
+  color: var(--secondary-text-color);
   line-height: 1.6;
 }

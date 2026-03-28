@@ -1,10 +1,9 @@
 @import './colors.css';
 
 .floating-download-button {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 14px 28px;
   background: var(--button-background-color); /* Updated to use button background color */
   color: var(--button-text-color); /* Updated to use button text color */
@@ -14,7 +13,6 @@
   backdrop-filter: blur(6px); /* Frosted glass effect */
   box-shadow: 0 4px 12px var(--box-shadow-color); /* Using centralized box shadow */
   cursor: pointer;
-  z-index: 1000;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   border: 2px solid var(--button-border-color); /* Updated to use button border color */
   background-clip: padding-box;
@@ -26,12 +24,12 @@
 
 @keyframes pulse {
   0%, 100% {
-    transform: translateX(-50%) scale(1);
+    transform: scale(1);
     box-shadow: 0 4px 12px var(--box-shadow-color);
     border-color: var(--button-border-color);
   }
   50% {
-    transform: translateX(-50%) scale(1.05);
+    transform: scale(1.05);
     box-shadow: 0 6px 18px var(--box-shadow-hover-color);
     border-color: var(--button-border-hover-color);
   }
@@ -43,5 +41,5 @@
 }
 
 .floating-download-button:active {
-  transform: translate(-50%, 3px);
+  transform: translateY(3px);
 }

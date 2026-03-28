@@ -1,72 +1,85 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import '../styles/About.css';
 import profilePic from '../assets/profile.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
-import DownloadButton from './DownloadButton'; // Importing the download button
+import DownloadButton from './DownloadButton';
 
 const About = () => {
-  // Restore the custom cursor functionality
-  useEffect(() => {
-    const cursor = document.querySelector('.cursor');
-    const handleMouseMove = (event) => {
-      cursor.style.left = `${event.clientX}px`;
-      cursor.style.top = `${event.clientY}px`;
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
   return (
-    <>
-      {/* Custom Cursor */}
-      <div className="cursor"></div>
-
-      <section className="about">
-        <div className="about-container">
-          {/* About Section */}
-          <div className="about-content">
-            <div className="profile-image">
-              <img src={profilePic} alt="Profile" />
-            </div>
-            <div className="about-text">
-              <h1>Naman Sanadhya</h1>
-              <h2>Backend Engineer</h2>
-              <p>
-                Backend Engineer with 5+ years of experience building scalable financial systems using Java, Spring Boot, and microservices. Strong in API design, transaction management, and high-availability systems.
-              </p>
-              {/* Download Resume Button */}
-              <DownloadButton />
-            </div>
+    <section className="about">
+      <div className="about-hero">
+        <div className="profile-image-wrap">
+          <div className="profile-greeting" aria-hidden="true">
+            Hi!!
           </div>
-
-          {/* Contact Card */}
-          <div className="contact-card">
-            <h3>Contact Me</h3>
-            <p>Email: <a href="mailto:namansanadhya@gmail.com">namansanadhya@gmail.com</a></p>
-            <p>Phone: +91 76651 55815</p>
-            <div className="social-icons">
-              <a 
-                href="https://github.com/naman5981" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="icon-link"
-              >
-                <FontAwesomeIcon icon={faGithub} size="2x" />
-              </a>
-              <a 
-                href="https://linkedin.com/in/namansanadhya" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="icon-link"
-              >
-                <FontAwesomeIcon icon={faLinkedin} size="2x" />
-              </a>
-            </div>
+          <div className="profile-image">
+            <img src={profilePic} alt="Profile" />
           </div>
         </div>
-      </section>
-    </>
+
+        <div className="about-text">
+          <h1>Naman Sanadhya</h1>
+          <h2>Java Backend Developer</h2>
+          <p>
+            I build scalable backend systems for banking and transaction-heavy platforms.
+            Over 5+ years, I have worked across Spring Boot microservices, API design,
+            transaction safety, production debugging, and modular service architecture.
+          </p>
+
+          <div className="about-stats">
+            <div className="about-stat">
+              <strong>5+</strong>
+              <span>Years</span>
+            </div>
+            <div className="about-stat">
+              <strong>30+</strong>
+              <span>Issues Solved</span>
+            </div>
+            <div className="about-stat">
+              <strong>3</strong>
+              <span>Core Domains</span>
+            </div>
+            <div className="about-stat">
+              <strong>100%</strong>
+              <span>Backend Focus</span>
+            </div>
+          </div>
+
+          <div className="about-actions">
+            <a className="primary-action" href="mailto:namansanadhya@gmail.com">
+              Get In Touch
+            </a>
+            <DownloadButton />
+          </div>
+
+          <div className="social-icons">
+            <a
+              href="https://github.com/naman5981"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="icon-link"
+            >
+                <FontAwesomeIcon icon={faGithub} size="2x" />
+            </a>
+            <a
+              href="https://linkedin.com/in/namansanadhya"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="icon-link"
+            >
+                <FontAwesomeIcon icon={faLinkedin} size="2x" />
+            </a>
+          </div>
+
+          <div className="about-contact-strip">
+            <span>Jaipur, Rajasthan</span>
+            <span>namansanadhya@gmail.com</span>
+            <span>+91 76651 55815</span>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

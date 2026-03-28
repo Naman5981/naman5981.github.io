@@ -1,7 +1,7 @@
 @import './colors.css';
 
 .skills-container {
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -9,7 +9,17 @@
 
 .skills-container h2 {
   margin-bottom: 15px;
-  color: var(--highlight-text-color); /* Updated to use centralized color */
+  color: var(--highlight-text-color);
+}
+
+.skill-category {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.skill-category h3 {
+  margin: 0 0 10px;
+  color: var(--primary-text-color);
 }
 
 .skills-container ul {
@@ -17,30 +27,21 @@
   padding: 0;
   margin: 0;
   display: flex;
-  flex-wrap: wrap; /* Allow items to wrap */
+  flex-wrap: wrap;
   gap: 10px;
   width: 100%;
 }
 
-/* Styling for each skill box */
 .skills-container li {
-  background-color: var(--card-background-color); /* Updated to use centralized color */
-  padding: 5px 10px; /* Adjusted padding for tighter fit */
-  border-radius: 8px;
-  color: var(--secondary-text-color); /* Updated to use centralized color */
+  background: rgba(35, 53, 84, 0.62);
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: var(--secondary-text-color);
   text-align: center;
   cursor: default;
-  border: none;
-  box-shadow: none;
-  transition: none;
-  display: inline-flex; /* Ensure items fit content size */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: inline-flex;
   justify-content: center;
   align-items: center;
-  white-space: nowrap; /* Prevent text from wrapping */
-}
-
-/* Remove hover effect */
-.skills-container li:hover {
-  transform: none;
-  box-shadow: none;
+  white-space: nowrap;
 }

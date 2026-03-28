@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import About from './components/About';
 import Education from './components/Education';
 import Experience from './components/Experience';
@@ -68,17 +68,50 @@ const sectionMap = {
 function App() {
   const [activeWorkspace, setActiveWorkspace] = useState('overview');
   const [highlightedSection, setHighlightedSection] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const headerRef = useRef(null);
 
   const activePanel = useMemo(
     () => workspaces.find((workspace) => workspace.id === activeWorkspace) ?? workspaces[0],
     [activeWorkspace]
   );
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event) => {
+      if (!headerRef.current?.contains(event.target)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [isMobileMenuOpen]);
+
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
+      setIsMobileMenuOpen(false);
       const header = document.querySelector('.site-header');
-      const headerHeight = header ? header.getBoundingClientRect().height : 0;
+      const headerStyles = header ? window.getComputedStyle(header) : null;
+      const isPinnedHeader = headerStyles
+        ? headerStyles.position === 'sticky' || headerStyles.position === 'fixed'
+        : false;
+      const headerHeight = header && isPinnedHeader ? header.getBoundingClientRect().height : 0;
       const extraOffset = 24;
       const targetPosition =
         section.getBoundingClientRect().top + window.scrollY - headerHeight - extraOffset;
@@ -117,13 +150,30 @@ function App() {
 
   return (
     <div className="site-shell">
-      <header className="site-header">
+      <header ref={headerRef} className="site-header">
         <div className="brand-lockup">
           <span className="brand-kicker">NS / backend systems</span>
           <h1>Naman Sanadhya</h1>
         </div>
 
-        <nav className="site-nav" aria-label="Primary">
+        <button
+          type="button"
+          className={`menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="primary-navigation"
+          aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          onClick={() => setIsMobileMenuOpen((current) => !current)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <nav
+          id="primary-navigation"
+          className={`site-nav ${isMobileMenuOpen ? 'menu-open' : ''}`}
+          aria-label="Primary"
+        >
           {Object.entries(sectionMap).map(([id, label]) => (
             <button key={id} type="button" onClick={() => scrollToSection(id)}>
               {label}
@@ -131,6 +181,15 @@ function App() {
           ))}
         </nav>
       </header>
+
+      {isMobileMenuOpen ? (
+        <button
+          type="button"
+          className="menu-backdrop"
+          aria-label="Close navigation menu"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      ) : null}
 
       <main className="site-main">
         <section className="intro-shell" id="about">

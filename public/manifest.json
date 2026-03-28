@@ -1,6 +1,6 @@
 {
-  "short_name": "Naman's Resume",
-  "name": "Naman's Website portfolio",
+  "short_name": "Naman Portfolio",
+  "name": "Naman Sanadhya Portfolio",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#081726",
+  "background_color": "#081726"
 }

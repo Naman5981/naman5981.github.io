@@ -126,6 +126,14 @@
   .experience-block {
     padding: 15px;
   }
+
+  .experience-details {
+    max-height: none;
+    opacity: 1;
+    transform: none;
+    margin-top: 16px;
+    overflow: visible;
+  }
 }
 
 @media (max-width: 480px) {

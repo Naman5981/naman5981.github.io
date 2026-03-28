@@ -1,0 +1,25 @@
+@import './colors.css';
+
+.achievements-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.achievements-container h2 {
+  margin-bottom: 15px;
+  color: var(--highlight-text-color);
+}
+
+.achievements-container ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.achievements-container li {
+  margin-bottom: 10px;
+  color: var(--secondary-text-color);
+  line-height: 1.6;
+}

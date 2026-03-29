@@ -28,7 +28,7 @@
 
 .experience-block h3 {
   font-size: 1.5rem;
-  margin-bottom: 10px;
+  margin: 0;
   display: inline-block;
 }
 
@@ -40,6 +40,25 @@
 .experience-block h3 a:hover {
   text-decoration: underline;
   color: var(--highlight-text-color);
+}
+
+.experience-company {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.company-logo {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: 14px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(100, 255, 218, 0.18);
+  box-shadow: 0 12px 24px rgba(2, 12, 27, 0.2);
 }
 
 .location {
@@ -143,6 +162,17 @@
 
   .experience-block {
     padding: 10px;
+  }
+
+  .experience-company {
+    gap: 12px;
+  }
+
+  .company-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    padding: 5px;
   }
 
   .experience-block h3 {

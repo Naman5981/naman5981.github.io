@@ -6,6 +6,8 @@ const Experience = () => {
         {
             company: "Xebia (AU Small Finance Bank)",
             website: "https://www.xebia.com",
+            logo: "/logos/xebia.svg",
+            logoAlt: "Xebia logo",
             location: "Jaipur, RJ",
             duration: "Jan 2026 - Present",
             designation: "Java Developer",
@@ -21,6 +23,8 @@ const Experience = () => {
         {
             company: "Infosys Limited",
             website: "https://www.infosys.com",
+            logo: "/logos/infosys.svg",
+            logoAlt: "Infosys logo",
             location: "Jaipur, RJ",
             duration: "May 2022 - Jan 2026",
             designation: "Java Backend Developer",
@@ -36,6 +40,8 @@ const Experience = () => {
         {
             company: "Tech Mahindra",
             website: "https://www.techmahindra.com",
+            logo: "/logos/tech-mahindra.svg",
+            logoAlt: "Tech Mahindra logo",
             location: "Mumbai, MH",
             duration: "Jan 2021 - Apr 2022",
             designation: "Associate Software Engineer",
@@ -67,11 +73,25 @@ const Experience = () => {
             <h2>Work Experience</h2>
             {experiences.map((exp, index) => (
                 <div className="experience-block" key={index} tabIndex={0}>
-                    <h3>
-                        <a href={exp.website} target="_blank" rel="noopener noreferrer">
-                            {exp.company}
-                        </a>
-                    </h3>
+                    <div className="experience-company">
+                        {exp.logo ? (
+                            <img
+                                className="company-logo"
+                                src={exp.logo}
+                                alt={exp.logoAlt}
+                                loading="lazy"
+                            />
+                        ) : null}
+                        <h3>
+                            {exp.website ? (
+                                <a href={exp.website} target="_blank" rel="noopener noreferrer">
+                                    {exp.company}
+                                </a>
+                            ) : (
+                                exp.company
+                            )}
+                        </h3>
+                    </div>
                     <p className="location">{exp.location}</p>
                     <p className="duration">{exp.duration}</p>
                     <p className="designation">{exp.designation}</p>

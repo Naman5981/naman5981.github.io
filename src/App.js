@@ -33,10 +33,10 @@ const workspaces = [
     id: 'projects',
     label: 'Projects',
     eyebrow: 'Selected Work',
-    title: 'A project section that can grow into deeper engineering case studies.',
+    title: 'Five selected builds spanning banking systems, healthcare tools, and internal productivity apps.',
     description:
-      'Instead of standalone resume bullets, projects now live as part of the website flow and can be expanded next into architecture, outcomes, and implementation details.',
-    metrics: ['Banking systems', 'Healthcare assistants', 'Mobile and backend builds'],
+      'The projects section now highlights a broader mix of backend, mobile, and management tooling work, with room to expand each entry into architecture, outcomes, and implementation details.',
+    metrics: ['5 selected projects', 'Banking, healthcare, and productivity', 'Mobile and backend builds'],
     links: ['projects']
   },
   {
@@ -204,7 +204,7 @@ function App() {
           >
             <span className="theme-toggle-track" aria-hidden="true">
               <span className="theme-toggle-icon theme-toggle-sun">{'\u2600'}</span>
-              <span className="theme-toggle-icon theme-toggle-moon">{'\u263E'}</span>
+              <span className="theme-toggle-icon theme-toggle-moon">{'\u263D'}</span>
               <span className="theme-toggle-thumb" />
             </span>
           </button>

@@ -23,6 +23,16 @@
   margin-bottom: 10px;
 }
 
+.projects h4 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.projects h4 a:hover {
+  color: var(--highlight-text-color);
+  text-decoration: underline;
+}
+
 .projects p {
   color: var(--secondary-text-color);
   line-height: 1.6;

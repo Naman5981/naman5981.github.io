@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/About.css';
 import profilePic from '../assets/profile.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,6 +6,26 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import DownloadButton from './DownloadButton';
 
 const About = () => {
+  const [issuesSolvedCount, setIssuesSolvedCount] = useState(0);
+
+  useEffect(() => {
+    const targetValue = 30;
+    const animationDuration = 700;
+    const stepDuration = Math.max(Math.floor(animationDuration / targetValue), 16);
+
+    let currentValue = 0;
+    const intervalId = window.setInterval(() => {
+      currentValue += 1;
+      setIssuesSolvedCount(currentValue);
+
+      if (currentValue >= targetValue) {
+        window.clearInterval(intervalId);
+      }
+    }, stepDuration);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
   return (
     <section className="about">
       <div className="about-hero">
@@ -33,7 +53,7 @@ const About = () => {
               <span>Years</span>
             </div>
             <div className="about-stat">
-              <strong>30+</strong>
+              <strong>{issuesSolvedCount}+</strong>
               <span>Issues Solved</span>
             </div>
             <div className="about-stat">

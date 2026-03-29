@@ -33,13 +33,13 @@
 }
 
 .skills-container li {
-  background: rgba(35, 53, 84, 0.62);
+  background: var(--chip-background-soft);
   padding: 8px 12px;
   border-radius: 999px;
   color: var(--secondary-text-color);
   text-align: center;
   cursor: default;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--soft-border-color);
   display: inline-flex;
   justify-content: center;
   align-items: center;

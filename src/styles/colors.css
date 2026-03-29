@@ -1,5 +1,7 @@
 /* colors.css */
 :root {
+  color-scheme: dark;
+
   /* Background Colors */
   --background-color: #112240;
   --dark-background-color: #0a192f;
@@ -24,5 +26,81 @@
 
   /* Focus Glow */
   --focus-glow-color: rgba(144, 202, 249, 0.5);
+
+  /* Shell / Layout */
+  --page-background:
+    radial-gradient(circle at top left, rgba(44, 120, 115, 0.22), transparent 28%),
+    radial-gradient(circle at top right, rgba(87, 123, 255, 0.16), transparent 24%),
+    linear-gradient(180deg, #07111f 0%, #081726 45%, #050b13 100%);
+  --glass-border-color: rgba(255, 255, 255, 0.12);
+  --glass-top-highlight: rgba(255, 255, 255, 0.08);
+  --glass-bottom-highlight: rgba(255, 255, 255, 0.03);
+  --glass-panel-background: rgba(7, 17, 31, 0.3);
+  --glass-panel-background-strong: rgba(7, 17, 31, 0.32);
+  --glass-button-background: rgba(17, 34, 64, 0.72);
+  --glass-button-background-strong: rgba(17, 34, 64, 0.82);
+  --glass-chip-background: rgba(35, 53, 84, 0.82);
+  --module-background: rgba(10, 25, 47, 0.82);
+  --module-border-color: rgba(255, 255, 255, 0.08);
+  --soft-border-color: rgba(255, 255, 255, 0.06);
+  --experience-gradient: linear-gradient(180deg, rgba(19, 37, 68, 0.86), rgba(11, 23, 42, 0.94));
+  --card-background-soft: rgba(35, 53, 84, 0.52);
+  --card-background-softer: rgba(35, 53, 84, 0.48);
+  --chip-background-soft: rgba(35, 53, 84, 0.62);
+  --icon-background: rgba(255, 255, 255, 0.06);
+  --icon-background-hover: rgba(100, 255, 218, 0.12);
+  --hero-subtitle-color: rgba(255, 255, 255, 0.88);
+  --tooltip-background: #f7fbff;
+  --tooltip-text-color: #081726;
+  --backdrop-overlay: rgba(4, 10, 18, 0.16);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --background-color: #eef4ff;
+  --dark-background-color: #dfeaf7;
+  --card-background-color: #dbe6f7;
+
+  --primary-text-color: #18263a;
+  --secondary-text-color: #53657e;
+  --highlight-text-color: #0b9c89;
+  --link-hover-color: #0e7490;
+
+  --button-background-color: rgba(255, 255, 255, 0.72);
+  --button-text-color: #245b85;
+  --button-hover-text-color: #17476a;
+  --button-border-color: rgba(36, 91, 133, 0.24);
+  --button-border-hover-color: rgba(14, 116, 144, 0.35);
+
+  --box-shadow-color: rgba(22, 42, 74, 0.12);
+  --box-shadow-hover-color: rgba(22, 42, 74, 0.18);
+  --focus-glow-color: rgba(36, 91, 133, 0.22);
+
+  --page-background:
+    radial-gradient(circle at top left, rgba(89, 173, 186, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(120, 149, 255, 0.14), transparent 24%),
+    linear-gradient(180deg, #f4f9ff 0%, #e9f1fb 50%, #dde8f6 100%);
+  --glass-border-color: rgba(24, 38, 58, 0.1);
+  --glass-top-highlight: rgba(255, 255, 255, 0.68);
+  --glass-bottom-highlight: rgba(24, 38, 58, 0.03);
+  --glass-panel-background: rgba(255, 255, 255, 0.58);
+  --glass-panel-background-strong: rgba(255, 255, 255, 0.7);
+  --glass-button-background: rgba(255, 255, 255, 0.74);
+  --glass-button-background-strong: rgba(255, 255, 255, 0.85);
+  --glass-chip-background: rgba(236, 243, 252, 0.92);
+  --module-background: rgba(255, 255, 255, 0.7);
+  --module-border-color: rgba(24, 38, 58, 0.08);
+  --soft-border-color: rgba(24, 38, 58, 0.08);
+  --experience-gradient: linear-gradient(180deg, rgba(245, 249, 255, 0.96), rgba(226, 235, 248, 0.96));
+  --card-background-soft: rgba(236, 243, 252, 0.94);
+  --card-background-softer: rgba(240, 245, 252, 0.94);
+  --chip-background-soft: rgba(232, 240, 250, 0.98);
+  --icon-background: rgba(255, 255, 255, 0.85);
+  --icon-background-hover: rgba(11, 156, 137, 0.12);
+  --hero-subtitle-color: rgba(24, 38, 58, 0.86);
+  --tooltip-background: #18263a;
+  --tooltip-text-color: #f4f9ff;
+  --backdrop-overlay: rgba(223, 234, 247, 0.24);
 }
 

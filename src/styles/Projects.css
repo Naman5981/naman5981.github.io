@@ -13,8 +13,8 @@
   margin-bottom: 18px;
   padding: 18px 20px;
   border-radius: 18px;
-  background: rgba(35, 53, 84, 0.52);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--card-background-soft);
+  border: 1px solid var(--soft-border-color);
 }
 
 .projects h4 {

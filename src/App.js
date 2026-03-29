@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import About from './components/About';
 import Education from './components/Education';
 import Experience from './components/Experience';
@@ -66,6 +67,14 @@ const sectionMap = {
 };
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    const storedTheme = window.localStorage.getItem('theme-preference');
+    if (storedTheme === 'light' || storedTheme === 'dark') {
+      return storedTheme;
+    }
+
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  });
   const [activeWorkspace, setActiveWorkspace] = useState('overview');
   const [highlightedSection, setHighlightedSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -75,6 +84,11 @@ function App() {
     () => workspaces.find((workspace) => workspace.id === activeWorkspace) ?? workspaces[0],
     [activeWorkspace]
   );
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    window.localStorage.setItem('theme-preference', theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -156,18 +170,20 @@ function App() {
           <h1>Naman Sanadhya</h1>
         </div>
 
-        <button
-          type="button"
-          className={`menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
-          aria-expanded={isMobileMenuOpen}
-          aria-controls="primary-navigation"
-          aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          onClick={() => setIsMobileMenuOpen((current) => !current)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+        <div className="header-actions">
+          <button
+            type="button"
+            className={`menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="primary-navigation"
+            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            onClick={() => setIsMobileMenuOpen((current) => !current)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
 
         <nav
           id="primary-navigation"
@@ -179,6 +195,19 @@ function App() {
               {label}
             </button>
           ))}
+
+          <button
+            type="button"
+            className={`theme-toggle ${theme === 'light' ? 'light' : 'dark'}`}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+          >
+            <span className="theme-toggle-track" aria-hidden="true">
+              <span className="theme-toggle-icon theme-toggle-sun">{'\u2600'}</span>
+              <span className="theme-toggle-icon theme-toggle-moon">{'\u263E'}</span>
+              <span className="theme-toggle-thumb" />
+            </span>
+          </button>
         </nav>
       </header>
 
@@ -306,6 +335,8 @@ function App() {
           </aside>
         </div>
       </main>
+
+      <SpeedInsights />
     </div>
   );
 }

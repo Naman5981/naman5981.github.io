@@ -262,9 +262,72 @@ export const getSmartSearchResults = ({
     .slice(0, 8);
 };
 
-export const smartSearchPrompts = [
+export const defaultSmartSearchPrompts = [
   'Show me fintech backend work',
   'Find projects using Java and PostgreSQL',
   'What shows production support experience?',
   'Which skills are relevant for platform engineering?'
 ];
+
+export const getDynamicSmartSearchPrompts = ({
+  profile,
+  projects = [],
+  skillCategories = [],
+  experiences = []
+}) => {
+  const prompts = [];
+  const seen = new Set();
+
+  const addPrompt = (value) => {
+    const trimmedValue = `${value || ''}`.trim();
+
+    if (!trimmedValue) {
+      return;
+    }
+
+    const normalizedValue = normalize(trimmedValue);
+
+    if (!normalizedValue || seen.has(normalizedValue)) {
+      return;
+    }
+
+    seen.add(normalizedValue);
+    prompts.push(trimmedValue);
+  };
+
+  const topProject = projects[0];
+  const secondProject = projects[1];
+  const topSkillCategory = skillCategories[0];
+  const secondSkillCategory = skillCategories[1];
+  const latestExperience = experiences[0];
+
+  addPrompt(`What is ${profile?.fullName || 'his'} background?`);
+  addPrompt(`What does ${profile?.fullName || 'he'} specialize in?`);
+
+  if (topProject?.title) {
+    addPrompt(`Tell me about ${topProject.title}`);
+  }
+
+  if (secondProject?.title) {
+    addPrompt(`What problem does ${secondProject.title} solve?`);
+  }
+
+  if (topSkillCategory?.category) {
+    addPrompt(`Which ${topSkillCategory.category.toLowerCase()} skills stand out?`);
+  }
+
+  if (secondSkillCategory?.category) {
+    addPrompt(`Show me work related to ${secondSkillCategory.category.toLowerCase()}`);
+  }
+
+  if (latestExperience?.company) {
+    addPrompt(`What did he do at ${latestExperience.company}?`);
+  }
+
+  addPrompt('Show me fintech backend work');
+  addPrompt('Find projects using Java and PostgreSQL');
+  addPrompt('What shows production support experience?');
+  addPrompt('Which skills are relevant for platform engineering?');
+
+  return prompts.slice(0, 6);
+};

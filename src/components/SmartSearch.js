@@ -1,56 +1,55 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getExperiences, getProjects, getSkillCategories } from '../services/portfolio';
-import { smartSearchPrompts } from '../lib/smartSearch';
+import { getProfile, getProjects, getSkillCategories, getExperiences } from '../services/portfolio';
+import { defaultSmartSearchPrompts, getDynamicSmartSearchPrompts } from '../lib/smartSearch';
 import { getAISearchResults } from '../services/aiSearch';
 import '../styles/SmartSearch.css';
 
-const SmartSearch = ({ isOpen, onClose, onNavigate }) => {
-  const [projects, setProjects] = useState(null);
-  const [skillCategories, setSkillCategories] = useState(null);
-  const [experiences, setExperiences] = useState(null);
-  const [hasError, setHasError] = useState(false);
+const SmartSearch = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const [isTraceActive, setIsTraceActive] = useState(false);
   const [activeResponse, setActiveResponse] = useState(null);
+  const [promptSuggestions, setPromptSuggestions] = useState(defaultSmartSearchPrompts.slice(0, 3));
   const promptRowRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
 
-    const loadSearchSources = async () => {
+    const loadPromptSuggestions = async () => {
       try {
-        const [nextProjects, nextSkillCategories, nextExperiences] = await Promise.all([
+        const [profile, projects, skillCategories, experiences] = await Promise.all([
+          getProfile(),
           getProjects(),
           getSkillCategories(),
           getExperiences()
         ]);
 
-        if (isMounted) {
-          setProjects(nextProjects);
-          setSkillCategories(nextSkillCategories);
-          setExperiences(nextExperiences);
-          setHasError(false);
+        if (!isMounted) {
+          return;
         }
+
+        const nextPrompts = getDynamicSmartSearchPrompts({
+          profile,
+          projects,
+          skillCategories,
+          experiences
+        });
+
+        setPromptSuggestions(nextPrompts.slice(0, 3));
       } catch (error) {
-        console.error('Failed to load smart search sources.', error);
+        console.error('Failed to load dynamic AI search prompts.', error);
+
         if (isMounted) {
-          setHasError(true);
+          setPromptSuggestions(defaultSmartSearchPrompts.slice(0, 3));
         }
       }
     };
 
-    loadSearchSources();
+    loadPromptSuggestions();
 
     return () => {
       isMounted = false;
     };
   }, []);
-
-  const isLoading = !projects || !skillCategories || !experiences;
-  const handleOpenSection = (sectionId) => {
-    onNavigate(sectionId);
-    onClose();
-  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -92,29 +91,39 @@ const SmartSearch = ({ isOpen, onClose, onNavigate }) => {
   const runSearch = async (nextQuery) => {
     const trimmedQuery = nextQuery.trim();
 
-    if (!trimmedQuery || isLoading) {
+    if (!trimmedQuery) {
       return;
     }
 
     setActiveResponse({
       query: trimmedQuery,
-      results: [],
+      answer: '',
       isPending: true
     });
     setQuery('');
 
-    const nextSearch = await getAISearchResults({
-      query: trimmedQuery,
-      projects: projects ?? [],
-      skillCategories: skillCategories ?? [],
-      experiences: experiences ?? []
-    });
+    try {
+      const nextSearch = await getAISearchResults({
+        query: trimmedQuery
+      });
 
-    setActiveResponse({
-      query: trimmedQuery,
-      results: nextSearch.results,
-      isPending: false
-    });
+      setActiveResponse({
+        query: trimmedQuery,
+        answer: nextSearch.answer,
+        isPending: false,
+        hasError: false,
+        errorMessage: ''
+      });
+    } catch (error) {
+      console.error('Gemini AI search failed.', error);
+      setActiveResponse({
+        query: trimmedQuery,
+        answer: '',
+        isPending: false,
+        hasError: true,
+        errorMessage: error instanceof Error ? error.message : 'Gemini AI search is unavailable right now.'
+      });
+    }
   };
 
   const handleSubmit = (event) => {
@@ -137,30 +146,13 @@ const SmartSearch = ({ isOpen, onClose, onNavigate }) => {
         <section className="smart-search" aria-label="AI portfolio search">
           <div className="smart-search-header">
             <div>
-              <h2>AI Search</h2>
+              <h2>AI Search (Beta)</h2>
             </div>
           </div>
 
         <div className="smart-search-body">
           <div className="smart-search-messages">
-            {hasError ? (
-              <div className="search-empty-state">
-                <h3>Search is unavailable</h3>
-                <p>The search data could not be loaded from Supabase right now.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="smart-chat-thread" aria-hidden="true">
-                {[0, 1].map((item) => (
-                  <article key={item} className="smart-chat-message assistant">
-                    <div className="smart-chat-bubble smart-result-skeleton">
-                      <div className="shimmer-line short" />
-                      <div className="shimmer-line title" />
-                      <div className="shimmer-line" />
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : activeResponse ? (
+            {activeResponse ? (
               <div className="smart-response-card">
                 <p className="smart-response-query">{activeResponse.query}</p>
                 {activeResponse.isPending ? (
@@ -174,26 +166,10 @@ const SmartSearch = ({ isOpen, onClose, onNavigate }) => {
                 ) : (
                   <>
                     <p className="smart-response-summary">
-                      {activeResponse.results.length
-                        ? `I found ${activeResponse.results.length} relevant matches.`
-                        : `I could not find a strong match for this query.`}
+                      {activeResponse.hasError
+                        ? activeResponse.errorMessage || 'Gemini AI search is unavailable right now.'
+                        : activeResponse.answer || 'I could not find a strong answer for this query.'}
                     </p>
-                    {activeResponse.results.length ? (
-                      <div className="smart-response-results">
-                        {activeResponse.results.map((result) => (
-                          <button
-                            key={result.id}
-                            type="button"
-                            className="smart-chat-result"
-                            onClick={() => handleOpenSection(result.targetSection)}
-                          >
-                            <span className="smart-chat-result-type">{result.type}</span>
-                            <strong>{result.title}</strong>
-                            <span>{result.body}</span>
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
                   </>
                 )}
               </div>
@@ -227,7 +203,7 @@ const SmartSearch = ({ isOpen, onClose, onNavigate }) => {
             </div>
 
             <div ref={promptRowRef} className="smart-search-prompt-row">
-              {smartSearchPrompts.slice(0, 3).map((prompt) => (
+              {promptSuggestions.map((prompt) => (
                 <button key={prompt} type="button" onClick={() => runSearch(prompt)}>
                   {prompt}
                 </button>

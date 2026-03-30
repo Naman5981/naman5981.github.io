@@ -1,49 +1,43 @@
-import { getSmartSearchResults } from '../lib/smartSearch';
-
 const providerLabel = 'Gemini AI search';
 
 export const getAISearchProviderLabel = () => providerLabel;
 
-export const getAISearchResults = async ({ query, projects, skillCategories, experiences }) => {
+export const getAISearchResults = async ({ query }) => {
   const trimmedQuery = query.trim();
 
   if (!trimmedQuery) {
     return {
-      mode: 'fallback',
-      results: []
+      mode: 'gemini',
+      answer: ''
     };
   }
 
-  try {
-    const response = await fetch('/api/ai-search', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ query: trimmedQuery })
-    });
+  const response = await fetch('/api/ai-search', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ query: trimmedQuery })
+  });
 
-    if (!response.ok) {
-      throw new Error(`AI search request failed with status ${response.status}`);
+  if (!response.ok) {
+    const errorPayload = await response.json().catch(() => null);
+    const isLikelyLocalCraDev =
+      typeof window !== 'undefined' &&
+      (window.location.port === '3000' || window.location.port === '3001') &&
+      response.status === 404;
+
+    if (isLikelyLocalCraDev) {
+      throw new Error('Local API route not running. Start this project with `vercel dev` instead of `npm start`.');
     }
 
-    const data = await response.json();
-
-    return {
-      mode: data.mode ?? 'gemini',
-      results: Array.isArray(data.results) ? data.results : []
-    };
-  } catch (error) {
-    console.error('Falling back to local smart search.', error);
-
-    return {
-      mode: 'fallback',
-      results: getSmartSearchResults({
-        query: trimmedQuery,
-        projects,
-        skillCategories,
-        experiences
-      })
-    };
+    throw new Error(errorPayload?.error || `AI search request failed with status ${response.status}`);
   }
+
+  const data = await response.json();
+
+  return {
+    mode: data.mode ?? 'gemini',
+    answer: typeof data.answer === 'string' ? data.answer : ''
+  };
 };

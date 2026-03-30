@@ -1,209 +1,62 @@
+const fs = require('fs');
+const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 
-const profileSlug = process.env.PROFILE_SLUG || process.env.REACT_APP_PROFILE_SLUG || 'naman-sanadhya';
-const supabaseUrl = process.env.SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY;
-const geminiApiKey = process.env.GEMINI_API_KEY;
-const geminiModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-
-const normalize = (value) =>
-  `${value || ''}`
-    .toLowerCase()
-    .replace(/[^a-z0-9+#.\s-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-const intentDictionary = {
-  backend: ['backend', 'java', 'spring', 'spring boot', 'api', 'microservice', 'microservices'],
-  fintech: ['fintech', 'banking', 'payments', 'merchant', 'transaction', 'virtual account'],
-  database: ['database', 'postgres', 'postgresql', 'sql', 'mysql', 'data'],
-  cloud: ['cloud', 'ci/cd', 'deployment', 'platform', 'automation'],
-  mobile: ['android', 'mobile', 'assistant', 'voice', 'dialogflow'],
-  healthcare: ['healthcare', 'health', 'nutrition', 'medical'],
-  reliability: ['production', 'support', 'incident', 'debugging', 'reliability', 'stability'],
-  leadership: ['ownership', 'delivery', 'scalable', 'architecture', 'design']
+const responseSchema = {
+  type: 'object',
+  properties: {
+    answer: { type: 'string' }
+  },
+  required: ['answer']
 };
 
-const labelMap = {
-  backend: 'Backend',
-  fintech: 'Fintech',
-  database: 'Databases',
-  cloud: 'Platform',
-  mobile: 'Mobile',
-  healthcare: 'Healthcare',
-  reliability: 'Reliability',
-  leadership: 'Architecture'
-};
+let cachedLocalEnv = null;
 
-const extractConcepts = (query) => {
-  const normalizedQuery = normalize(query);
-  const concepts = new Set();
+const stripWrappingQuotes = (value) => value.replace(/^['"]|['"]$/g, '');
 
-  Object.entries(intentDictionary).forEach(([concept, keywords]) => {
-    if (keywords.some((keyword) => normalizedQuery.includes(normalize(keyword)))) {
-      concepts.add(concept);
-    }
-  });
-
-  return Array.from(concepts);
-};
-
-const buildSearchTokens = (query) =>
-  normalize(query)
-    .split(' ')
-    .filter((token) => token.length > 1);
-
-const scoreTextMatch = (text, queryTokens) =>
-  queryTokens.reduce((score, token) => {
-    if (!text.includes(token)) {
-      return score;
-    }
-
-    return score + (token.length > 4 ? 2 : 1);
-  }, 0);
-
-const scoreConceptMatch = (candidateConcepts, queryConcepts) =>
-  queryConcepts.reduce(
-    (score, concept) => (candidateConcepts.includes(concept) ? score + 6 : score),
-    0
-  );
-
-const describeMatches = (candidateConcepts, queryConcepts, fallbackTags) => {
-  const matchedConcepts = queryConcepts
-    .filter((concept) => candidateConcepts.includes(concept))
-    .map((concept) => labelMap[concept]);
-
-  return matchedConcepts.length ? matchedConcepts : (fallbackTags || []).slice(0, 3);
-};
-
-const buildProjectCandidates = (projects) =>
-  projects.map((project) => {
-    const concepts = [];
-    const searchText = normalize(
-      [
-        project.title,
-        project.description,
-        project.category,
-        project.status,
-        project.impact,
-        ...(project.stack || [])
-      ].join(' ')
-    );
-
-    if (searchText.includes('spring') || searchText.includes('java')) concepts.push('backend');
-    if (searchText.includes('bank') || searchText.includes('payment') || searchText.includes('merchant')) concepts.push('fintech');
-    if (searchText.includes('postgres') || searchText.includes('sql')) concepts.push('database');
-    if (searchText.includes('android') || searchText.includes('assistant')) concepts.push('mobile');
-    if (searchText.includes('health') || searchText.includes('nutrition')) concepts.push('healthcare');
-    if (searchText.includes('architecture') || searchText.includes('modular')) concepts.push('leadership');
-
-    return {
-      id: `project-${project.slug || project.title}`,
-      type: 'Project',
-      title: project.title,
-      body: project.impact || project.description,
-      targetSection: 'projects',
-      concepts,
-      searchText,
-      fallbackTags: (project.stack || []).slice(0, 3)
-    };
-  });
-
-const buildSkillCandidates = (categories) =>
-  categories.flatMap((category) =>
-    category.skills.map((skill) => {
-      const searchText = normalize(`${category.category} ${skill}`);
-      const concepts = [];
-
-      if (searchText.includes('java') || searchText.includes('spring') || searchText.includes('api')) concepts.push('backend');
-      if (searchText.includes('postgres') || searchText.includes('mysql') || searchText.includes('sql')) concepts.push('database');
-      if (searchText.includes('cloud') || searchText.includes('ci') || searchText.includes('deployment')) concepts.push('cloud');
-      if (searchText.includes('android') || searchText.includes('mobile')) concepts.push('mobile');
-      if (searchText.includes('automation') || searchText.includes('architecture')) concepts.push('leadership');
-
-      return {
-        id: `skill-${category.category}-${skill}`,
-        type: 'Skill',
-        title: skill,
-        body: `Found in ${category.category}`,
-        targetSection: 'skills',
-        concepts,
-        searchText,
-        fallbackTags: [category.category]
-      };
-    })
-  );
-
-const buildExperienceCandidates = (experiences) =>
-  experiences.map((experience) => {
-    const searchText = normalize(
-      [
-        experience.company,
-        experience.designation,
-        experience.summary,
-        ...(experience.description || []),
-        experience.location
-      ].join(' ')
-    );
-    const concepts = [];
-
-    if (searchText.includes('spring') || searchText.includes('java') || searchText.includes('service')) concepts.push('backend');
-    if (searchText.includes('bank') || searchText.includes('financial') || searchText.includes('transaction')) concepts.push('fintech');
-    if (searchText.includes('incident') || searchText.includes('production') || searchText.includes('support') || searchText.includes('debug')) concepts.push('reliability');
-    if (searchText.includes('architecture') || searchText.includes('ownership') || searchText.includes('scalable')) concepts.push('leadership');
-
-    return {
-      id: `experience-${experience.company}`,
-      type: 'Experience',
-      title: `${experience.company} · ${experience.designation}`,
-      body: experience.summary,
-      targetSection: 'experience',
-      concepts,
-      searchText,
-      fallbackTags: [experience.duration, experience.location].filter(Boolean)
-    };
-  });
-
-const getFallbackResults = ({ query, projects, skillCategories, experiences }) => {
-  const trimmedQuery = `${query || ''}`.trim();
-  if (!trimmedQuery) {
-    return [];
+const getLocalEnv = () => {
+  if (cachedLocalEnv) {
+    return cachedLocalEnv;
   }
 
-  const queryTokens = buildSearchTokens(trimmedQuery);
-  const queryConcepts = extractConcepts(trimmedQuery);
-  const normalizedQuery = normalize(trimmedQuery);
+  const envPath = path.join(process.cwd(), '.env.local');
 
-  const candidates = [
-    ...buildProjectCandidates(projects),
-    ...buildSkillCandidates(skillCategories),
-    ...buildExperienceCandidates(experiences)
-  ];
+  if (!fs.existsSync(envPath)) {
+    cachedLocalEnv = {};
+    return cachedLocalEnv;
+  }
 
-  return candidates
-    .map((candidate) => {
-      const exactPhraseBonus = candidate.searchText.includes(normalizedQuery) ? 8 : 0;
-      const tokenScore = scoreTextMatch(candidate.searchText, queryTokens);
-      const conceptScore = scoreConceptMatch(candidate.concepts, queryConcepts);
-      const score = exactPhraseBonus + tokenScore + conceptScore;
+  const parsed = {};
+  const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
 
-      return {
-        id: candidate.id,
-        type: candidate.type,
-        title: candidate.title,
-        body: candidate.body,
-        targetSection: candidate.targetSection,
-        tags: describeMatches(candidate.concepts, queryConcepts, candidate.fallbackTags),
-        score
-      };
-    })
-    .filter((candidate) => candidate.score > 0)
-    .sort((left, right) => right.score - left.score || left.type.localeCompare(right.type))
-    .slice(0, 8)
-    .map(({ score, ...candidate }) => candidate);
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith('#')) {
+      return;
+    }
+
+    const separatorIndex = trimmed.indexOf('=');
+
+    if (separatorIndex === -1) {
+      return;
+    }
+
+    const key = trimmed.slice(0, separatorIndex).trim();
+    const value = trimmed.slice(separatorIndex + 1).trim();
+    parsed[key] = stripWrappingQuotes(value);
+  });
+
+  cachedLocalEnv = parsed;
+  return cachedLocalEnv;
 };
 
+const getEnvValue = (key) => process.env[key] || getLocalEnv()[key];
+
 const getSupabase = () => {
+  const supabaseUrl = getEnvValue('SUPABASE_URL') || getEnvValue('REACT_APP_SUPABASE_URL');
+  const supabaseAnonKey = getEnvValue('SUPABASE_ANON_KEY') || getEnvValue('REACT_APP_SUPABASE_ANON_KEY');
+
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Supabase environment variables are not configured.');
   }
@@ -212,16 +65,22 @@ const getSupabase = () => {
 };
 
 const getPortfolioSearchContext = async () => {
+  const profileSlug =
+    getEnvValue('PROFILE_SLUG') || getEnvValue('REACT_APP_PROFILE_SLUG') || 'naman-sanadhya';
   const supabase = getSupabase();
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('id')
+    .select('id, full_name, headline, bio, location, email, phone')
     .eq('slug', profileSlug)
     .single();
 
   if (profileError) throw profileError;
 
-  const [{ data: projects, error: projectError }, { data: experiences, error: experienceError }, { data: categories, error: categoriesError }] = await Promise.all([
+  const [
+    { data: projects, error: projectError },
+    { data: experiences, error: experienceError },
+    { data: categories, error: categoriesError }
+  ] = await Promise.all([
     supabase
       .from('projects')
       .select('slug, title, description, repo_url, live_url, sort_order')
@@ -302,13 +161,29 @@ const getPortfolioSearchContext = async () => {
   }));
 
   return {
+    profile: {
+      fullName: profile.full_name,
+      headline: profile.headline,
+      bio: profile.bio,
+      location: profile.location,
+      email: profile.email,
+      phone: profile.phone
+    },
     projects: mappedProjects,
     skillCategories: mappedCategories,
     experiences: mappedExperiences
   };
 };
 
-const buildGeminiContext = ({ projects, skillCategories, experiences }) => ({
+const buildGeminiContext = ({ profile, projects, skillCategories, experiences }) => ({
+  profile: {
+    fullName: profile?.fullName || '',
+    headline: profile?.headline || '',
+    bio: profile?.bio || '',
+    location: profile?.location || '',
+    email: profile?.email || '',
+    phone: profile?.phone || ''
+  },
   projects: projects.map((project) => ({
     id: project.slug || project.title,
     title: project.title,
@@ -330,7 +205,7 @@ const buildGeminiContext = ({ projects, skillCategories, experiences }) => ({
   ),
   experience: experiences.map((experience) => ({
     id: experience.company,
-    title: `${experience.company} · ${experience.designation}`,
+    title: `${experience.company} - ${experience.designation}`,
     description: experience.summary,
     details: experience.description || [],
     duration: experience.duration,
@@ -339,43 +214,27 @@ const buildGeminiContext = ({ projects, skillCategories, experiences }) => ({
   }))
 });
 
-const responseSchema = {
-  type: 'object',
-  properties: {
-    results: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-          type: { type: 'string', enum: ['Project', 'Skill', 'Experience'] },
-          title: { type: 'string' },
-          body: { type: 'string' },
-          targetSection: { type: 'string', enum: ['projects', 'skills', 'experience'] },
-          tags: {
-            type: 'array',
-            items: { type: 'string' }
-          }
-        },
-        required: ['id', 'type', 'title', 'body', 'targetSection', 'tags']
-      }
-    }
-  },
-  required: ['results']
-};
-
 const buildGeminiRequest = ({ query, context }) => ({
   contents: [
     {
       parts: [
         {
           text: [
-            'You are ranking search results for a backend engineer portfolio.',
+            'You are speaking as the portfolio owner.',
+            'Answer in first person, as if you are Naman Sanadhya talking about your own work.',
+            'The portfolio owner profile is included in the data below.',
+            'If the user asks about "his", "their", or "the person", interpret that as the portfolio owner.',
             `User query: ${query}`,
             'Use only the provided portfolio data.',
-            'Return up to 8 relevant items.',
-            'Keep result bodies concise.',
-            'Prefer exact query intent, domain fit, technology fit, and practical relevance.',
+            'Answer in plain text only.',
+            'Do not invent anything that is not present in the portfolio data.',
+            'Keep the answer concise, natural, warm, and directly useful.',
+            'Sound human, not robotic.',
+            'Do not refer to yourself as "the portfolio owner".',
+            'Use my name naturally only when it helps clarity. Otherwise answer as "I" and "my".',
+            'Do not use em dashes.',
+            'If the portfolio data does not support the query, say that briefly.',
+            'Do not use markdown bullet lists unless the query clearly asks for a list.',
             `Portfolio data: ${JSON.stringify(context)}`
           ].join('\n\n')
         }
@@ -389,7 +248,10 @@ const buildGeminiRequest = ({ query, context }) => ({
   }
 });
 
-const getGeminiResults = async ({ query, context }) => {
+const getGeminiAnswer = async ({ query, context }) => {
+  const geminiApiKey = getEnvValue('GEMINI_API_KEY');
+  const geminiModel = getEnvValue('GEMINI_MODEL') || 'gemini-2.5-flash';
+
   if (!geminiApiKey) {
     throw new Error('GEMINI_API_KEY is not configured.');
   }
@@ -414,26 +276,21 @@ const getGeminiResults = async ({ query, context }) => {
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
   if (!text) {
-    return [];
+    return '';
   }
 
   const parsed = JSON.parse(text);
-  if (!Array.isArray(parsed.results)) {
-    return [];
+  if (typeof parsed.answer !== 'string') {
+    return '';
   }
 
-  return parsed.results.slice(0, 8).map((result) => ({
-    id: result.id,
-    type: result.type,
-    title: result.title,
-    body: result.body,
-    targetSection: result.targetSection,
-    tags: Array.isArray(result.tags) ? result.tags.slice(0, 3) : []
-  }));
+  return parsed.answer.trim();
 };
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
+  const isDevelopment =
+    process.env.NODE_ENV !== 'production' || process.env.VERCEL_ENV === 'development';
 
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -445,36 +302,22 @@ module.exports = async (req, res) => {
     const query = `${body.query || ''}`.trim();
 
     if (!query) {
-      res.status(200).json({ mode: 'fallback', results: [] });
+      res.status(200).json({ mode: 'gemini', answer: '' });
       return;
     }
 
     const context = await getPortfolioSearchContext();
-
-    try {
-      const geminiResults = await getGeminiResults({
-        query,
-        context: buildGeminiContext(context)
-      });
-
-      if (geminiResults.length) {
-        res.status(200).json({ mode: 'gemini', results: geminiResults });
-        return;
-      }
-    } catch (geminiError) {
-      console.error('Gemini search failed, using fallback.', geminiError);
-    }
-
-    const fallbackResults = getFallbackResults({
+    const geminiAnswer = await getGeminiAnswer({
       query,
-      projects: context.projects,
-      skillCategories: context.skillCategories,
-      experiences: context.experiences
+      context: buildGeminiContext(context)
     });
 
-    res.status(200).json({ mode: 'fallback', results: fallbackResults });
+    res.status(200).json({ mode: 'gemini', answer: geminiAnswer });
   } catch (error) {
     console.error('AI search endpoint failed.', error);
-    res.status(500).json({ error: 'AI search failed' });
+    res.status(500).json({
+      error: 'Gemini AI search failed',
+      details: isDevelopment ? error.message : undefined
+    });
   }
 };

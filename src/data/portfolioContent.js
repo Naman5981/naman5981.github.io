@@ -73,7 +73,7 @@ export const projectShowcase = {
     category: 'Internal Productivity',
     status: 'Live Build',
     accent: 'teal',
-    stack: ['Java', 'Spring Boot', 'MySQL', 'Admin Workflows'],
+    stack: ['Java', 'Spring Boot', 'PostgreSQL', 'Admin Workflows'],
     impact: 'Staff records, reviews, and performance summaries in one operational dashboard.',
     links: {
       repoUrl: 'https://github.com/Naman5981/Employee_Performance_Tracker'

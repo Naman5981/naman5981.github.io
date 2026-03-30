@@ -27,9 +27,11 @@ const AnalyticsDashboard = () => {
     };
 
     loadSummary();
+    const intervalId = window.setInterval(loadSummary, 15000);
 
     return () => {
       isMounted = false;
+      window.clearInterval(intervalId);
     };
   }, []);
 

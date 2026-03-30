@@ -6,8 +6,10 @@ import Experience from './components/Experience';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Achievements from './components/Achievements';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 import PortfolioError from './components/PortfolioError';
 import { navigationSections, portfolioStats, workspacePanels } from './data/portfolioContent';
+import { trackPortfolioEvent } from './services/analytics';
 import { getProfile } from './services/portfolio';
 import './styles/App.css';
 
@@ -113,6 +115,22 @@ function App() {
       observer.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    const sectionLabel = sectionMap[activeSection];
+
+    if (!sectionLabel) {
+      return;
+    }
+
+    trackPortfolioEvent({
+      eventType: 'section_view',
+      targetKey: activeSection,
+      targetLabel: sectionLabel,
+      source: 'section_navigation',
+      oncePerSession: true
+    });
+  }, [activeSection, sectionMap]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -418,6 +436,10 @@ function App() {
           </div>
 
           <aside className="secondary-column">
+            <section className="module-card compact-card is-visible" data-reveal>
+              <AnalyticsDashboard />
+            </section>
+
             <section
               id="skills"
               className={`module-card compact-card ${

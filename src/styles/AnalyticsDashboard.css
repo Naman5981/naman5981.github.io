@@ -1,0 +1,117 @@
+@import './colors.css';
+
+.analytics-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+}
+
+.analytics-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.analytics-header h2,
+.analytics-header p,
+.analytics-list-card h3 {
+  margin: 0;
+}
+
+.analytics-header h2 {
+  color: var(--highlight-text-color);
+}
+
+.analytics-header p,
+.analytics-empty-copy {
+  color: var(--secondary-text-color);
+  line-height: 1.6;
+}
+
+.analytics-stat-grid,
+.analytics-list-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.analytics-stat-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.analytics-list-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.analytics-stat-card,
+.analytics-list-card {
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid var(--soft-border-color);
+  background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
+}
+
+.analytics-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.analytics-stat-card span {
+  color: var(--secondary-text-color);
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.analytics-stat-card strong {
+  color: var(--primary-text-color);
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+}
+
+.analytics-list-card ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analytics-list-card li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--glass-chip-background);
+  border: 1px solid var(--module-border-color);
+}
+
+.analytics-list-card li span {
+  color: var(--primary-text-color);
+}
+
+.analytics-list-card li strong {
+  color: var(--highlight-text-color);
+}
+
+@media (max-width: 900px) {
+  .analytics-stat-grid,
+  .analytics-list-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .analytics-dashboard {
+    padding: 16px;
+  }
+
+  .analytics-stat-card,
+  .analytics-list-card {
+    border-radius: 16px;
+    padding: 16px;
+  }
+}

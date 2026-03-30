@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/Projects.css';
 import { projectAliases, projectShowcase } from '../data/portfolioContent';
+import { trackPortfolioEvent } from '../services/analytics';
 import { getProjects } from '../services/portfolio';
 
 const Projects = () => {
   const [projects, setProjects] = useState(null);
   const [hasError, setHasError] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const trackedProjectViews = useRef(new Set());
 
   useEffect(() => {
     let isMounted = true;
@@ -74,6 +76,55 @@ const Projects = () => {
     return searchableText.includes(normalizedSearch);
   });
 
+  useEffect(() => {
+    if (!filteredProjects.length) {
+      return undefined;
+    }
+
+    const cards = Array.from(document.querySelectorAll('[data-project-slug]'));
+    if (!cards.length) {
+      return undefined;
+    }
+
+    const observer = new window.IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const slug = entry.target.getAttribute('data-project-slug');
+          const title = entry.target.getAttribute('data-project-title');
+
+          if (!slug || !title || trackedProjectViews.current.has(slug)) {
+            return;
+          }
+
+          trackedProjectViews.current.add(slug);
+
+          trackPortfolioEvent({
+            eventType: 'project_view',
+            targetKey: slug,
+            targetLabel: title,
+            source: 'projects_grid',
+            oncePerSession: true
+          });
+
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.45
+      }
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [filteredProjects]);
+
   if (hasError) {
     return (
       <section className="projects">
@@ -140,6 +191,8 @@ const Projects = () => {
                 <article
                   className={`project project-${project.accent}`}
                   key={project.slug ?? project.title}
+                  data-project-slug={project.slug ?? project.title}
+                  data-project-title={project.title}
                 >
                   <div className="project-topline">
                     <span className="project-category">{project.category}</span>

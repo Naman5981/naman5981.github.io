@@ -27,6 +27,7 @@ function App() {
   const [hasPortfolioError, setHasPortfolioError] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [revealedSections, setRevealedSections] = useState(() => ({ about: true }));
   const headerRef = useRef(null);
   const sectionMap = useMemo(
     () =>
@@ -175,6 +176,15 @@ function App() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
+            const sectionId =
+              entry.target.id || entry.target.closest('[id]')?.id || entry.target.parentElement?.id;
+
+            if (sectionId) {
+              setRevealedSections((current) =>
+                current[sectionId] ? current : { ...current, [sectionId]: true }
+              );
+            }
+
             observer.unobserve(entry.target);
           }
         });
@@ -195,6 +205,8 @@ function App() {
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
+      setRevealedSections((current) => ({ ...current, [sectionId]: true }));
+
       setIsMobileMenuOpen(false);
       setActiveSection(sectionId);
       const header = document.querySelector('.site-header');
@@ -322,7 +334,7 @@ function App() {
           <div
             className={`intro-main module-card module-hero ${
               highlightedSection === 'about' ? 'section-flash' : ''
-            }`}
+            } ${revealedSections.about ? 'is-visible' : ''}`}
             data-reveal
           >
             <About />
@@ -388,7 +400,7 @@ function App() {
               id="experience"
               className={`module-card ${
                 highlightedSection === 'experience' ? 'section-flash' : ''
-              }`}
+              } ${revealedSections.experience ? 'is-visible' : ''}`}
               data-reveal
             >
               <Experience />
@@ -398,7 +410,7 @@ function App() {
               id="projects"
               className={`module-card ${
                 highlightedSection === 'projects' ? 'section-flash' : ''
-              }`}
+              } ${revealedSections.projects ? 'is-visible' : ''}`}
               data-reveal
             >
               <Projects />
@@ -410,7 +422,7 @@ function App() {
               id="skills"
               className={`module-card compact-card ${
                 highlightedSection === 'skills' ? 'section-flash' : ''
-              }`}
+              } ${revealedSections.skills ? 'is-visible' : ''}`}
               data-reveal
             >
               <Skills />
@@ -420,7 +432,7 @@ function App() {
               id="education"
               className={`module-card compact-card ${
                 highlightedSection === 'education' ? 'section-flash' : ''
-              }`}
+              } ${revealedSections.education ? 'is-visible' : ''}`}
               data-reveal
             >
               <Education />
@@ -430,7 +442,7 @@ function App() {
               id="achievements"
               className={`module-card compact-card ${
                 highlightedSection === 'achievements' ? 'section-flash' : ''
-              }`}
+              } ${revealedSections.achievements ? 'is-visible' : ''}`}
               data-reveal
             >
               <Achievements />

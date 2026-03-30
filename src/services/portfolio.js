@@ -96,10 +96,7 @@ export const getExperiences = async () => {
   return (experiences ?? []).map((experience) => ({
     company: experience.company,
     website: experience.website,
-    logo:
-      experience.company === 'Infosys Limited' || experience.company === 'Tech Mahindra'
-        ? null
-        : experience.logo_path,
+    logo: experience.logo_path,
     logoAlt: experience.logo_alt,
     location: experience.location,
     duration: experience.duration_label,

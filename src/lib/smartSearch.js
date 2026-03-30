@@ -6,14 +6,14 @@ const normalize = (value) =>
     .trim();
 
 const intentDictionary = {
-  backend: ['backend', 'java', 'spring', 'spring boot', 'api', 'microservice', 'microservices'],
+  backend: ['backend', 'java', 'spring', 'spring boot', 'api', 'apis', 'microservice', 'microservices'],
   fintech: ['fintech', 'banking', 'payments', 'merchant', 'transaction', 'virtual account'],
-  database: ['database', 'postgres', 'postgresql', 'sql', 'mysql', 'data'],
-  cloud: ['cloud', 'ci/cd', 'deployment', 'platform', 'automation'],
+  database: ['database', 'databases', 'postgres', 'postgresql', 'sql', 'mysql', 'data'],
+  cloud: ['cloud', 'ci/cd', 'deployment', 'deployments', 'platform', 'platform engineering', 'devops', 'automation'],
   mobile: ['android', 'mobile', 'assistant', 'voice', 'dialogflow'],
   healthcare: ['healthcare', 'health', 'nutrition', 'medical'],
-  reliability: ['production', 'support', 'incident', 'debugging', 'reliability', 'stability'],
-  leadership: ['ownership', 'delivery', 'scalable', 'architecture', 'design']
+  reliability: ['production', 'production support', 'support', 'incident', 'debugging', 'reliability', 'stability', 'monitoring'],
+  leadership: ['ownership', 'delivery', 'scalable', 'architecture', 'design', 'system design']
 };
 
 const labelMap = {
@@ -43,7 +43,7 @@ const extractConcepts = (query) => {
 const buildSearchTokens = (query) =>
   normalize(query)
     .split(' ')
-    .filter((token) => token.length > 1);
+    .filter((token) => token.length > 1 && !['me', 'my', 'the', 'in', 'with', 'for', 'and', 'show', 'find', 'what'].includes(token));
 
 const scoreTextMatch = (text, queryTokens) =>
   queryTokens.reduce((score, token) => {
@@ -51,7 +51,16 @@ const scoreTextMatch = (text, queryTokens) =>
       return score;
     }
 
-    return score + (token.length > 4 ? 2 : 1);
+    return score + (token.length > 6 ? 3 : token.length > 4 ? 2 : 1);
+  }, 0);
+
+const scoreTitleMatch = (text, queryTokens) =>
+  queryTokens.reduce((score, token) => {
+    if (!text.includes(token)) {
+      return score;
+    }
+
+    return score + 3;
   }, 0);
 
 const scoreConceptMatch = (candidateConcepts, queryConcepts) =>
@@ -78,6 +87,8 @@ const buildProjectCandidates = (projects) =>
         project.category,
         project.status,
         project.impact,
+        project.problem,
+        project.outcome,
         ...(project.stack ?? [])
       ].join(' ')
     );
@@ -105,6 +116,7 @@ const buildProjectCandidates = (projects) =>
       id: `project-${project.slug ?? project.title}`,
       type: 'Project',
       title: project.title,
+      titleSearchText: normalize(project.title),
       body: project.impact ?? project.description,
       targetSection: 'projects',
       concepts,
@@ -143,6 +155,7 @@ const buildSkillCandidates = (categories) =>
         id: `skill-${category.category}-${skill}`,
         type: 'Skill',
         title: skill,
+        titleSearchText: normalize(skill),
         body: `Found in ${category.category}`,
         targetSection: 'skills',
         concepts,
@@ -160,7 +173,8 @@ const buildExperienceCandidates = (experiences) =>
         experience.designation,
         experience.summary,
         ...(experience.description ?? []),
-        experience.location
+        experience.location,
+        experience.duration
       ].join(' ')
     );
     const concepts = [];
@@ -200,6 +214,7 @@ const buildExperienceCandidates = (experiences) =>
       type: 'Experience',
       title: `${experience.company} · ${experience.designation}`,
       body: experience.summary,
+      titleSearchText: normalize(`${experience.company} ${experience.designation}`),
       targetSection: 'experience',
       concepts,
       searchText,
@@ -232,8 +247,9 @@ export const getSmartSearchResults = ({
     .map((candidate) => {
       const exactPhraseBonus = candidate.searchText.includes(normalizedQuery) ? 8 : 0;
       const tokenScore = scoreTextMatch(candidate.searchText, queryTokens);
+      const titleScore = scoreTitleMatch(candidate.titleSearchText ?? candidate.searchText, queryTokens);
       const conceptScore = scoreConceptMatch(candidate.concepts, queryConcepts);
-      const score = exactPhraseBonus + tokenScore + conceptScore;
+      const score = exactPhraseBonus + tokenScore + titleScore + conceptScore;
 
       return {
         ...candidate,

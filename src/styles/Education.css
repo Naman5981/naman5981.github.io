@@ -17,14 +17,12 @@
   background: var(--card-background-softer);
   border: 1px solid var(--soft-border-color);
   transition:
-    transform 0.24s ease,
     border-color 0.24s ease,
     box-shadow 0.24s ease,
     background 0.24s ease;
 }
 
 .education-block:hover {
-  transform: translateY(-3px);
   border-color: rgba(100, 255, 218, 0.18);
   box-shadow: 0 18px 30px var(--box-shadow-color);
   background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));

@@ -78,20 +78,24 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    if (isMobileMenuOpen) {
+      document.documentElement.setAttribute('data-mobile-menu-open', 'true');
+    } else {
+      document.documentElement.removeAttribute('data-mobile-menu-open');
+    }
 
     return () => {
-      document.body.style.overflow = '';
+      document.documentElement.removeAttribute('data-mobile-menu-open');
     };
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
     if (!isSmartSearchOpen) {
+      document.documentElement.removeAttribute('data-ai-search-open');
       return undefined;
     }
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.documentElement.setAttribute('data-ai-search-open', 'true');
 
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
@@ -102,7 +106,7 @@ function App() {
     window.addEventListener('keydown', handleEscape);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.removeAttribute('data-ai-search-open');
       window.removeEventListener('keydown', handleEscape);
     };
   }, [isSmartSearchOpen]);
@@ -312,19 +316,6 @@ function App() {
         <div className="header-actions">
           <button
             type="button"
-            className={`menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="primary-navigation"
-            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            onClick={() => setIsMobileMenuOpen((current) => !current)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-
-          <button
-            type="button"
             className={`theme-toggle ${theme === 'light' ? 'light' : 'dark'}`}
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
@@ -334,6 +325,19 @@ function App() {
               <span className="theme-toggle-icon theme-toggle-moon">{'\u263D'}</span>
               <span className="theme-toggle-thumb" />
             </span>
+          </button>
+
+          <button
+            type="button"
+            className={`menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="primary-navigation"
+            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            onClick={() => setIsMobileMenuOpen((current) => !current)}
+          >
+            <span />
+            <span />
+            <span />
           </button>
         </div>
 
@@ -362,14 +366,14 @@ function App() {
         </nav>
       </header>
 
-      {isMobileMenuOpen ? (
-        <button
-          type="button"
-          className="menu-backdrop"
-          aria-label="Close navigation menu"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      ) : null}
+      <button
+        type="button"
+        className={`menu-backdrop ${isMobileMenuOpen ? 'open' : ''}`}
+        aria-label="Close navigation menu"
+        aria-hidden={!isMobileMenuOpen}
+        tabIndex={isMobileMenuOpen ? 0 : -1}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
 
       <main className="site-main">
         <section className="intro-shell" id="about">
@@ -497,14 +501,27 @@ function App() {
         </div>
       </main>
 
-      <button
-        type="button"
-        className={`smart-search-launcher ${isSmartSearchOpen ? 'hidden' : ''}`}
-        aria-label="Open AI search"
-        onClick={() => setIsSmartSearchOpen(true)}
-      >
-        AI Search
-      </button>
+        <button
+          type="button"
+          className={`smart-search-launcher ${isSmartSearchOpen ? 'open' : ''}`}
+          aria-label={isSmartSearchOpen ? 'Close AI search' : 'Open AI search'}
+          aria-expanded={isSmartSearchOpen}
+          onClick={() => setIsSmartSearchOpen((current) => !current)}
+        >
+          <span className="smart-search-launcher-mark" aria-hidden="true">
+            {isSmartSearchOpen ? (
+              <span className="smart-search-launcher-close-glyph">X</span>
+            ) : (
+              <>
+                <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                  <path d="M10.5 4.75a5.75 5.75 0 1 0 0 11.5a5.75 5.75 0 0 0 0-11.5Zm0-1.5a7.25 7.25 0 1 1 0 14.5a7.25 7.25 0 0 1 0-14.5Zm6.31 12.5l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 1.06-1.06Z" />
+                </svg>
+                <span>AI</span>
+              </>
+            )}
+          </span>
+          <span className="smart-search-launcher-label">{isSmartSearchOpen ? 'Close' : 'AI Search'}</span>
+        </button>
 
       <SmartSearch
         isOpen={isSmartSearchOpen}

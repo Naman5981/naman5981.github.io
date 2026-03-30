@@ -4,18 +4,25 @@ import { getExperiences } from '../services/portfolio';
 
 const CompanyLogo = ({ src, alt, company }) => {
   const [hasError, setHasError] = useState(false);
-  const initials = company
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase();
+  const fallbackLabelMap = {
+    'Infosys Limited': 'Infosys',
+    'Tech Mahindra': 'TechM',
+    'Xebia (AU Small Finance Bank)': 'Xebia'
+  };
+  const fallbackLabel =
+    fallbackLabelMap[company] ??
+    company
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join('')
+      .toUpperCase();
 
   if (!src || hasError) {
     return (
       <div className="company-logo company-logo-fallback" aria-label={`${company} logo fallback`}>
-        <span>{initials}</span>
+        <span>{fallbackLabel}</span>
       </div>
     );
   }

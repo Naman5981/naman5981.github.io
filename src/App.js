@@ -7,66 +7,9 @@ import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Achievements from './components/Achievements';
 import PortfolioError from './components/PortfolioError';
+import { navigationSections, portfolioStats, workspacePanels } from './data/portfolioContent';
 import { getProfile } from './services/portfolio';
 import './styles/App.css';
-
-const workspaces = [
-  {
-    id: 'overview',
-    label: 'Overview',
-    eyebrow: 'Introduction',
-    title: 'Backend engineer focused on systems that need to stay reliable under pressure.',
-    description:
-      'I work on backend systems where correctness, performance, and production stability matter, with most of my recent work centered on financial services and transaction-driven platforms.',
-    metrics: ['5+ years building backend systems', 'Fintech and platform experience', 'Microservices, APIs, and production support'],
-    links: ['about', 'experience', 'skills']
-  },
-  {
-    id: 'experience',
-    label: 'Experience',
-    eyebrow: 'Career',
-    title: 'Work shaped by banking workflows, backend architecture, and operational ownership.',
-    description:
-      'My roles have focused on designing services, shipping production features, debugging live issues, and improving reliability across banking and high-traffic backend systems.',
-    metrics: ['Spring Boot services', 'Incident response and fixes', 'Scalable transaction workflows'],
-    links: ['experience', 'achievements']
-  },
-  {
-    id: 'projects',
-    label: 'Projects',
-    eyebrow: 'Selected Work',
-    title: 'Five selected builds spanning banking systems, healthcare tools, and internal productivity apps.',
-    description:
-      'These projects show the range of systems I have built across backend workflows, mobile products, and practical tools designed to solve operational or domain-specific problems.',
-    metrics: ['5 selected projects', 'Banking, healthcare, and productivity', 'Mobile and backend builds'],
-    links: ['projects']
-  },
-  {
-    id: 'toolkit',
-    label: 'Toolkit',
-    eyebrow: 'Capabilities',
-    title: 'Skills, education, and recognition grouped as supporting depth.',
-    description:
-      'This section gives a quick view of the technologies, engineering practices, and academic foundation that support the delivery work shown elsewhere on the site.',
-    metrics: ['Languages and APIs', 'Cloud and CI/CD', 'Architecture and automation'],
-    links: ['skills', 'education']
-  }
-];
-
-const stats = [
-  { value: '5+', label: 'Years shipping backend systems' },
-  { value: '3', label: 'Core tracks: banking, platforms, automation' },
-  { value: '30+', label: 'Production issues investigated and resolved' }
-];
-
-const sectionMap = {
-  about: 'Profile',
-  experience: 'Experience',
-  projects: 'Projects',
-  skills: 'Toolkit',
-  education: 'Education',
-  achievements: 'Achievements'
-};
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -82,10 +25,19 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [siteOwnerName, setSiteOwnerName] = useState('');
   const [hasPortfolioError, setHasPortfolioError] = useState(false);
+  const [activeSection, setActiveSection] = useState('about');
   const headerRef = useRef(null);
+  const sectionMap = useMemo(
+    () =>
+      navigationSections.reduce((lookup, section) => {
+        lookup[section.id] = section.label;
+        return lookup;
+      }, {}),
+    []
+  );
 
   const activePanel = useMemo(
-    () => workspaces.find((workspace) => workspace.id === activeWorkspace) ?? workspaces[0],
+    () => workspacePanels.find((workspace) => workspace.id === activeWorkspace) ?? workspacePanels[0],
     [activeWorkspace]
   );
 
@@ -120,6 +72,47 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    const sectionIds = navigationSections.map((section) => section.id);
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    if (!sections.length) {
+      return undefined;
+    }
+
+    const observer = new window.IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((left, right) => right.intersectionRatio - left.intersectionRatio);
+
+        if (visibleEntries.length > 0) {
+          setActiveSection(visibleEntries[0].target.id);
+        }
+      },
+      {
+        rootMargin: '-22% 0px -58% 0px',
+        threshold: [0.15, 0.32, 0.5]
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isMobileMenuOpen) {
       return undefined;
     }
@@ -149,6 +142,7 @@ function App() {
     const section = document.getElementById(sectionId);
     if (section) {
       setIsMobileMenuOpen(false);
+      setActiveSection(sectionId);
       const header = document.querySelector('.site-header');
       const headerStyles = header ? window.getComputedStyle(header) : null;
       const isPinnedHeader = headerStyles
@@ -236,11 +230,23 @@ function App() {
           className={`site-nav ${isMobileMenuOpen ? 'menu-open' : ''}`}
           aria-label="Primary"
         >
-          {Object.entries(sectionMap).map(([id, label]) => (
-            <button key={id} type="button" onClick={() => scrollToSection(id)}>
-              {label}
-            </button>
-          ))}
+          <div className="site-nav-inner">
+            {navigationSections.map(({ id, label }) => (
+              <button
+                key={id}
+                type="button"
+                className={activeSection === id ? 'active' : ''}
+                aria-current={activeSection === id ? 'location' : undefined}
+                onClick={() => scrollToSection(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="mobile-nav-meta">
+            <span className="mobile-nav-caption">Navigate sections</span>
+            <span className="mobile-nav-active">{sectionMap[activeSection]}</span>
+          </div>
         </nav>
       </header>
 
@@ -265,7 +271,7 @@ function App() {
         </section>
 
         <section className="stats-grid" aria-label="Key metrics">
-          {stats.map((stat) => (
+          {portfolioStats.map((stat) => (
             <article key={stat.label} className="stat-card">
               <strong>{stat.value}</strong>
               <span>{stat.label}</span>
@@ -280,7 +286,7 @@ function App() {
           </div>
 
           <div className="workspace-tabs" role="tablist" aria-label="Portfolio workspaces">
-            {workspaces.map((workspace) => (
+            {workspacePanels.map((workspace) => (
               <button
                 key={workspace.id}
                 type="button"

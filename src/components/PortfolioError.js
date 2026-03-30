@@ -1,4 +1,5 @@
 import React from 'react';
+import { portfolioErrorContent } from '../data/portfolioContent';
 import '../styles/PortfolioError.css';
 
 const PortfolioError = () => {
@@ -32,14 +33,11 @@ const PortfolioError = () => {
           </nav>
 
           <div className="portfolio-error-message">
-            <p className="portfolio-error-code">404.</p>
-            <h1>Oooooooops!</h1>
-            <p>
-              Supabase data could not be loaded for this deployment. The page is up, but the
-              portfolio data source is not responding the way it should.
-            </p>
+            <p className="portfolio-error-code">{portfolioErrorContent.code}</p>
+            <h1>{portfolioErrorContent.title}</h1>
+            <p>{portfolioErrorContent.description}</p>
             <button type="button" className="portfolio-error-button">
-              It&apos;s not you, it&apos;s me.
+              {portfolioErrorContent.actionLabel}
             </button>
           </div>
         </section>

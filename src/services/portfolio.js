@@ -125,6 +125,8 @@ export const getProjects = async () => {
   return (data ?? []).map((project) => ({
     slug: project.slug,
     title: project.title,
+    repoUrl: project.repo_url ?? null,
+    liveUrl: project.live_url ?? null,
     href: project.repo_url ?? project.live_url ?? null,
     description: project.description
   }));

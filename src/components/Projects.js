@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Projects.css';
+import { projectAliases, projectShowcase } from '../data/portfolioContent';
 import { getProjects } from '../services/portfolio';
 
 const Projects = () => {
@@ -44,23 +45,75 @@ const Projects = () => {
     );
   }
 
+  const decoratedProjects = projects.map((project) => {
+    const projectKey = projectAliases[project.slug] ?? project.slug;
+    const showcase = projectShowcase[projectKey] ?? {};
+
+    return {
+      ...project,
+      category: showcase.category ?? 'Selected Build',
+      status: showcase.status ?? 'Project',
+      accent: showcase.accent ?? 'teal',
+      stack: showcase.stack ?? [],
+      impact: showcase.impact ?? project.description,
+      repoUrl: project.repoUrl ?? showcase.links?.repoUrl ?? null,
+      liveUrl: project.liveUrl ?? showcase.links?.liveUrl ?? null
+    };
+  });
+
   return (
     <section className="projects">
-      <h2>Projects</h2>
-      {projects.map((project) => (
-        <div className="project" key={project.slug ?? project.title}>
-          <h4>
-            {project.href ? (
-              <a href={project.href} target="_blank" rel="noopener noreferrer">
-                {project.title}
-              </a>
-            ) : (
-              project.title
-            )}
-          </h4>
-          <p>{project.description}</p>
-        </div>
-      ))}
+      <div className="projects-header">
+        <h2>Projects</h2>
+        <p>
+          Product-minded builds across backend-heavy workflows, domain tools, and mobile
+          experiences.
+        </p>
+      </div>
+
+      <div className="project-grid">
+        {decoratedProjects.map((project) => (
+          <article className={`project project-${project.accent}`} key={project.slug ?? project.title}>
+            <div className="project-topline">
+              <span className="project-category">{project.category}</span>
+              <span className="project-status">{project.status}</span>
+            </div>
+
+            <div className="project-heading">
+              <h4>{project.title}</h4>
+              <p>{project.description}</p>
+            </div>
+
+            <div className="project-impact">
+              <span className="project-impact-label">Focus</span>
+              <p>{project.impact}</p>
+            </div>
+
+            {project.stack.length ? (
+              <div className="project-stack" aria-label={`${project.title} technology stack`}>
+                {project.stack.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+              </div>
+            ) : null}
+
+            <div className="project-actions">
+              {project.repoUrl ? (
+                <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                  View Repository
+                </a>
+              ) : null}
+              {project.liveUrl ? (
+                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                  Open Project
+                </a>
+              ) : (
+                <span className="project-note">Private or internal implementation</span>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
   );
 };

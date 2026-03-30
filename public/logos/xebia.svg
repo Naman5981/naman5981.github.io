@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="206" height="205" viewBox="0 0 206 205" role="img" aria-labelledby="title">
+  <title>Xebia logo</title>
+  <rect width="206" height="205" fill="#7b2a72" rx="0" />
+  <path
+    d="M31 77h27.5l17.9 18.4L94.8 77h24.8l-31 29.2 34.4 35.8H95.8l-20.2-21.2L54.4 142H29.8l33.4-33.5z"
+    fill="#fff"
+  />
+  <text
+    x="100"
+    y="119"
+    fill="#fff"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="34"
+    font-weight="700"
+    letter-spacing="-1"
+  >
+    ebia
+  </text>
+</svg>

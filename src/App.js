@@ -6,6 +6,7 @@ import Experience from './components/Experience';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Achievements from './components/Achievements';
+import { getProfile } from './services/portfolio';
 import './styles/App.css';
 
 const workspaces = [
@@ -15,7 +16,7 @@ const workspaces = [
     eyebrow: 'Introduction',
     title: 'Backend engineer focused on systems that need to stay reliable under pressure.',
     description:
-      'The homepage is now organized as a technical profile: who I am, what I build, where I have worked, and the systems skills I bring into production environments.',
+      'I work on backend systems where correctness, performance, and production stability matter, with most of my recent work centered on financial services and transaction-driven platforms.',
     metrics: ['5+ years building backend systems', 'Fintech and platform experience', 'Microservices, APIs, and production support'],
     links: ['about', 'experience', 'skills']
   },
@@ -25,7 +26,7 @@ const workspaces = [
     eyebrow: 'Career',
     title: 'Work shaped by banking workflows, backend architecture, and operational ownership.',
     description:
-      'The experience section is the backbone of the site, showing how product delivery, debugging, and system design come together across real-world teams and high-volume platforms.',
+      'My roles have focused on designing services, shipping production features, debugging live issues, and improving reliability across banking and high-traffic backend systems.',
     metrics: ['Spring Boot services', 'Incident response and fixes', 'Scalable transaction workflows'],
     links: ['experience', 'achievements']
   },
@@ -35,7 +36,7 @@ const workspaces = [
     eyebrow: 'Selected Work',
     title: 'Five selected builds spanning banking systems, healthcare tools, and internal productivity apps.',
     description:
-      'The projects section now highlights a broader mix of backend, mobile, and management tooling work, with room to expand each entry into architecture, outcomes, and implementation details.',
+      'These projects show the range of systems I have built across backend workflows, mobile products, and practical tools designed to solve operational or domain-specific problems.',
     metrics: ['5 selected projects', 'Banking, healthcare, and productivity', 'Mobile and backend builds'],
     links: ['projects']
   },
@@ -45,7 +46,7 @@ const workspaces = [
     eyebrow: 'Capabilities',
     title: 'Skills, education, and recognition grouped as supporting depth.',
     description:
-      'This area supports the main story with stack familiarity, formal education, and achievements rather than competing with the core experience narrative.',
+      'This section gives a quick view of the technologies, engineering practices, and academic foundation that support the delivery work shown elsewhere on the site.',
     metrics: ['Languages and APIs', 'Cloud and CI/CD', 'Architecture and automation'],
     links: ['skills', 'education']
   }
@@ -78,12 +79,34 @@ function App() {
   const [activeWorkspace, setActiveWorkspace] = useState('overview');
   const [highlightedSection, setHighlightedSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [siteOwnerName, setSiteOwnerName] = useState('');
   const headerRef = useRef(null);
 
   const activePanel = useMemo(
     () => workspaces.find((workspace) => workspace.id === activeWorkspace) ?? workspaces[0],
     [activeWorkspace]
   );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadHeaderProfile = async () => {
+      try {
+        const profile = await getProfile();
+        if (isMounted) {
+          setSiteOwnerName(profile.fullName);
+        }
+      } catch (error) {
+        console.error('Failed to load site owner from Supabase.', error);
+      }
+    };
+
+    loadHeaderProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -167,7 +190,7 @@ function App() {
       <header ref={headerRef} className="site-header">
         <div className="brand-lockup">
           <span className="brand-kicker">NS / backend systems</span>
-          <h1>Naman Sanadhya</h1>
+          <h1>{siteOwnerName}</h1>
         </div>
 
         <div className="header-actions">
@@ -183,18 +206,6 @@ function App() {
             <span />
             <span />
           </button>
-        </div>
-
-        <nav
-          id="primary-navigation"
-          className={`site-nav ${isMobileMenuOpen ? 'menu-open' : ''}`}
-          aria-label="Primary"
-        >
-          {Object.entries(sectionMap).map(([id, label]) => (
-            <button key={id} type="button" onClick={() => scrollToSection(id)}>
-              {label}
-            </button>
-          ))}
 
           <button
             type="button"
@@ -208,6 +219,18 @@ function App() {
               <span className="theme-toggle-thumb" />
             </span>
           </button>
+        </div>
+
+        <nav
+          id="primary-navigation"
+          className={`site-nav ${isMobileMenuOpen ? 'menu-open' : ''}`}
+          aria-label="Primary"
+        >
+          {Object.entries(sectionMap).map(([id, label]) => (
+            <button key={id} type="button" onClick={() => scrollToSection(id)}>
+              {label}
+            </button>
+          ))}
         </nav>
       </header>
 

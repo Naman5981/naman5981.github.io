@@ -1,19 +1,58 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import '../styles/About.css';
-import profilePic from '../assets/profile.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import DownloadButton from './DownloadButton';
+import { getProfile } from '../services/portfolio';
+
+const iconMap = {
+  github: faGithub,
+  linkedin: faLinkedin
+};
 
 const About = () => {
+  const [profile, setProfile] = useState(null);
+  const [hasError, setHasError] = useState(false);
   const [issuesSolvedCount, setIssuesSolvedCount] = useState(0);
 
   useEffect(() => {
-    const targetValue = 30;
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      try {
+        const nextProfile = await getProfile();
+        if (isMounted && nextProfile) {
+          setProfile(nextProfile);
+          setHasError(false);
+        }
+      } catch (error) {
+        console.error('Failed to load profile from Supabase.', error);
+        if (isMounted) {
+          setHasError(true);
+        }
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const targetValue = Math.max(profile?.issuesSolvedTarget ?? 0, 0);
+    if (targetValue === 0) {
+      setIssuesSolvedCount(0);
+      return undefined;
+    }
+
     const animationDuration = 700;
     const stepDuration = Math.max(Math.floor(animationDuration / targetValue), 16);
 
     let currentValue = 0;
+    setIssuesSolvedCount(0);
+
     const intervalId = window.setInterval(() => {
       currentValue += 1;
       setIssuesSolvedCount(currentValue);
@@ -24,7 +63,35 @@ const About = () => {
     }, stepDuration);
 
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [profile?.issuesSolvedTarget]);
+
+  const socialLinks = useMemo(
+    () =>
+      (profile?.socialLinks ?? [])
+        .filter((link) => iconMap[link.platform])
+        .map((link) => ({
+          ...link,
+          icon: iconMap[link.platform]
+        })),
+    [profile]
+  );
+
+  if (!profile && !hasError) {
+    return null;
+  }
+
+  if (hasError || !profile) {
+    return (
+      <section className="about">
+        <div className="about-hero">
+          <div className="about-text">
+            <h1>Profile unavailable</h1>
+            <p>Supabase data could not be loaded.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="about">
@@ -34,22 +101,18 @@ const About = () => {
             Hi!!
           </div>
           <div className="profile-image">
-            <img src={profilePic} alt="Profile" />
+            {profile.profileImagePath ? <img src={profile.profileImagePath} alt="Profile" /> : null}
           </div>
         </div>
 
         <div className="about-text">
-          <h1>Naman Sanadhya</h1>
-          <h2>Java Backend Developer</h2>
-          <p>
-            I build scalable backend systems for banking and transaction-heavy platforms.
-            Over 5+ years, I have worked across Spring Boot microservices, API design,
-            transaction safety, production debugging, and modular service architecture.
-          </p>
+          <h1>{profile.fullName}</h1>
+          <h2>{profile.headline}</h2>
+          <p>{profile.bio}</p>
 
           <div className="about-stats">
             <div className="about-stat">
-              <strong>5+</strong>
+              <strong>{profile.yearsExperienceLabel}</strong>
               <span>Years</span>
             </div>
             <div className="about-stat">
@@ -57,45 +120,41 @@ const About = () => {
               <span>Issues Solved</span>
             </div>
             <div className="about-stat">
-              <strong>3</strong>
+              <strong>{profile.coreDomainsCount}</strong>
               <span>Core Domains</span>
             </div>
             <div className="about-stat">
-              <strong>100%</strong>
+              <strong>{profile.backendFocusLabel}</strong>
               <span>Backend Focus</span>
             </div>
           </div>
 
           <div className="about-actions">
-            <a className="primary-action" href="mailto:namansanadhya@gmail.com">
+            <a className="primary-action" href={profile.email ? `mailto:${profile.email}` : '#'}>
               Get In Touch
             </a>
-            <DownloadButton />
+            <DownloadButton href={profile.resumePath} />
           </div>
 
           <div className="social-icons">
-            <a
-              href="https://github.com/naman5981"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="icon-link"
-            >
-                <FontAwesomeIcon icon={faGithub} size="2x" />
-            </a>
-            <a
-              href="https://linkedin.com/in/namansanadhya"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="icon-link"
-            >
-                <FontAwesomeIcon icon={faLinkedin} size="2x" />
-            </a>
+            {socialLinks.map((link) => (
+              <a
+                key={link.platform}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="icon-link"
+                aria-label={link.label ?? link.platform}
+              >
+                <FontAwesomeIcon icon={link.icon} size="2x" />
+              </a>
+            ))}
           </div>
 
           <div className="about-contact-strip">
-            <span>Jaipur, Rajasthan</span>
-            <span>namansanadhya@gmail.com</span>
-            <span>+91 76651 55815</span>
+            <span>{profile.location}</span>
+            <span>{profile.email}</span>
+            <span>{profile.phone}</span>
           </div>
         </div>
       </div>

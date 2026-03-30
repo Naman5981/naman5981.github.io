@@ -1,14 +1,15 @@
 import React from 'react';
 import '../styles/DownloadButton.css';
-import resume from '../assets/Naman_Sanadhya_Resume.pdf';
 
-const DownloadButton = () => {
+const DownloadButton = ({ href }) => {
+  if (!href) {
+    return null;
+  }
+
+  const fileName = href.split('/').pop() || 'resume.pdf';
+
   return (
-    <a 
-      href={resume} 
-      download="Naman_Sanadhya_Resume.pdf" 
-      className="floating-download-button"
-    >
+    <a href={href} download={fileName} className="floating-download-button">
       Download My Resume
     </a>
   );

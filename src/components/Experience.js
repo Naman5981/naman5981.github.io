@@ -2,6 +2,27 @@ import React, { useEffect, useState } from 'react';
 import '../styles/Experience.css';
 import { getExperiences } from '../services/portfolio';
 
+const CompanyLogo = ({ src, alt, company }) => {
+  const [hasError, setHasError] = useState(false);
+  const initials = company
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase();
+
+  if (!src || hasError) {
+    return (
+      <div className="company-logo company-logo-fallback" aria-label={`${company} logo fallback`}>
+        <span>{initials}</span>
+      </div>
+    );
+  }
+
+  return <img className="company-logo" src={src} alt={alt} loading="lazy" onError={() => setHasError(true)} />;
+};
+
 const Experience = () => {
   const [experiences, setExperiences] = useState(null);
   const [hasError, setHasError] = useState(false);
@@ -50,9 +71,7 @@ const Experience = () => {
       {experiences.map((exp) => (
         <div className="experience-block" key={`${exp.company}-${exp.duration}`} tabIndex={0}>
           <div className="experience-company">
-            {exp.logo ? (
-              <img className="company-logo" src={exp.logo} alt={exp.logoAlt} loading="lazy" />
-            ) : null}
+            <CompanyLogo src={exp.logo} alt={exp.logoAlt} company={exp.company} />
             <h3>
               {exp.website ? (
                 <a href={exp.website} target="_blank" rel="noopener noreferrer">

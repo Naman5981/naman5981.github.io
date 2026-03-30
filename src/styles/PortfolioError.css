@@ -1,0 +1,344 @@
+@import './colors.css';
+
+.portfolio-error-page {
+  min-height: 100vh;
+  padding: 22px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(18, 22, 30, 0.92), rgba(10, 13, 18, 0.98));
+}
+
+.portfolio-error-shell {
+  min-height: calc(100vh - 44px);
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr);
+  border: 6px solid #171717;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #faf8f2;
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.32);
+}
+
+.portfolio-error-visual {
+  position: relative;
+  overflow: hidden;
+  background: #aee7f7;
+}
+
+.portfolio-error-bubble {
+  position: absolute;
+  border: 4px solid #161616;
+  border-radius: 999px;
+  background: #ff7380;
+}
+
+.portfolio-error-bubble::after {
+  content: '';
+  position: absolute;
+  border: 4px solid #161616;
+  border-radius: 999px;
+  background: inherit;
+}
+
+.bubble-large {
+  top: -8%;
+  left: -10%;
+  width: 260px;
+  height: 260px;
+  background: #fb5b8c;
+}
+
+.bubble-large::after {
+  right: -18px;
+  bottom: 22px;
+  width: 68px;
+  height: 68px;
+}
+
+.bubble-medium {
+  top: 18%;
+  left: 42%;
+  width: 132px;
+  height: 132px;
+}
+
+.bubble-medium::after {
+  left: 32px;
+  bottom: -24px;
+  width: 54px;
+  height: 54px;
+}
+
+.bubble-small {
+  top: 6%;
+  left: 58%;
+  width: 188px;
+  height: 188px;
+  background: #ffdc8a;
+}
+
+.bubble-small::after {
+  right: 10px;
+  bottom: -28px;
+  width: 72px;
+  height: 72px;
+}
+
+.bubble-yellow {
+  top: 38%;
+  left: 28%;
+  width: 138px;
+  height: 138px;
+  background: #19d8cf;
+}
+
+.bubble-yellow::after {
+  display: none;
+}
+
+.bubble-white-left,
+.bubble-white-right {
+  background: #ffffff;
+}
+
+.bubble-white-left {
+  bottom: 26%;
+  left: -9%;
+  width: 180px;
+  height: 180px;
+}
+
+.bubble-white-left::after {
+  right: 8px;
+  bottom: -26px;
+  width: 74px;
+  height: 74px;
+}
+
+.bubble-white-right {
+  top: 28%;
+  right: -7%;
+  width: 184px;
+  height: 184px;
+}
+
+.bubble-white-right::after {
+  left: 20px;
+  bottom: -24px;
+  width: 70px;
+  height: 70px;
+}
+
+.bubble-cyan {
+  bottom: 34%;
+  left: 40%;
+  width: 116px;
+  height: 116px;
+  background: #11d4cc;
+}
+
+.bubble-cyan::after {
+  display: none;
+}
+
+.portfolio-error-head {
+  position: absolute;
+  left: 50%;
+  bottom: -2%;
+  width: 320px;
+  height: 360px;
+  transform: translateX(-50%);
+}
+
+.portfolio-error-hair {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 36px;
+  height: 124px;
+  border: 4px solid #161616;
+  border-bottom: 0;
+  border-radius: 140px 140px 20px 20px;
+  background: #6a3c33;
+}
+
+.portfolio-error-face {
+  position: absolute;
+  left: 50%;
+  top: 98px;
+  width: 208px;
+  height: 230px;
+  transform: translateX(-50%);
+  border: 4px solid #161616;
+  border-radius: 96px 96px 86px 86px;
+  background: #ffd3c3;
+}
+
+.error-eye {
+  position: absolute;
+  top: 66px;
+  font-size: 4rem;
+  font-weight: 800;
+  color: #111;
+  text-transform: uppercase;
+}
+
+.error-eye.left {
+  left: 36px;
+}
+
+.error-eye.right {
+  right: 36px;
+}
+
+.error-nose {
+  position: absolute;
+  left: 50%;
+  top: 112px;
+  width: 12px;
+  height: 42px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #fc6889;
+}
+
+.error-mouth {
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  width: 42px;
+  height: 22px;
+  transform: translateX(-50%);
+  border: 4px solid #161616;
+  border-top: 0;
+  border-radius: 0 0 24px 24px;
+  background: #fff;
+}
+
+.portfolio-error-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 36px 42px;
+  background: #fffdf8;
+  color: #1b1212;
+}
+
+.portfolio-error-nav {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 52px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.portfolio-error-message {
+  max-width: 420px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.portfolio-error-code {
+  margin: 0;
+  font-size: clamp(5rem, 14vw, 8.5rem);
+  line-height: 0.9;
+  font-weight: 800;
+  letter-spacing: -0.08em;
+}
+
+.portfolio-error-message h1 {
+  margin: 14px 0 12px;
+  font-size: 1.6rem;
+}
+
+.portfolio-error-message p {
+  margin: 0 auto 28px;
+  line-height: 1.7;
+  color: #4f4747;
+}
+
+.portfolio-error-button {
+  min-width: 220px;
+  padding: 15px 20px;
+  border: 0;
+  background: #121212;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: default;
+}
+
+@media (max-width: 980px) {
+  .portfolio-error-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolio-error-visual {
+    min-height: 360px;
+  }
+
+  .portfolio-error-copy {
+    padding: 28px 24px 36px;
+  }
+
+  .portfolio-error-nav {
+    margin-bottom: 30px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .portfolio-error-page {
+    padding: 10px;
+  }
+
+  .portfolio-error-shell {
+    min-height: calc(100vh - 20px);
+    border-width: 4px;
+    border-radius: 18px;
+  }
+
+  .portfolio-error-visual {
+    min-height: 300px;
+  }
+
+  .portfolio-error-head {
+    width: 250px;
+    height: 280px;
+  }
+
+  .portfolio-error-face {
+    width: 164px;
+    height: 182px;
+    top: 86px;
+  }
+
+  .error-eye {
+    top: 46px;
+    font-size: 3rem;
+  }
+
+  .error-eye.left {
+    left: 26px;
+  }
+
+  .error-eye.right {
+    right: 26px;
+  }
+
+  .error-nose {
+    top: 86px;
+    height: 32px;
+  }
+
+  .portfolio-error-message h1 {
+    font-size: 1.35rem;
+  }
+
+  .portfolio-error-button {
+    width: 100%;
+    min-width: 0;
+  }
+}

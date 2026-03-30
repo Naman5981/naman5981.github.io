@@ -6,6 +6,7 @@ import Experience from './components/Experience';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Achievements from './components/Achievements';
+import PortfolioError from './components/PortfolioError';
 import { getProfile } from './services/portfolio';
 import './styles/App.css';
 
@@ -80,6 +81,7 @@ function App() {
   const [highlightedSection, setHighlightedSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [siteOwnerName, setSiteOwnerName] = useState('');
+  const [hasPortfolioError, setHasPortfolioError] = useState(false);
   const headerRef = useRef(null);
 
   const activePanel = useMemo(
@@ -95,9 +97,13 @@ function App() {
         const profile = await getProfile();
         if (isMounted) {
           setSiteOwnerName(profile.fullName);
+          setHasPortfolioError(false);
         }
       } catch (error) {
         console.error('Failed to load site owner from Supabase.', error);
+        if (isMounted) {
+          setHasPortfolioError(true);
+        }
       }
     };
 
@@ -184,6 +190,10 @@ function App() {
       window.setTimeout(waitForArrival, 120);
     }
   };
+
+  if (hasPortfolioError) {
+    return <PortfolioError />;
+  }
 
   return (
     <div className="site-shell">

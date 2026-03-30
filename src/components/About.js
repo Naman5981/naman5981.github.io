@@ -76,17 +76,37 @@ const About = () => {
     [profile]
   );
 
-  if (!profile && !hasError) {
-    return null;
-  }
-
-  if (hasError || !profile) {
+  if (hasError) {
     return (
       <section className="about">
         <div className="about-hero">
           <div className="about-text">
             <h1>Profile unavailable</h1>
             <p>Supabase data could not be loaded.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <section className="about">
+        <div className="about-hero about-skeleton" aria-hidden="true">
+          <div className="profile-image skeleton-avatar shimmer-block" />
+          <div className="about-text">
+            <div className="shimmer-line title" />
+            <div className="shimmer-line subtitle" />
+            <div className="shimmer-line" />
+            <div className="shimmer-line" />
+            <div className="about-stats">
+              {[0, 1, 2, 3].map((item) => (
+                <div className="about-stat skeleton-stat" key={item}>
+                  <span className="shimmer-line stat-value" />
+                  <span className="shimmer-line stat-label" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -106,6 +126,11 @@ const About = () => {
         </div>
 
         <div className="about-text">
+          <div className="availability-banner" role="status" aria-label="Current availability">
+            <span className="availability-dot" aria-hidden="true" />
+            Currently open to backend engineering roles, platform work, and high-ownership product teams
+          </div>
+
           <h1>{profile.fullName}</h1>
           <h2>{profile.headline}</h2>
           <p>{profile.bio}</p>

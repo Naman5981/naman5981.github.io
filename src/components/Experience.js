@@ -59,15 +59,36 @@ const Experience = () => {
     };
   }, []);
 
-  if (!experiences && !hasError) {
-    return null;
-  }
-
-  if (hasError || !experiences) {
+  if (hasError) {
     return (
       <section className="experience">
         <h2>Work Experience</h2>
         <p>Experience data could not be loaded.</p>
+      </section>
+    );
+  }
+
+  if (!experiences) {
+    return (
+      <section className="experience">
+        <h2>Work Experience</h2>
+        <div className="experience-skeleton-list" aria-hidden="true">
+          {[0, 1, 2].map((item) => (
+            <div className="experience-block experience-skeleton" key={item}>
+              <div className="experience-company">
+                <div className="company-logo skeleton-logo shimmer-block" />
+                <div className="experience-heading-skeleton">
+                  <div className="shimmer-line title" />
+                  <div className="shimmer-line short" />
+                </div>
+              </div>
+              <div className="shimmer-line short" />
+              <div className="shimmer-line short" />
+              <div className="shimmer-line" />
+              <div className="shimmer-line" />
+            </div>
+          ))}
+        </div>
       </section>
     );
   }

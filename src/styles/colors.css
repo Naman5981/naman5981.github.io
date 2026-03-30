@@ -53,6 +53,13 @@
   --tooltip-background: #f4f8ff;
   --tooltip-text-color: #080b10;
   --backdrop-overlay: rgba(4, 6, 10, 0.28);
+  --progress-track-color: rgba(255, 255, 255, 0.04);
+  --progress-accent-color: #6eb2ff;
+  --progress-glow-color: rgba(100, 255, 218, 0.28);
+  --search-input-background: rgba(14, 18, 24, 0.86);
+  --search-empty-background: rgba(255, 255, 255, 0.02);
+  --skeleton-base-color: rgba(255, 255, 255, 0.06);
+  --skeleton-highlight-color: rgba(255, 255, 255, 0.12);
 }
 
 :root[data-theme='light'] {
@@ -102,5 +109,12 @@
   --tooltip-background: #1f2937;
   --tooltip-text-color: #f8fbff;
   --backdrop-overlay: rgba(230, 237, 246, 0.34);
+  --progress-track-color: rgba(31, 41, 55, 0.06);
+  --progress-accent-color: #24415f;
+  --progress-glow-color: rgba(15, 118, 110, 0.18);
+  --search-input-background: rgba(255, 255, 255, 0.88);
+  --search-empty-background: rgba(255, 255, 255, 0.42);
+  --skeleton-base-color: rgba(31, 41, 55, 0.08);
+  --skeleton-highlight-color: rgba(255, 255, 255, 0.48);
 }
 

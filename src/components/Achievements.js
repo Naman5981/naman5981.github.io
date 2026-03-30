@@ -31,15 +31,27 @@ const Achievements = () => {
     };
   }, []);
 
-  if (!achievements && !hasError) {
-    return null;
-  }
-
-  if (hasError || !achievements) {
+  if (hasError) {
     return (
       <div className="achievements-container">
         <h2>Achievements</h2>
         <p>Achievement data could not be loaded.</p>
+      </div>
+    );
+  }
+
+  if (!achievements) {
+    return (
+      <div className="achievements-container">
+        <h2>Achievements</h2>
+        <div className="compact-section-skeleton" aria-hidden="true">
+          {[0, 1, 2].map((item) => (
+            <div className="compact-skeleton-card" key={item}>
+              <div className="shimmer-line" />
+              <div className="shimmer-line" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

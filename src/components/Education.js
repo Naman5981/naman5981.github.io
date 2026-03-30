@@ -31,15 +31,28 @@ const Education = () => {
     };
   }, []);
 
-  if (!educationData && !hasError) {
-    return null;
-  }
-
-  if (hasError || !educationData) {
+  if (hasError) {
     return (
       <div className="education-container">
         <h2>Education</h2>
         <p>Education data could not be loaded.</p>
+      </div>
+    );
+  }
+
+  if (!educationData) {
+    return (
+      <div className="education-container">
+        <h2>Education</h2>
+        <div className="compact-section-skeleton" aria-hidden="true">
+          {[0, 1].map((item) => (
+            <div className="compact-skeleton-card" key={item}>
+              <div className="shimmer-line title" />
+              <div className="shimmer-line" />
+              <div className="shimmer-line short" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

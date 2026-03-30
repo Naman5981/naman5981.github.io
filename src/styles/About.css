@@ -30,6 +30,11 @@
     0 0 0 10px rgba(100, 255, 218, 0.04);
 }
 
+.about-skeleton .profile-image {
+  border: 1px solid var(--module-border-color);
+  box-shadow: none;
+}
+
 .profile-greeting {
   position: absolute;
   top: 16px;
@@ -75,6 +80,31 @@
 .about-text {
   max-width: 880px;
   width: 100%;
+}
+
+.availability-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(100, 255, 218, 0.2);
+  background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(110, 178, 255, 0.08));
+  color: var(--primary-text-color);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+}
+
+.availability-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--highlight-text-color);
+  box-shadow: 0 0 0 6px rgba(100, 255, 218, 0.12);
+  animation: availability-pulse 1.8s ease-in-out infinite;
 }
 
 .about-kicker {
@@ -218,6 +248,20 @@
   font-size: 0.95rem;
 }
 
+.skeleton-stat {
+  min-width: 110px;
+}
+
+.stat-value {
+  width: 56px;
+  height: 30px;
+}
+
+.stat-label {
+  width: 78px;
+  height: 12px;
+}
+
 @media (max-width: 860px) {
   .about {
     padding: 20px 8px;
@@ -230,6 +274,10 @@
 
   .about-text h1 {
     font-size: 2.8rem;
+  }
+
+  .availability-banner {
+    justify-content: center;
   }
 }
 
@@ -253,6 +301,12 @@
 
   .about-text h1 {
     font-size: 2.2rem;
+  }
+
+  .availability-banner {
+    width: 100%;
+    border-radius: 18px;
+    text-align: left;
   }
 
   .about-text h2 {
@@ -294,5 +348,18 @@
     flex-direction: column;
     gap: 8px;
     font-size: 0.9rem;
+  }
+}
+
+@keyframes availability-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(100, 255, 218, 0.12);
+  }
+
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 8px rgba(100, 255, 218, 0.04);
   }
 }

@@ -26,6 +26,7 @@ function App() {
   const [siteOwnerName, setSiteOwnerName] = useState('');
   const [hasPortfolioError, setHasPortfolioError] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
+  const [scrollProgress, setScrollProgress] = useState(0);
   const headerRef = useRef(null);
   const sectionMap = useMemo(
     () =>
@@ -138,6 +139,59 @@ function App() {
     };
   }, [isMobileMenuOpen]);
 
+  useEffect(() => {
+    const updateScrollProgress = () => {
+      const scrollTop = window.scrollY;
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+      if (documentHeight <= 0) {
+        setScrollProgress(0);
+        return;
+      }
+
+      const nextProgress = Math.min((scrollTop / documentHeight) * 100, 100);
+      setScrollProgress(nextProgress);
+    };
+
+    updateScrollProgress();
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('resize', updateScrollProgress);
+
+    return () => {
+      window.removeEventListener('scroll', updateScrollProgress);
+      window.removeEventListener('resize', updateScrollProgress);
+    };
+  }, []);
+
+  useEffect(() => {
+    const revealItems = Array.from(document.querySelectorAll('[data-reveal]'));
+
+    if (!revealItems.length) {
+      return undefined;
+    }
+
+    const observer = new window.IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: '0px 0px -10% 0px',
+        threshold: 0.18
+      }
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -191,6 +245,10 @@ function App() {
 
   return (
     <div className="site-shell">
+      <div className="scroll-progress" aria-hidden="true">
+        <span className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
+      </div>
+
       <header ref={headerRef} className="site-header">
         <div className="brand-lockup">
           <span className="brand-kicker">NS / backend systems</span>
@@ -265,6 +323,7 @@ function App() {
             className={`intro-main module-card module-hero ${
               highlightedSection === 'about' ? 'section-flash' : ''
             }`}
+            data-reveal
           >
             <About />
           </div>
@@ -272,14 +331,14 @@ function App() {
 
         <section className="stats-grid" aria-label="Key metrics">
           {portfolioStats.map((stat) => (
-            <article key={stat.label} className="stat-card">
+            <article key={stat.label} className="stat-card" data-reveal>
               <strong>{stat.value}</strong>
               <span>{stat.label}</span>
             </article>
           ))}
         </section>
 
-        <section className="workspace-panel">
+        <section className="workspace-panel" data-reveal>
           <div className="workspace-heading">
             <span className="eyebrow">Explore Sections</span>
             <h2>Browse the site by experience, projects, or technical depth.</h2>
@@ -330,6 +389,7 @@ function App() {
               className={`module-card ${
                 highlightedSection === 'experience' ? 'section-flash' : ''
               }`}
+              data-reveal
             >
               <Experience />
             </section>
@@ -339,6 +399,7 @@ function App() {
               className={`module-card ${
                 highlightedSection === 'projects' ? 'section-flash' : ''
               }`}
+              data-reveal
             >
               <Projects />
             </section>
@@ -350,6 +411,7 @@ function App() {
               className={`module-card compact-card ${
                 highlightedSection === 'skills' ? 'section-flash' : ''
               }`}
+              data-reveal
             >
               <Skills />
             </section>
@@ -359,6 +421,7 @@ function App() {
               className={`module-card compact-card ${
                 highlightedSection === 'education' ? 'section-flash' : ''
               }`}
+              data-reveal
             >
               <Education />
             </section>
@@ -368,6 +431,7 @@ function App() {
               className={`module-card compact-card ${
                 highlightedSection === 'achievements' ? 'section-flash' : ''
               }`}
+              data-reveal
             >
               <Achievements />
             </section>

@@ -12,6 +12,10 @@
   color: var(--highlight-text-color);
 }
 
+.skills-container .section-search {
+  width: 100%;
+}
+
 .skill-category {
   width: 100%;
   margin-bottom: 18px;
@@ -44,4 +48,25 @@
   justify-content: center;
   align-items: center;
   white-space: nowrap;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.skills-container li:hover {
+  transform: translateY(-2px);
+  border-color: rgba(100, 255, 218, 0.22);
+  color: var(--primary-text-color);
+}
+
+.skills-chip-skeleton {
+  width: 100%;
+}
+
+@media (max-width: 560px) {
+  .skills-container {
+    padding: 16px;
+  }
 }

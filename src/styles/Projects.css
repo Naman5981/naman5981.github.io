@@ -23,6 +23,10 @@
   line-height: 1.65;
 }
 
+.projects-skeleton .project-grid {
+  margin-top: 0;
+}
+
 .project-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -40,6 +44,16 @@
   background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
   border: 1px solid var(--soft-border-color);
   box-shadow: 0 18px 34px var(--box-shadow-color);
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.project:hover {
+  transform: translateY(-4px);
+  border-color: rgba(100, 255, 218, 0.16);
+  box-shadow: 0 24px 42px var(--box-shadow-color);
 }
 
 .project::before {
@@ -186,6 +200,10 @@
 .project-actions a:hover {
   border-color: var(--button-border-hover-color);
   color: var(--button-hover-text-color);
+}
+
+.project-skeleton-card {
+  pointer-events: none;
 }
 
 .project-note {

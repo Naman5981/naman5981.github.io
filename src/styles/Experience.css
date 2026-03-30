@@ -2,6 +2,7 @@
 
 .experience {
   padding: 22px;
+  position: relative;
 }
 
 .experience h2 {
@@ -10,14 +11,54 @@
   color: var(--highlight-text-color);
 }
 
+.experience::before {
+  content: '';
+  position: absolute;
+  top: 92px;
+  bottom: 28px;
+  left: 44px;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(100, 255, 218, 0.28),
+    rgba(110, 178, 255, 0.18) 55%,
+    rgba(100, 255, 218, 0.06)
+  );
+  pointer-events: none;
+}
+
 .experience-block {
   background: var(--experience-gradient);
   border-radius: 20px;
-  padding: 22px;
+  padding: 22px 22px 22px 70px;
   margin-bottom: 20px;
   border: 1px solid var(--module-border-color);
   position: relative;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.experience-block::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 30px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--highlight-text-color);
+  box-shadow:
+    0 0 0 6px rgba(100, 255, 218, 0.12),
+    0 10px 24px rgba(100, 255, 218, 0.16);
+}
+
+.experience-block::after {
+  content: '';
+  position: absolute;
+  top: 33px;
+  left: 42px;
+  width: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(100, 255, 218, 0.4), rgba(100, 255, 218, 0));
 }
 
 .experience-block:focus-visible {
@@ -59,6 +100,22 @@
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(100, 255, 218, 0.18);
   box-shadow: 0 12px 24px rgba(2, 12, 27, 0.2);
+}
+
+.experience-heading-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(280px, 100%);
+}
+
+.experience-skeleton {
+  pointer-events: none;
+}
+
+.skeleton-logo {
+  box-shadow: none;
+  border-color: var(--soft-border-color);
 }
 
 .company-logo-fallback {
@@ -137,6 +194,7 @@
   .experience-block:focus-visible {
     border-color: rgba(100, 255, 218, 0.22);
     box-shadow: 0 18px 36px var(--box-shadow-color);
+    transform: translateX(4px);
   }
 
   .experience-block:hover .experience-details,
@@ -160,8 +218,25 @@
     padding: 15px;
   }
 
+  .experience::before {
+    left: 27px;
+    top: 78px;
+    bottom: 20px;
+  }
+
   .experience-block {
-    padding: 15px;
+    padding: 15px 15px 15px 52px;
+  }
+
+  .experience-block::before {
+    left: 14px;
+    top: 22px;
+  }
+
+  .experience-block::after {
+    left: 26px;
+    top: 27px;
+    width: 14px;
   }
 
   .experience-details {
@@ -178,8 +253,14 @@
     padding: 10px;
   }
 
+  .experience::before {
+    left: 22px;
+    top: 76px;
+    bottom: 16px;
+  }
+
   .experience-block {
-    padding: 10px;
+    padding: 12px 12px 12px 44px;
   }
 
   .experience-company {
@@ -195,5 +276,16 @@
 
   .experience-block h3 {
     font-size: 1.3rem;
+  }
+
+  .experience-block::before {
+    left: 12px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .experience-block::after {
+    left: 22px;
+    width: 12px;
   }
 }

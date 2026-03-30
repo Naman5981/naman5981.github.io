@@ -7,7 +7,6 @@ import { getProjects } from '../services/portfolio';
 const Projects = () => {
   const [projects, setProjects] = useState(null);
   const [hasError, setHasError] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const trackedProjectViews = useRef(new Set());
 
   useEffect(() => {
@@ -55,29 +54,8 @@ const Projects = () => {
     [projects]
   );
 
-  const normalizedSearch = searchTerm.trim().toLowerCase();
-  const filteredProjects = decoratedProjects.filter((project) => {
-    if (!normalizedSearch) {
-      return true;
-    }
-
-    const searchableText = [
-      project.title,
-      project.description,
-      project.category,
-      project.status,
-      project.impact,
-      ...(project.stack ?? [])
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
-
-    return searchableText.includes(normalizedSearch);
-  });
-
   useEffect(() => {
-    if (!filteredProjects.length) {
+    if (!decoratedProjects.length) {
       return undefined;
     }
 
@@ -123,7 +101,7 @@ const Projects = () => {
     return () => {
       observer.disconnect();
     };
-  }, [filteredProjects]);
+  }, [decoratedProjects]);
 
   if (hasError) {
     return (
@@ -146,7 +124,6 @@ const Projects = () => {
 
       {!projects ? (
         <div className="projects-skeleton" aria-hidden="true">
-          <div className="search-skeleton shimmer-line" />
           <div className="project-grid">
             {[0, 1, 2, 3].map((item) => (
               <article className="project project-skeleton-card" key={item}>
@@ -168,79 +145,54 @@ const Projects = () => {
           </div>
         </div>
       ) : (
-        <>
-          <div className="section-search">
-            <label className="search-label" htmlFor="project-search">
-              Search projects
-            </label>
-            <input
-              id="project-search"
-              type="search"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search by project, domain, stack, or focus"
-            />
-            <span className="search-meta">
-              {filteredProjects.length} of {decoratedProjects.length} shown
-            </span>
-          </div>
+        <div className="project-grid">
+          {decoratedProjects.map((project) => (
+            <article
+              className={`project project-${project.accent}`}
+              key={project.slug ?? project.title}
+              data-project-slug={project.slug ?? project.title}
+              data-project-title={project.title}
+            >
+              <div className="project-topline">
+                <span className="project-category">{project.category}</span>
+                <span className="project-status">{project.status}</span>
+              </div>
 
-          {filteredProjects.length ? (
-            <div className="project-grid">
-              {filteredProjects.map((project) => (
-                <article
-                  className={`project project-${project.accent}`}
-                  key={project.slug ?? project.title}
-                  data-project-slug={project.slug ?? project.title}
-                  data-project-title={project.title}
-                >
-                  <div className="project-topline">
-                    <span className="project-category">{project.category}</span>
-                    <span className="project-status">{project.status}</span>
-                  </div>
+              <div className="project-heading">
+                <h4>{project.title}</h4>
+                <p>{project.description}</p>
+              </div>
 
-                  <div className="project-heading">
-                    <h4>{project.title}</h4>
-                    <p>{project.description}</p>
-                  </div>
+              <div className="project-impact">
+                <span className="project-impact-label">Focus</span>
+                <p>{project.impact}</p>
+              </div>
 
-                  <div className="project-impact">
-                    <span className="project-impact-label">Focus</span>
-                    <p>{project.impact}</p>
-                  </div>
+              {project.stack.length ? (
+                <div className="project-stack" aria-label={`${project.title} technology stack`}>
+                  {project.stack.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+              ) : null}
 
-                  {project.stack.length ? (
-                    <div className="project-stack" aria-label={`${project.title} technology stack`}>
-                      {project.stack.map((item) => (
-                        <span key={item}>{item}</span>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  <div className="project-actions">
-                    {project.repoUrl ? (
-                      <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                        View Repository
-                      </a>
-                    ) : null}
-                    {project.liveUrl ? (
-                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                        Open Project
-                      </a>
-                    ) : (
-                      <span className="project-note">Private or internal implementation</span>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="search-empty-state">
-              <h3>No projects matched</h3>
-              <p>Try a broader keyword like Java, banking, mobile, or API.</p>
-            </div>
-          )}
-        </>
+              <div className="project-actions">
+                {project.repoUrl ? (
+                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                    View Repository
+                  </a>
+                ) : null}
+                {project.liveUrl ? (
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                    Open Project
+                  </a>
+                ) : (
+                  <span className="project-note">Private or internal implementation</span>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
       )}
     </section>
   );

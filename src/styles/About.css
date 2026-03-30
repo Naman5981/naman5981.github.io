@@ -248,6 +248,44 @@
   font-size: 0.95rem;
 }
 
+.contact-copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--soft-border-color);
+  background: var(--glass-chip-background);
+  color: var(--secondary-text-color);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+}
+
+.contact-copy-button span,
+.contact-copy-button strong {
+  line-height: 1;
+}
+
+.contact-copy-button strong {
+  color: var(--highlight-text-color);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.contact-copy-button:hover,
+.contact-copy-button:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(100, 255, 218, 0.24);
+  box-shadow: 0 16px 28px var(--box-shadow-color);
+  color: var(--primary-text-color);
+  outline: none;
+}
+
 .skeleton-stat {
   min-width: 110px;
 }
@@ -348,6 +386,12 @@
     flex-direction: column;
     gap: 8px;
     font-size: 0.9rem;
+  }
+
+  .contact-copy-button {
+    justify-content: space-between;
+    width: 100%;
+    border-radius: 16px;
   }
 }
 

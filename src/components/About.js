@@ -14,6 +14,7 @@ const About = () => {
   const [profile, setProfile] = useState(null);
   const [hasError, setHasError] = useState(false);
   const [issuesSolvedCount, setIssuesSolvedCount] = useState(0);
+  const [copiedField, setCopiedField] = useState('');
 
   useEffect(() => {
     let isMounted = true;
@@ -75,6 +76,22 @@ const About = () => {
         })),
     [profile]
   );
+
+  const handleCopy = async (label, value) => {
+    if (!value) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedField(label);
+      window.setTimeout(() => {
+        setCopiedField((current) => (current === label ? '' : current));
+      }, 1800);
+    } catch (error) {
+      console.error(`Failed to copy ${label}.`, error);
+    }
+  };
 
   if (hasError) {
     return (
@@ -178,8 +195,18 @@ const About = () => {
 
           <div className="about-contact-strip">
             <span>{profile.location}</span>
-            <span>{profile.email}</span>
-            <span>{profile.phone}</span>
+            {profile.email ? (
+              <button type="button" className="contact-copy-button" onClick={() => handleCopy('email', profile.email)}>
+                <span>{profile.email}</span>
+                <strong>{copiedField === 'email' ? 'Copied' : 'Copy Email'}</strong>
+              </button>
+            ) : null}
+            {profile.phone ? (
+              <button type="button" className="contact-copy-button" onClick={() => handleCopy('phone', profile.phone)}>
+                <span>{profile.phone}</span>
+                <strong>{copiedField === 'phone' ? 'Copied' : 'Copy Phone'}</strong>
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

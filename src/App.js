@@ -7,6 +7,7 @@ import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Achievements from './components/Achievements';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
+import SmartSearch from './components/SmartSearch';
 import PortfolioError from './components/PortfolioError';
 import { navigationSections, portfolioStats, workspacePanels } from './data/portfolioContent';
 import { trackPortfolioEvent } from './services/analytics';
@@ -30,6 +31,7 @@ function App() {
   const [activeSection, setActiveSection] = useState('about');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [revealedSections, setRevealedSections] = useState(() => ({ about: true }));
+  const [isSmartSearchOpen, setIsSmartSearchOpen] = useState(false);
   const headerRef = useRef(null);
   const sectionMap = useMemo(
     () =>
@@ -82,6 +84,28 @@ function App() {
       document.body.style.overflow = '';
     };
   }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isSmartSearchOpen) {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsSmartSearchOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [isSmartSearchOpen]);
 
   useEffect(() => {
     const sectionIds = navigationSections.map((section) => section.id);
@@ -472,6 +496,21 @@ function App() {
           </aside>
         </div>
       </main>
+
+      <button
+        type="button"
+        className={`smart-search-launcher ${isSmartSearchOpen ? 'hidden' : ''}`}
+        aria-label="Open AI search"
+        onClick={() => setIsSmartSearchOpen(true)}
+      >
+        AI Search
+      </button>
+
+      <SmartSearch
+        isOpen={isSmartSearchOpen}
+        onClose={() => setIsSmartSearchOpen(false)}
+        onNavigate={scrollToSection}
+      />
 
       <SpeedInsights />
     </div>

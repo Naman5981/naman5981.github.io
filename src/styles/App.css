@@ -793,6 +793,16 @@ button {
   padding: 10px;
   border-radius: 28px;
   scroll-margin-top: 120px;
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(100, 255, 218, 0.12);
+  box-shadow: 0 24px 44px var(--box-shadow-color);
 }
 
 .module-hero {

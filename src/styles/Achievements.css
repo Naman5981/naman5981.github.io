@@ -13,13 +13,45 @@
 }
 
 .achievements-container ul {
-  list-style-type: disc;
-  padding-left: 20px;
+  list-style: none;
+  padding-left: 0;
   margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .achievements-container li {
-  margin-bottom: 10px;
+  position: relative;
+  padding: 14px 16px 14px 42px;
+  border-radius: 16px;
+  border: 1px solid var(--soft-border-color);
+  background: var(--card-background-softer);
   color: var(--secondary-text-color);
   line-height: 1.6;
+  transition:
+    transform 0.24s ease,
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    color 0.24s ease;
+}
+
+.achievements-container li::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 18px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--highlight-text-color);
+  box-shadow: 0 0 0 6px rgba(100, 255, 218, 0.08);
+}
+
+.achievements-container li:hover {
+  transform: translateY(-3px);
+  border-color: rgba(100, 255, 218, 0.18);
+  box-shadow: 0 18px 30px var(--box-shadow-color);
+  color: var(--primary-text-color);
 }

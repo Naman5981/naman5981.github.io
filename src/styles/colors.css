@@ -3,59 +3,59 @@
   color-scheme: dark;
 
   /* Background Colors */
-  --background-color: #0e1014;
-  --dark-background-color: #040507;
-  --card-background-color: #161a22;
+  --background-color: #0d1420;
+  --dark-background-color: #070b12;
+  --card-background-color: #18202c;
 
   /* Text Colors */
-  --primary-text-color: #d7e0ee;
-  --secondary-text-color: #9ca8ba;
-  --highlight-text-color: #54d8bf;
-  --link-hover-color: #7bbfe9;
-  --accent-strong: #54d8bf;
-  --accent-text-subtle: #7fdcc9;
-  --accent-border-strong: rgba(84, 216, 191, 0.26);
-  --accent-border-soft: rgba(84, 216, 191, 0.14);
-  --accent-surface-soft: rgba(84, 216, 191, 0.08);
-  --accent-surface-mix: linear-gradient(135deg, rgba(84, 216, 191, 0.12), rgba(110, 178, 255, 0.12));
-  --accent-glow-soft: rgba(84, 216, 191, 0.16);
-  --surface-neutral-strong: rgba(16, 20, 28, 0.9);
-  --surface-neutral-soft: rgba(22, 27, 35, 0.74);
+  --primary-text-color: #e7edf4;
+  --secondary-text-color: #9aa8b8;
+  --highlight-text-color: #c8935d;
+  --link-hover-color: #d7ae84;
+  --accent-strong: #c8935d;
+  --accent-text-subtle: #d5ab84;
+  --accent-border-strong: rgba(200, 147, 93, 0.24);
+  --accent-border-soft: rgba(200, 147, 93, 0.13);
+  --accent-surface-soft: rgba(200, 147, 93, 0.07);
+  --accent-surface-mix: linear-gradient(135deg, rgba(200, 147, 93, 0.12), rgba(124, 146, 172, 0.1));
+  --accent-glow-soft: rgba(200, 147, 93, 0.14);
+  --surface-neutral-strong: rgba(19, 27, 38, 0.92);
+  --surface-neutral-soft: rgba(25, 34, 46, 0.8);
 
   /* Button Colors */
-  --button-background-color: rgba(20, 24, 31, 0.7);
-  --button-text-color: rgba(163, 213, 255, 0.94);
-  --button-hover-text-color: rgba(189, 227, 255, 1);
-  --button-border-color: rgba(132, 188, 236, 0.34);
-  --button-border-hover-color: rgba(132, 188, 236, 0.52);
+  --button-background-color: rgba(23, 31, 43, 0.78);
+  --button-text-color: rgba(225, 233, 243, 0.96);
+  --button-hover-text-color: rgba(240, 245, 250, 1);
+  --button-border-color: rgba(135, 153, 177, 0.26);
+  --button-border-hover-color: rgba(200, 147, 93, 0.34);
 
   /* Box Shadow Colors */
-  --box-shadow-color: rgba(0, 0, 0, 0.34);
-  --box-shadow-hover-color: rgba(0, 0, 0, 0.45);
+  --box-shadow-color: rgba(4, 8, 14, 0.34);
+  --box-shadow-hover-color: rgba(4, 8, 14, 0.45);
 
   /* Focus Glow */
-  --focus-glow-color: rgba(132, 188, 236, 0.36);
+  --focus-glow-color: rgba(200, 147, 93, 0.22);
 
   /* Shell / Layout */
   --page-background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.02), transparent 24%),
-    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.015), transparent 20%),
-    linear-gradient(180deg, #050608 0%, #06070a 42%, #020304 100%);
-  --glass-border-color: rgba(255, 255, 255, 0.09);
-  --glass-top-highlight: rgba(255, 255, 255, 0.06);
-  --glass-bottom-highlight: rgba(255, 255, 255, 0.02);
-  --glass-panel-background: rgba(9, 11, 16, 0.38);
-  --glass-panel-background-strong: rgba(9, 11, 16, 0.5);
-  --glass-button-background: rgba(20, 24, 31, 0.72);
-  --glass-button-background-strong: rgba(20, 24, 31, 0.84);
-  --glass-chip-background: rgba(25, 30, 37, 0.88);
-  --module-background: rgba(11, 14, 20, 0.88);
-  --module-border-color: rgba(255, 255, 255, 0.055);
-  --soft-border-color: rgba(255, 255, 255, 0.045);
-  --experience-gradient: linear-gradient(180deg, rgba(17, 21, 28, 0.97), rgba(10, 13, 19, 0.98));
-  --card-background-soft: rgba(21, 25, 33, 0.76);
-  --card-background-softer: rgba(18, 22, 29, 0.72);
-  --chip-background-soft: rgba(24, 29, 36, 0.84);
+    radial-gradient(circle at top left, rgba(109, 130, 158, 0.12), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(200, 147, 93, 0.06), transparent 18%),
+    linear-gradient(180deg, #0a1119 0%, #0d1621 42%, #080d14 100%);
+  --glass-border-color: rgba(231, 237, 244, 0.08);
+  --glass-top-highlight: rgba(255, 255, 255, 0.05);
+  --glass-bottom-highlight: rgba(255, 255, 255, 0.018);
+  --glass-panel-background: rgba(11, 16, 24, 0.44);
+  --glass-panel-background-strong: rgba(11, 16, 24, 0.56);
+  --glass-button-background: rgba(23, 31, 43, 0.76);
+  --glass-button-background-strong: rgba(23, 31, 43, 0.88);
+  --glass-chip-background: rgba(28, 37, 49, 0.9);
+  --module-background: rgba(13, 19, 28, 0.9);
+  --module-border-color: rgba(231, 237, 244, 0.05);
+  --soft-border-color: rgba(231, 237, 244, 0.04);
+  --experience-gradient: linear-gradient(180deg, rgba(20, 28, 39, 0.98), rgba(12, 18, 27, 0.99));
+  --card-background-soft: rgba(23, 31, 43, 0.82);
+  --card-background-softer: rgba(19, 27, 38, 0.78);
+  --chip-background-soft: rgba(27, 36, 48, 0.88);
   --font-body: 'Manrope', 'Segoe UI', 'Helvetica Neue', sans-serif;
   --font-display: 'Sora', 'Manrope', 'Segoe UI', sans-serif;
   --font-meta: 'IBM Plex Mono', 'SFMono-Regular', 'Consolas', monospace;
@@ -68,7 +68,7 @@
   --motion-ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-ease-emphasis: cubic-bezier(0.2, 0.9, 0.24, 1);
   --motion-duration-reveal: 620ms;
-  --motion-duration-panel: 320ms;
+  --motion-duration-panel: 520ms;
   --motion-duration-emphasis: 220ms;
   --card-radius-xl: 28px;
   --card-radius-lg: 22px;
@@ -77,71 +77,71 @@
   --card-padding-lg: 24px;
   --card-padding-md: 18px;
   --card-padding-sm: 14px;
-  --icon-background: rgba(255, 255, 255, 0.05);
-  --icon-background-hover: rgba(84, 216, 191, 0.09);
-  --hero-subtitle-color: rgba(255, 255, 255, 0.85);
-  --tooltip-background: #f4f8ff;
-  --tooltip-text-color: #080b10;
-  --backdrop-overlay: rgba(4, 6, 10, 0.28);
-  --progress-track-color: rgba(255, 255, 255, 0.04);
-  --progress-accent-color: #6eb2ff;
-  --progress-glow-color: rgba(84, 216, 191, 0.18);
-  --search-input-background: rgba(14, 18, 24, 0.86);
-  --search-empty-background: rgba(255, 255, 255, 0.02);
-  --skeleton-base-color: rgba(255, 255, 255, 0.06);
-  --skeleton-highlight-color: rgba(255, 255, 255, 0.12);
+  --icon-background: rgba(231, 237, 244, 0.045);
+  --icon-background-hover: rgba(200, 147, 93, 0.08);
+  --hero-subtitle-color: rgba(231, 237, 244, 0.84);
+  --tooltip-background: #f3ebe3;
+  --tooltip-text-color: #12161d;
+  --backdrop-overlay: rgba(7, 10, 15, 0.36);
+  --progress-track-color: rgba(231, 237, 244, 0.035);
+  --progress-accent-color: #8fa3bc;
+  --progress-glow-color: rgba(200, 147, 93, 0.16);
+  --search-input-background: rgba(14, 20, 30, 0.88);
+  --search-empty-background: rgba(231, 237, 244, 0.02);
+  --skeleton-base-color: rgba(231, 237, 244, 0.05);
+  --skeleton-highlight-color: rgba(231, 237, 244, 0.1);
 }
 
 :root[data-theme='light'] {
   color-scheme: light;
 
-  --background-color: #f3f6fb;
-  --dark-background-color: #dfe6f1;
-  --card-background-color: #e8eef7;
+  --background-color: #f7f2ea;
+  --dark-background-color: #e7ddd1;
+  --card-background-color: #efe7dc;
 
-  --primary-text-color: #223042;
-  --secondary-text-color: #66778b;
-  --highlight-text-color: #0f766e;
-  --link-hover-color: #225f8e;
-  --accent-strong: #0f766e;
-  --accent-text-subtle: #2a8d85;
-  --accent-border-strong: rgba(15, 118, 110, 0.2);
-  --accent-border-soft: rgba(15, 118, 110, 0.11);
-  --accent-surface-soft: rgba(15, 118, 110, 0.06);
-  --accent-surface-mix: linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(102, 163, 255, 0.1));
-  --accent-glow-soft: rgba(15, 118, 110, 0.12);
-  --surface-neutral-strong: rgba(255, 255, 255, 0.9);
-  --surface-neutral-soft: rgba(244, 248, 253, 0.92);
+  --primary-text-color: #212a36;
+  --secondary-text-color: #6f6b67;
+  --highlight-text-color: #a96e3e;
+  --link-hover-color: #87562e;
+  --accent-strong: #a96e3e;
+  --accent-text-subtle: #b67b4b;
+  --accent-border-strong: rgba(169, 110, 62, 0.18);
+  --accent-border-soft: rgba(169, 110, 62, 0.1);
+  --accent-surface-soft: rgba(169, 110, 62, 0.05);
+  --accent-surface-mix: linear-gradient(135deg, rgba(169, 110, 62, 0.08), rgba(159, 170, 184, 0.08));
+  --accent-glow-soft: rgba(169, 110, 62, 0.08);
+  --surface-neutral-strong: rgba(255, 252, 248, 0.92);
+  --surface-neutral-soft: rgba(245, 239, 232, 0.94);
 
-  --button-background-color: rgba(255, 255, 255, 0.82);
-  --button-text-color: #24415f;
-  --button-hover-text-color: #18324d;
-  --button-border-color: rgba(36, 65, 95, 0.16);
-  --button-border-hover-color: rgba(15, 118, 110, 0.26);
+  --button-background-color: rgba(255, 252, 248, 0.86);
+  --button-text-color: #334153;
+  --button-hover-text-color: #252f3d;
+  --button-border-color: rgba(51, 65, 83, 0.12);
+  --button-border-hover-color: rgba(169, 110, 62, 0.2);
 
-  --box-shadow-color: rgba(30, 41, 59, 0.1);
-  --box-shadow-hover-color: rgba(30, 41, 59, 0.16);
-  --focus-glow-color: rgba(36, 65, 95, 0.16);
+  --box-shadow-color: rgba(58, 47, 39, 0.1);
+  --box-shadow-hover-color: rgba(58, 47, 39, 0.15);
+  --focus-glow-color: rgba(169, 110, 62, 0.12);
 
   --page-background:
-    radial-gradient(circle at top left, rgba(118, 167, 212, 0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(157, 197, 219, 0.1), transparent 24%),
-    linear-gradient(180deg, #f8fbff 0%, #eef3f9 52%, #e6edf6 100%);
-  --glass-border-color: rgba(31, 41, 55, 0.1);
-  --glass-top-highlight: rgba(255, 255, 255, 0.78);
-  --glass-bottom-highlight: rgba(31, 41, 55, 0.03);
-  --glass-panel-background: rgba(255, 255, 255, 0.26);
-  --glass-panel-background-strong: rgba(255, 255, 255, 0.38);
-  --glass-button-background: rgba(255, 255, 255, 0.6);
-  --glass-button-background-strong: rgba(255, 255, 255, 0.7);
-  --glass-chip-background: rgba(242, 246, 251, 0.92);
-  --module-background: rgba(255, 255, 255, 0.8);
-  --module-border-color: rgba(31, 41, 55, 0.07);
-  --soft-border-color: rgba(31, 41, 55, 0.06);
-  --experience-gradient: linear-gradient(180deg, rgba(251, 253, 255, 0.98), rgba(236, 243, 250, 0.98));
-  --card-background-soft: rgba(242, 246, 251, 0.9);
-  --card-background-softer: rgba(247, 250, 253, 0.94);
-  --chip-background-soft: rgba(239, 244, 250, 0.94);
+    radial-gradient(circle at top left, rgba(170, 183, 198, 0.12), transparent 30%),
+    radial-gradient(circle at top right, rgba(197, 145, 95, 0.08), transparent 22%),
+    linear-gradient(180deg, #fbf7f1 0%, #f2ebe3 52%, #eae1d6 100%);
+  --glass-border-color: rgba(33, 42, 54, 0.08);
+  --glass-top-highlight: rgba(255, 255, 255, 0.82);
+  --glass-bottom-highlight: rgba(33, 42, 54, 0.025);
+  --glass-panel-background: rgba(255, 252, 248, 0.3);
+  --glass-panel-background-strong: rgba(255, 252, 248, 0.42);
+  --glass-button-background: rgba(255, 252, 248, 0.64);
+  --glass-button-background-strong: rgba(255, 252, 248, 0.76);
+  --glass-chip-background: rgba(243, 237, 230, 0.94);
+  --module-background: rgba(255, 251, 246, 0.82);
+  --module-border-color: rgba(33, 42, 54, 0.06);
+  --soft-border-color: rgba(33, 42, 54, 0.045);
+  --experience-gradient: linear-gradient(180deg, rgba(255, 252, 248, 0.99), rgba(242, 235, 227, 0.98));
+  --card-background-soft: rgba(243, 237, 230, 0.92);
+  --card-background-softer: rgba(249, 244, 238, 0.95);
+  --chip-background-soft: rgba(240, 233, 225, 0.95);
   --font-body: 'Manrope', 'Segoe UI', 'Helvetica Neue', sans-serif;
   --font-display: 'Sora', 'Manrope', 'Segoe UI', sans-serif;
   --font-meta: 'IBM Plex Mono', 'SFMono-Regular', 'Consolas', monospace;
@@ -154,7 +154,7 @@
   --motion-ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-ease-emphasis: cubic-bezier(0.2, 0.9, 0.24, 1);
   --motion-duration-reveal: 620ms;
-  --motion-duration-panel: 320ms;
+  --motion-duration-panel: 520ms;
   --motion-duration-emphasis: 220ms;
   --card-radius-xl: 28px;
   --card-radius-lg: 22px;
@@ -163,18 +163,18 @@
   --card-padding-lg: 24px;
   --card-padding-md: 18px;
   --card-padding-sm: 14px;
-  --icon-background: rgba(255, 255, 255, 0.9);
-  --icon-background-hover: rgba(15, 118, 110, 0.07);
-  --hero-subtitle-color: rgba(31, 41, 55, 0.84);
-  --tooltip-background: #1f2937;
-  --tooltip-text-color: #f8fbff;
-  --backdrop-overlay: rgba(230, 237, 246, 0.34);
-  --progress-track-color: rgba(31, 41, 55, 0.06);
-  --progress-accent-color: #24415f;
-  --progress-glow-color: rgba(15, 118, 110, 0.12);
-  --search-input-background: rgba(255, 255, 255, 0.88);
-  --search-empty-background: rgba(255, 255, 255, 0.42);
-  --skeleton-base-color: rgba(31, 41, 55, 0.08);
-  --skeleton-highlight-color: rgba(255, 255, 255, 0.48);
+  --icon-background: rgba(255, 252, 248, 0.92);
+  --icon-background-hover: rgba(169, 110, 62, 0.06);
+  --hero-subtitle-color: rgba(33, 42, 54, 0.82);
+  --tooltip-background: #212a36;
+  --tooltip-text-color: #fbf7f1;
+  --backdrop-overlay: rgba(234, 225, 214, 0.42);
+  --progress-track-color: rgba(33, 42, 54, 0.05);
+  --progress-accent-color: #b1835d;
+  --progress-glow-color: rgba(169, 110, 62, 0.1);
+  --search-input-background: rgba(255, 252, 248, 0.9);
+  --search-empty-background: rgba(255, 252, 248, 0.46);
+  --skeleton-base-color: rgba(33, 42, 54, 0.07);
+  --skeleton-highlight-color: rgba(255, 252, 248, 0.5);
 }
 

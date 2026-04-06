@@ -611,9 +611,21 @@ function App() {
             onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
           >
             <span className="theme-toggle-track" aria-hidden="true">
-              <span className="theme-toggle-icon theme-toggle-sun">{'\u2600'}</span>
-              <span className="theme-toggle-icon theme-toggle-moon">{'\u263D'}</span>
-              <span className="theme-toggle-thumb" />
+              <span className="theme-toggle-thumb">
+                <span className="theme-toggle-thumb-core">
+                  <span className="theme-toggle-thumb-symbol theme-toggle-thumb-sun-symbol">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="4.1" />
+                      <path d="M12 2.6v2.4M12 19v2.4M4.85 4.85l1.7 1.7M17.45 17.45l1.7 1.7M2.6 12H5M19 12h2.4M4.85 19.15l1.7-1.7M17.45 6.55l1.7-1.7" />
+                    </svg>
+                  </span>
+                  <span className="theme-toggle-thumb-symbol theme-toggle-thumb-moon-symbol">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16.8 14.7A7.2 7.2 0 0 1 9.3 7.2 7.6 7.6 0 1 0 16.8 14.7Z" />
+                    </svg>
+                  </span>
+                </span>
+              </span>
             </span>
           </button>
 

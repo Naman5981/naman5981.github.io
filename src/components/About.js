@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import DownloadButton from './DownloadButton';
 import { getProfile } from '../services/portfolio';
-import { getAnalyticsSummary } from '../services/analytics';
 
 const iconMap = {
   github: faGithub,
@@ -16,7 +15,6 @@ const About = () => {
   const [hasError, setHasError] = useState(false);
   const [issuesSolvedCount, setIssuesSolvedCount] = useState(0);
   const [copiedField, setCopiedField] = useState('');
-  const [credibilitySignal, setCredibilitySignal] = useState('Live portfolio engagement');
 
   useEffect(() => {
     let isMounted = true;
@@ -37,39 +35,6 @@ const About = () => {
     };
 
     loadProfile();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadCredibilitySignal = async () => {
-      try {
-        const summary = await getAnalyticsSummary();
-
-        if (!isMounted) {
-          return;
-        }
-
-        const topProject = summary.topProjects?.[0];
-
-        if (topProject?.target_label) {
-          setCredibilitySignal(`${topProject.target_label} drawing repeat attention`);
-          return;
-        }
-
-        if ((summary.resumeDownloads ?? 0) > 0) {
-          setCredibilitySignal(`${summary.resumeDownloads} resume pulls from portfolio visitors`);
-        }
-      } catch (error) {
-        console.error('Failed to load credibility signal.', error);
-      }
-    };
-
-    loadCredibilitySignal();
 
     return () => {
       isMounted = false;
@@ -110,16 +75,6 @@ const About = () => {
           icon: iconMap[link.platform]
         })),
     [profile]
-  );
-
-  const credibilityItems = useMemo(
-    () => [
-      profile?.yearsExperienceLabel ? `${profile.yearsExperienceLabel} backend systems` : 'Backend systems experience',
-      'Fintech + platform work',
-      'Production support ownership',
-      credibilitySignal
-    ],
-    [credibilitySignal, profile?.yearsExperienceLabel]
   );
 
   const handleCopy = async (label, value) => {
@@ -191,12 +146,6 @@ const About = () => {
           <div className="availability-banner" role="status" aria-label="Current availability">
             <span className="availability-dot" aria-hidden="true" />
             Currently open to backend engineering roles, platform work, and high-ownership product teams
-          </div>
-
-          <div className="about-credibility-strip" aria-label="Credibility highlights">
-            {credibilityItems.map((item) => (
-              <span key={item}>{item}</span>
-            ))}
           </div>
 
           <div className="about-copy">

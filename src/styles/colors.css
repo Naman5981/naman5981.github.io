@@ -3,59 +3,59 @@
   color-scheme: dark;
 
   /* Background Colors */
-  --background-color: #0d1420;
-  --dark-background-color: #070b12;
-  --card-background-color: #18202c;
+  --background-color: #0a1018;
+  --dark-background-color: #04070d;
+  --card-background-color: #1b2430;
 
   /* Text Colors */
-  --primary-text-color: #e7edf4;
-  --secondary-text-color: #9aa8b8;
-  --highlight-text-color: #c8935d;
-  --link-hover-color: #d7ae84;
-  --accent-strong: #c8935d;
-  --accent-text-subtle: #d5ab84;
-  --accent-border-strong: rgba(200, 147, 93, 0.24);
-  --accent-border-soft: rgba(200, 147, 93, 0.13);
-  --accent-surface-soft: rgba(200, 147, 93, 0.07);
-  --accent-surface-mix: linear-gradient(135deg, rgba(200, 147, 93, 0.12), rgba(124, 146, 172, 0.1));
-  --accent-glow-soft: rgba(200, 147, 93, 0.14);
-  --surface-neutral-strong: rgba(19, 27, 38, 0.92);
-  --surface-neutral-soft: rgba(25, 34, 46, 0.8);
+  --primary-text-color: #edf2f8;
+  --secondary-text-color: #afbac8;
+  --highlight-text-color: #d2a06a;
+  --link-hover-color: #e1b88f;
+  --accent-strong: #d2a06a;
+  --accent-text-subtle: #ddb488;
+  --accent-border-strong: rgba(210, 160, 106, 0.3);
+  --accent-border-soft: rgba(210, 160, 106, 0.16);
+  --accent-surface-soft: rgba(210, 160, 106, 0.08);
+  --accent-surface-mix: linear-gradient(135deg, rgba(210, 160, 106, 0.14), rgba(122, 139, 160, 0.08));
+  --accent-glow-soft: rgba(210, 160, 106, 0.16);
+  --surface-neutral-strong: rgba(20, 28, 39, 0.94);
+  --surface-neutral-soft: rgba(26, 35, 47, 0.84);
 
   /* Button Colors */
-  --button-background-color: rgba(23, 31, 43, 0.78);
-  --button-text-color: rgba(225, 233, 243, 0.96);
-  --button-hover-text-color: rgba(240, 245, 250, 1);
-  --button-border-color: rgba(135, 153, 177, 0.26);
-  --button-border-hover-color: rgba(200, 147, 93, 0.34);
+  --button-background-color: rgba(25, 34, 46, 0.82);
+  --button-text-color: rgba(233, 239, 247, 0.98);
+  --button-hover-text-color: rgba(244, 248, 252, 1);
+  --button-border-color: rgba(149, 164, 184, 0.28);
+  --button-border-hover-color: rgba(210, 160, 106, 0.38);
 
   /* Box Shadow Colors */
-  --box-shadow-color: rgba(4, 8, 14, 0.34);
-  --box-shadow-hover-color: rgba(4, 8, 14, 0.45);
+  --box-shadow-color: rgba(3, 6, 12, 0.42);
+  --box-shadow-hover-color: rgba(3, 6, 12, 0.54);
 
   /* Focus Glow */
-  --focus-glow-color: rgba(200, 147, 93, 0.22);
+  --focus-glow-color: rgba(210, 160, 106, 0.24);
 
   /* Shell / Layout */
   --page-background:
-    radial-gradient(circle at top left, rgba(109, 130, 158, 0.12), transparent 26%),
-    radial-gradient(circle at bottom right, rgba(200, 147, 93, 0.06), transparent 18%),
-    linear-gradient(180deg, #0a1119 0%, #0d1621 42%, #080d14 100%);
-  --glass-border-color: rgba(231, 237, 244, 0.08);
-  --glass-top-highlight: rgba(255, 255, 255, 0.05);
-  --glass-bottom-highlight: rgba(255, 255, 255, 0.018);
-  --glass-panel-background: rgba(11, 16, 24, 0.44);
-  --glass-panel-background-strong: rgba(11, 16, 24, 0.56);
-  --glass-button-background: rgba(23, 31, 43, 0.76);
-  --glass-button-background-strong: rgba(23, 31, 43, 0.88);
-  --glass-chip-background: rgba(28, 37, 49, 0.9);
-  --module-background: rgba(13, 19, 28, 0.9);
-  --module-border-color: rgba(231, 237, 244, 0.05);
-  --soft-border-color: rgba(231, 237, 244, 0.04);
-  --experience-gradient: linear-gradient(180deg, rgba(20, 28, 39, 0.98), rgba(12, 18, 27, 0.99));
-  --card-background-soft: rgba(23, 31, 43, 0.82);
-  --card-background-softer: rgba(19, 27, 38, 0.78);
-  --chip-background-soft: rgba(27, 36, 48, 0.88);
+    radial-gradient(circle at top left, rgba(96, 116, 142, 0.1), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(210, 160, 106, 0.05), transparent 16%),
+    linear-gradient(180deg, #070d14 0%, #0a121c 42%, #04080f 100%);
+  --glass-border-color: rgba(237, 242, 248, 0.1);
+  --glass-top-highlight: rgba(255, 255, 255, 0.06);
+  --glass-bottom-highlight: rgba(255, 255, 255, 0.02);
+  --glass-panel-background: rgba(12, 17, 25, 0.5);
+  --glass-panel-background-strong: rgba(14, 20, 29, 0.62);
+  --glass-button-background: rgba(24, 33, 45, 0.82);
+  --glass-button-background-strong: rgba(25, 34, 47, 0.92);
+  --glass-chip-background: rgba(30, 40, 53, 0.94);
+  --module-background: rgba(14, 20, 29, 0.94);
+  --module-border-color: rgba(237, 242, 248, 0.07);
+  --soft-border-color: rgba(237, 242, 248, 0.055);
+  --experience-gradient: linear-gradient(180deg, rgba(23, 31, 43, 0.985), rgba(13, 19, 28, 0.995));
+  --card-background-soft: rgba(24, 33, 45, 0.86);
+  --card-background-softer: rgba(20, 28, 39, 0.84);
+  --chip-background-soft: rgba(29, 39, 52, 0.92);
   --font-body: 'Manrope', 'Segoe UI', 'Helvetica Neue', sans-serif;
   --font-display: 'Sora', 'Manrope', 'Segoe UI', sans-serif;
   --font-meta: 'IBM Plex Mono', 'SFMono-Regular', 'Consolas', monospace;
@@ -77,19 +77,19 @@
   --card-padding-lg: 24px;
   --card-padding-md: 18px;
   --card-padding-sm: 14px;
-  --icon-background: rgba(231, 237, 244, 0.045);
-  --icon-background-hover: rgba(200, 147, 93, 0.08);
-  --hero-subtitle-color: rgba(231, 237, 244, 0.84);
+  --icon-background: rgba(237, 242, 248, 0.05);
+  --icon-background-hover: rgba(210, 160, 106, 0.09);
+  --hero-subtitle-color: rgba(237, 242, 248, 0.88);
   --tooltip-background: #f3ebe3;
   --tooltip-text-color: #12161d;
-  --backdrop-overlay: rgba(7, 10, 15, 0.36);
-  --progress-track-color: rgba(231, 237, 244, 0.035);
-  --progress-accent-color: #8fa3bc;
-  --progress-glow-color: rgba(200, 147, 93, 0.16);
-  --search-input-background: rgba(14, 20, 30, 0.88);
-  --search-empty-background: rgba(231, 237, 244, 0.02);
-  --skeleton-base-color: rgba(231, 237, 244, 0.05);
-  --skeleton-highlight-color: rgba(231, 237, 244, 0.1);
+  --backdrop-overlay: rgba(5, 8, 13, 0.44);
+  --progress-track-color: rgba(237, 242, 248, 0.04);
+  --progress-accent-color: #9aadc4;
+  --progress-glow-color: rgba(210, 160, 106, 0.18);
+  --search-input-background: rgba(13, 19, 28, 0.92);
+  --search-empty-background: rgba(237, 242, 248, 0.025);
+  --skeleton-base-color: rgba(237, 242, 248, 0.06);
+  --skeleton-highlight-color: rgba(237, 242, 248, 0.11);
 }
 
 :root[data-theme='light'] {

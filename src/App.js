@@ -9,14 +9,47 @@ import Achievements from './components/Achievements';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import SmartSearch from './components/SmartSearch';
 import PortfolioError from './components/PortfolioError';
-import {
-  navigationSections,
-  portfolioStats,
-  workspacePanels
-} from './data/portfolioContent';
+import { navigationSections, portfolioStats } from './data/portfolioContent';
 import { trackPortfolioEvent } from './services/analytics';
 import { getProfile } from './services/portfolio';
+import javaLogo from './assets/tech-marquee/java.png';
+import springBootLogo from './assets/tech-marquee/springboot.png';
+import postgresqlLogo from './assets/tech-marquee/postgresql.png';
+import mysqlLogo from './assets/tech-marquee/mysql.png';
+import dockerLogo from './assets/tech-marquee/docker.png';
+import redisLogo from './assets/tech-marquee/redis.png';
+import gitLogo from './assets/tech-marquee/git.png';
+import kafkaLogo from './assets/tech-marquee/kafka.png';
+import linuxLogo from './assets/tech-marquee/linux.png';
+import postmanLogo from './assets/tech-marquee/postman.png';
+import junitLogo from './assets/tech-marquee/junit.png';
+import githubLogo from './assets/tech-marquee/github.png';
+import mavenLogo from './assets/tech-marquee/maven.png';
+import chatgptLogo from './assets/tech-marquee/chatgpt.png';
+import firebaseLogo from './assets/tech-marquee/firebase.png';
+import n8nLogo from './assets/tech-marquee/n8n.png';
+import claudeLogo from './assets/tech-marquee/claude.png';
 import './styles/App.css';
+
+const transitionTechnologies = [
+  { name: 'Java', logo: javaLogo },
+  { name: 'Spring Boot', logo: springBootLogo },
+  { name: 'PostgreSQL', logo: postgresqlLogo },
+  { name: 'MySQL', logo: mysqlLogo },
+  { name: 'Docker', logo: dockerLogo },
+  { name: 'Redis', logo: redisLogo },
+  { name: 'Git', logo: gitLogo },
+  { name: 'Kafka', logo: kafkaLogo },
+  { name: 'Linux', logo: linuxLogo },
+  { name: 'Postman', logo: postmanLogo },
+  { name: 'JUnit', logo: junitLogo },
+  { name: 'GitHub', logo: githubLogo },
+  { name: 'Maven', logo: mavenLogo },
+  { name: 'ChatGPT', logo: chatgptLogo },
+  { name: 'Firebase', logo: firebaseLogo },
+  { name: 'n8n', logo: n8nLogo },
+  { name: 'Claude', logo: claudeLogo }
+];
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -27,7 +60,6 @@ function App() {
 
     return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   });
-  const [activeWorkspace, setActiveWorkspace] = useState('overview');
   const [activePortfolioTab, setActivePortfolioTab] = useState('experience');
   const [mountedPortfolioTabs, setMountedPortfolioTabs] = useState(() => ({ experience: true }));
   const [outgoingPortfolioTab, setOutgoingPortfolioTab] = useState(null);
@@ -59,11 +91,6 @@ function App() {
         return lookup;
       }, {}),
     []
-  );
-
-  const activePanel = useMemo(
-    () => workspacePanels.find((workspace) => workspace.id === activeWorkspace) ?? workspacePanels[0],
-    [activeWorkspace]
   );
 
   const smartSearchContext = useMemo(() => {
@@ -126,46 +153,10 @@ function App() {
 
   const activePortfolioPanel =
     portfolioTabs.find((tab) => tab.id === activePortfolioTab) ?? portfolioTabs[0];
-  const portfolioNarrative = useMemo(
-    () => ({
-      experience: {
-        kicker: 'Why Start Here',
-        body: 'The experience section establishes the kind of environments I have worked in: banking workflows, production systems, and backend ownership under real operational pressure.',
-        next: 'That context matters because the projects section shows how the same engineering judgment translates into concrete product and platform builds.'
-      },
-      projects: {
-        kicker: 'From Roles To Work',
-        body: 'Projects turn the career story into visible output, showing how I approach domain tools, product delivery, and backend-heavy implementation outside the resume timeline.',
-        next: 'From there, the supporting sections make the underlying depth easier to trust: the stack, the education, and the signals around what people actually explore.'
-      },
-      skills: {
-        kicker: 'What Supports The Work',
-        body: 'Skills is where the technical foundation becomes explicit, connecting the delivery work back to the languages, tools, and platform habits behind it.',
-        next: 'The next sections add context around how that foundation was built and what kinds of outcomes it has already supported.'
-      },
-      education: {
-        kicker: 'How The Foundation Was Built',
-        body: 'Education provides the grounding behind the implementation work, giving the technical background that supports the systems and product decisions elsewhere in the portfolio.',
-        next: 'That foundation becomes more convincing when it is followed by achievements and live visitor signals, which show both recognition and response.'
-      },
-      achievements: {
-        kicker: 'Signals Of Progress',
-        body: 'Achievements condense the strongest milestones into a faster trust layer, giving a quick read on the recognition and outcomes tied to the deeper work above.',
-        next: 'Visitor signals then close the loop by showing what other people actually open, revisit, and validate once they land here.'
-      },
-      'visitor-signals': {
-        kicker: 'Live Validation',
-        body: 'Visitor signals act as proof-of-interest, showing which sections and projects attract attention instead of asking the reader to infer what matters most.',
-        next: 'That makes the portfolio feel less like a static presentation and more like a living body of work with visible patterns of engagement.'
-      }
-    }),
-    []
-  );
   const portfolioTabIds = useMemo(() => new Set(portfolioTabs.map((tab) => tab.id)), [portfolioTabs]);
   const outgoingPortfolioPanel = outgoingPortfolioTab
     ? portfolioTabs.find((tab) => tab.id === outgoingPortfolioTab) ?? null
     : null;
-  const activePortfolioNarrative = portfolioNarrative[activePortfolioPanel.id];
 
   useEffect(() => {
     let isMounted = true;
@@ -712,59 +703,24 @@ function App() {
           ))}
         </section>
 
-        <section className="workspace-panel" data-reveal>
-          <div className="workspace-heading">
-            <span className="eyebrow">Explore Sections</span>
-            <h2>Browse the site by experience, projects, or technical depth.</h2>
-          </div>
-
-          <div className="workspace-tabs" role="tablist" aria-label="Portfolio workspaces">
-            {workspacePanels.map((workspace) => (
-              <button
-                key={workspace.id}
-                type="button"
-                role="tab"
-                aria-selected={activeWorkspace === workspace.id}
-                className={activeWorkspace === workspace.id ? 'active' : ''}
-                onClick={() => setActiveWorkspace(workspace.id)}
-              >
-                {workspace.label}
-              </button>
+        <section className="portfolio-tech-strip" aria-hidden="true" data-reveal>
+          <div className="portfolio-tech-strip-track">
+            {[...transitionTechnologies, ...transitionTechnologies, ...transitionTechnologies].map((technology, index) => (
+              <React.Fragment key={`portfolio-tech-${index}`}>
+                <div className="portfolio-tech-pill">
+                  <img src={technology.logo} alt="" loading="lazy" />
+                  <span>{technology.name}</span>
+                </div>
+                <span className="portfolio-tech-separator" aria-hidden="true" />
+              </React.Fragment>
             ))}
-          </div>
-
-          <div className="workspace-content">
-            <div>
-              <span className="eyebrow">{activePanel.eyebrow}</span>
-              <h3>{activePanel.title}</h3>
-              <p>{activePanel.description}</p>
-            </div>
-
-            <div className="workspace-metrics">
-              {activePanel.metrics.map((metric) => (
-                <span key={metric}>{metric}</span>
-              ))}
-            </div>
-
-            <div className="workspace-links">
-              {activePanel.links.map((link) => (
-                <button key={link} type="button" onClick={() => scrollToSection(link)}>
-                  Open {sectionMap[link]}
-                </button>
-              ))}
-            </div>
           </div>
         </section>
 
         <section className="portfolio-tabs-shell" data-reveal>
-          <div className="portfolio-section-bridge" aria-hidden="true">
-            <span />
-          </div>
-
           <div className="portfolio-tabs-header">
             <div>
               <span className="eyebrow">Core Portfolio</span>
-              <h2>Review the work, technical depth, and signals that shape the overall engineering story.</h2>
             </div>
 
             <div
@@ -840,12 +796,6 @@ function App() {
             </div>
           </div>
 
-          <article className="portfolio-narrative-strip" data-reveal>
-            <span className="portfolio-narrative-kicker">{activePortfolioNarrative.kicker}</span>
-            <p>{activePortfolioNarrative.body}</p>
-            <p className="portfolio-narrative-next">{activePortfolioNarrative.next}</p>
-          </article>
-
           <section
             ref={portfolioPanelRef}
             id={
@@ -903,6 +853,8 @@ function App() {
           </section>
         </section>
       </main>
+
+      <p className="site-signoff">Designed with care, shaped with AI.</p>
 
         <button
           type="button"

@@ -37,6 +37,7 @@ function App() {
   const [portfolioStageHeight, setPortfolioStageHeight] = useState(0);
   const [highlightedSection, setHighlightedSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHeaderCondensed, setIsHeaderCondensed] = useState(false);
   const [siteOwnerName, setSiteOwnerName] = useState('');
   const [hasPortfolioError, setHasPortfolioError] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
@@ -233,6 +234,19 @@ function App() {
       document.documentElement.removeAttribute('data-mobile-menu-open');
     };
   }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    const syncHeaderState = () => {
+      setIsHeaderCondensed(window.scrollY > 20);
+    };
+
+    syncHeaderState();
+    window.addEventListener('scroll', syncHeaderState, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', syncHeaderState);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isSmartSearchOpen) {
@@ -597,7 +611,7 @@ function App() {
         <span className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
       </div>
 
-      <header ref={headerRef} className="site-header">
+      <header ref={headerRef} className={`site-header ${isHeaderCondensed ? 'is-condensed' : ''}`}>
         <div className="brand-lockup">
           <span className="brand-kicker">NS / backend systems</span>
           <h1>{siteOwnerName}</h1>
@@ -653,7 +667,7 @@ function App() {
               <button
                 key={id}
                 type="button"
-                className={activeSection === id ? 'active' : ''}
+                className={`${activeSection === id ? 'active' : ''} ${id === 'about' ? 'nav-home-link' : ''}`.trim()}
                 aria-current={activeSection === id ? 'location' : undefined}
                 onClick={() => scrollToSection(id)}
               >

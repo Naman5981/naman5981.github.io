@@ -13,26 +13,19 @@
   backdrop-filter: blur(6px); /* Frosted glass effect */
   box-shadow: 0 4px 12px var(--box-shadow-color); /* Using centralized box shadow */
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  transition:
+    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
+    box-shadow var(--motion-duration-emphasis) ease,
+    border-color var(--motion-duration-emphasis) ease,
+    background var(--motion-duration-emphasis) ease;
   border: 2px solid var(--button-border-color); /* Updated to use button border color */
   background-clip: padding-box;
 }
 
 .floating-download-button:hover {
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 4px 12px var(--box-shadow-color);
-    border-color: var(--button-border-color);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 6px 18px var(--box-shadow-hover-color);
-    border-color: var(--button-border-hover-color);
-  }
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px var(--box-shadow-hover-color);
+  border-color: var(--button-border-hover-color);
 }
 
 .floating-download-button:focus {

@@ -36,19 +36,22 @@ const Projects = () => {
 
   const decoratedProjects = useMemo(
     () =>
-      (projects ?? []).map((project) => {
+      (projects ?? []).map((project, index) => {
         const projectKey = projectAliases[project.slug] ?? project.slug;
         const showcase = projectShowcase[projectKey] ?? {};
 
         return {
           ...project,
+          projectKey,
           category: showcase.category ?? 'Selected Build',
           status: showcase.status ?? 'Project',
           accent: showcase.accent ?? 'teal',
           stack: showcase.stack ?? [],
           impact: showcase.impact ?? project.description,
           repoUrl: project.repoUrl ?? showcase.links?.repoUrl ?? null,
-          liveUrl: project.liveUrl ?? showcase.links?.liveUrl ?? null
+          liveUrl: project.liveUrl ?? showcase.links?.liveUrl ?? null,
+          variant: index === 0 ? 'featured' : 'standard',
+          spotlight: showcase.spotlight ?? (index === 0 ? 'Featured case study' : null)
         };
       }),
     [projects]
@@ -148,33 +151,45 @@ const Projects = () => {
         <div className="project-grid">
           {decoratedProjects.map((project) => (
             <article
-              className={`project project-${project.accent}`}
+              className={`project project-${project.accent} project-${project.variant}`}
               key={project.slug ?? project.title}
               data-project-slug={project.slug ?? project.title}
               data-project-title={project.title}
             >
               <div className="project-topline">
-                <span className="project-category">{project.category}</span>
+                <div className="project-meta-group">
+                  <span className="project-category">{project.category}</span>
+                  {project.spotlight ? (
+                    <span className="project-spotlight">{project.spotlight}</span>
+                  ) : null}
+                </div>
                 <span className="project-status">{project.status}</span>
               </div>
 
-              <div className="project-heading">
-                <h4>{project.title}</h4>
-                <p>{project.description}</p>
-              </div>
+              <div className="project-body">
+                <div className="project-main">
+                  <div className="project-heading">
+                    <h4>{project.title}</h4>
+                    <p>{project.description}</p>
+                  </div>
 
-              <div className="project-impact">
-                <span className="project-impact-label">Focus</span>
-                <p>{project.impact}</p>
-              </div>
-
-              {project.stack.length ? (
-                <div className="project-stack" aria-label={`${project.title} technology stack`}>
-                  {project.stack.map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
+                  <div className="project-impact">
+                    <span className="project-impact-label">Focus</span>
+                    <p>{project.impact}</p>
+                  </div>
                 </div>
-              ) : null}
+
+                {project.stack.length ? (
+                  <div className="project-side">
+                    <span className="project-stack-label">Stack</span>
+                    <div className="project-stack" aria-label={`${project.title} technology stack`}>
+                      {project.stack.map((item) => (
+                        <span key={item}>{item}</span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
 
               <div className="project-actions">
                 {project.repoUrl ? (

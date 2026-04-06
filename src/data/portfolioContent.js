@@ -1,8 +1,8 @@
 export const navigationSections = [
   { id: 'about', label: 'Profile' },
   { id: 'experience', label: 'Experience' },
-  { id: 'skills', label: 'Toolkit' },
   { id: 'projects', label: 'Projects' },
+  { id: 'skills', label: 'Skills' },
   { id: 'education', label: 'Education' },
   { id: 'achievements', label: 'Achievements' }
 ];
@@ -52,7 +52,7 @@ export const workspacePanels = [
   },
   {
     id: 'toolkit',
-    label: 'Toolkit',
+    label: 'Skills',
     eyebrow: 'Capabilities',
     title: 'Skills, education, and recognition grouped as supporting depth.',
     description:

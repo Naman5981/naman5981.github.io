@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import About from './components/About';
 import Education from './components/Education';
@@ -9,7 +9,11 @@ import Achievements from './components/Achievements';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import SmartSearch from './components/SmartSearch';
 import PortfolioError from './components/PortfolioError';
-import { navigationSections, portfolioStats, workspacePanels } from './data/portfolioContent';
+import {
+  navigationSections,
+  portfolioStats,
+  workspacePanels
+} from './data/portfolioContent';
 import { trackPortfolioEvent } from './services/analytics';
 import { getProfile } from './services/portfolio';
 import './styles/App.css';
@@ -24,6 +28,13 @@ function App() {
     return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   });
   const [activeWorkspace, setActiveWorkspace] = useState('overview');
+  const [activePortfolioTab, setActivePortfolioTab] = useState('experience');
+  const [mountedPortfolioTabs, setMountedPortfolioTabs] = useState(() => ({ experience: true }));
+  const [outgoingPortfolioTab, setOutgoingPortfolioTab] = useState(null);
+  const [portfolioSlideDirection, setPortfolioSlideDirection] = useState('forward');
+  const [pendingPortfolioScrollSection, setPendingPortfolioScrollSection] = useState('');
+  const [isPortfolioSelectorOpen, setIsPortfolioSelectorOpen] = useState(false);
+  const [portfolioStageHeight, setPortfolioStageHeight] = useState(0);
   const [highlightedSection, setHighlightedSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [siteOwnerName, setSiteOwnerName] = useState('');
@@ -32,7 +43,14 @@ function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [revealedSections, setRevealedSections] = useState(() => ({ about: true }));
   const [isSmartSearchOpen, setIsSmartSearchOpen] = useState(false);
+  const [portfolioTabIndicator, setPortfolioTabIndicator] = useState({ width: 0, left: 0, top: 0, height: 0 });
   const headerRef = useRef(null);
+  const portfolioPanelRef = useRef(null);
+  const portfolioSelectorRef = useRef(null);
+  const portfolioTabsRef = useRef(null);
+  const portfolioTabButtonRefs = useRef({});
+  const portfolioPaneRefs = useRef({});
+  const portfolioTransitionTimeoutRef = useRef(null);
   const sectionMap = useMemo(
     () =>
       navigationSections.reduce((lookup, section) => {
@@ -46,6 +64,107 @@ function App() {
     () => workspacePanels.find((workspace) => workspace.id === activeWorkspace) ?? workspacePanels[0],
     [activeWorkspace]
   );
+
+  const smartSearchContext = useMemo(() => {
+    if (activeSection === 'about') {
+      return {
+        label: 'Ask about the portfolio',
+        context: 'Profile'
+      };
+    }
+
+    const sectionLabel = sectionMap[activeSection] || 'Portfolio';
+
+    return {
+      label: `Ask about ${sectionLabel}`,
+      context: sectionLabel
+    };
+  }, [activeSection, sectionMap]);
+
+  const portfolioTabs = useMemo(
+    () => [
+      {
+        id: 'experience',
+        label: 'Experience',
+        layout: 'wide',
+        component: Experience
+      },
+      {
+        id: 'projects',
+        label: 'Projects',
+        layout: 'wide',
+        component: Projects
+      },
+      {
+        id: 'skills',
+        label: 'Skills',
+        layout: 'compact',
+        component: Skills
+      },
+      {
+        id: 'education',
+        label: 'Education',
+        layout: 'compact',
+        component: Education
+      },
+      {
+        id: 'achievements',
+        label: 'Achievements',
+        layout: 'compact',
+        component: Achievements
+      },
+      {
+        id: 'visitor-signals',
+        label: 'Visitor Signals',
+        layout: 'compact',
+        component: AnalyticsDashboard
+      }
+    ],
+    []
+  );
+
+  const activePortfolioPanel =
+    portfolioTabs.find((tab) => tab.id === activePortfolioTab) ?? portfolioTabs[0];
+  const portfolioNarrative = useMemo(
+    () => ({
+      experience: {
+        kicker: 'Why Start Here',
+        body: 'The experience section establishes the kind of environments I have worked in: banking workflows, production systems, and backend ownership under real operational pressure.',
+        next: 'That context matters because the projects section shows how the same engineering judgment translates into concrete product and platform builds.'
+      },
+      projects: {
+        kicker: 'From Roles To Work',
+        body: 'Projects turn the career story into visible output, showing how I approach domain tools, product delivery, and backend-heavy implementation outside the resume timeline.',
+        next: 'From there, the supporting sections make the underlying depth easier to trust: the stack, the education, and the signals around what people actually explore.'
+      },
+      skills: {
+        kicker: 'What Supports The Work',
+        body: 'Skills is where the technical foundation becomes explicit, connecting the delivery work back to the languages, tools, and platform habits behind it.',
+        next: 'The next sections add context around how that foundation was built and what kinds of outcomes it has already supported.'
+      },
+      education: {
+        kicker: 'How The Foundation Was Built',
+        body: 'Education provides the grounding behind the implementation work, giving the technical background that supports the systems and product decisions elsewhere in the portfolio.',
+        next: 'That foundation becomes more convincing when it is followed by achievements and live visitor signals, which show both recognition and response.'
+      },
+      achievements: {
+        kicker: 'Signals Of Progress',
+        body: 'Achievements condense the strongest milestones into a faster trust layer, giving a quick read on the recognition and outcomes tied to the deeper work above.',
+        next: 'Visitor signals then close the loop by showing what other people actually open, revisit, and validate once they land here.'
+      },
+      'visitor-signals': {
+        kicker: 'Live Validation',
+        body: 'Visitor signals act as proof-of-interest, showing which sections and projects attract attention instead of asking the reader to infer what matters most.',
+        next: 'That makes the portfolio feel less like a static presentation and more like a living body of work with visible patterns of engagement.'
+      }
+    }),
+    []
+  );
+  const portfolioTabIds = useMemo(() => new Set(portfolioTabs.map((tab) => tab.id)), [portfolioTabs]);
+  const outgoingPortfolioPanel = outgoingPortfolioTab
+    ? portfolioTabs.find((tab) => tab.id === outgoingPortfolioTab) ?? null
+    : null;
+  const activePortfolioNarrative = portfolioNarrative[activePortfolioPanel.id];
 
   useEffect(() => {
     let isMounted = true;
@@ -76,6 +195,32 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
     window.localStorage.setItem('theme-preference', theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (!isPortfolioSelectorOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event) => {
+      if (!portfolioSelectorRef.current?.contains(event.target)) {
+        setIsPortfolioSelectorOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsPortfolioSelectorOpen(false);
+      }
+    };
+
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [isPortfolioSelectorOpen]);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -248,58 +393,203 @@ function App() {
     };
   }, []);
 
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      setRevealedSections((current) => ({ ...current, [sectionId]: true }));
+  useEffect(() => {
+    setRevealedSections((current) =>
+      current[activePortfolioTab] ? current : { ...current, [activePortfolioTab]: true }
+    );
+    setMountedPortfolioTabs((current) =>
+      current[activePortfolioTab] ? current : { ...current, [activePortfolioTab]: true }
+    );
+  }, [activePortfolioTab]);
 
-      setIsMobileMenuOpen(false);
-      setActiveSection(sectionId);
-      const header = document.querySelector('.site-header');
-      const headerStyles = header ? window.getComputedStyle(header) : null;
-      const isPinnedHeader = headerStyles
-        ? headerStyles.position === 'sticky' || headerStyles.position === 'fixed'
-        : false;
-      const headerHeight = header && isPinnedHeader ? header.getBoundingClientRect().height : 0;
-      const extraOffset = 24;
-      const targetPosition =
-        section.getBoundingClientRect().top + window.scrollY - headerHeight - extraOffset;
-      const finalTop = Math.max(targetPosition, 0);
+  useEffect(() => {
+    return () => {
+      if (portfolioTransitionTimeoutRef.current) {
+        window.clearTimeout(portfolioTransitionTimeoutRef.current);
+      }
+    };
+  }, []);
 
-      setHighlightedSection('');
-      window.scrollTo({
-        top: finalTop,
-        behavior: 'smooth'
-      });
-
-      let attempts = 0;
-      const maxAttempts = 40;
-      const triggerHighlight = () => {
-        setHighlightedSection(sectionId);
-        window.setTimeout(() => {
-          setHighlightedSection((current) => (current === sectionId ? '' : current));
-        }, 850);
-      };
-
-      const waitForArrival = () => {
-        const distance = Math.abs(window.scrollY - finalTop);
-        attempts += 1;
-
-        if (distance <= 8 || attempts >= maxAttempts) {
-          triggerHighlight();
-          return;
-        }
-
-        window.setTimeout(waitForArrival, 40);
-      };
-
-      window.setTimeout(waitForArrival, 120);
+  useEffect(() => {
+    if (!pendingPortfolioScrollSection || activePortfolioTab !== pendingPortfolioScrollSection) {
+      return undefined;
     }
-  };
+
+    const timeoutId = window.setTimeout(() => {
+      const panel = portfolioPanelRef.current;
+
+      if (panel) {
+        setOutgoingPortfolioTab(null);
+        scrollElementIntoView(panel, pendingPortfolioScrollSection);
+      }
+
+      setPendingPortfolioScrollSection('');
+    }, 80);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [activePortfolioTab, pendingPortfolioScrollSection]);
+
+  useLayoutEffect(() => {
+    const tabRow = portfolioTabsRef.current;
+    const activeButton = portfolioTabButtonRefs.current[activePortfolioTab];
+
+    if (!tabRow || !activeButton) {
+      return undefined;
+    }
+
+    const updateIndicator = () => {
+      const rowRect = tabRow.getBoundingClientRect();
+      const buttonRect = activeButton.getBoundingClientRect();
+
+      setPortfolioTabIndicator({
+        width: buttonRect.width,
+        left: buttonRect.left - rowRect.left,
+        top: buttonRect.top - rowRect.top,
+        height: buttonRect.height
+      });
+    };
+
+    updateIndicator();
+    window.addEventListener('resize', updateIndicator);
+
+    return () => {
+      window.removeEventListener('resize', updateIndicator);
+    };
+  }, [activePortfolioTab, portfolioTabs]);
+
+  useLayoutEffect(() => {
+    const activePane = portfolioPaneRefs.current[activePortfolioTab];
+    const outgoingPane = outgoingPortfolioTab ? portfolioPaneRefs.current[outgoingPortfolioTab] : null;
+
+    const updateStageHeight = () => {
+      const nextHeight = Math.max(
+        activePane?.offsetHeight ?? 0,
+        outgoingPane?.offsetHeight ?? 0
+      );
+
+      if (nextHeight > 0) {
+        setPortfolioStageHeight(nextHeight);
+      }
+    };
+
+    updateStageHeight();
+    window.addEventListener('resize', updateStageHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateStageHeight);
+    };
+  }, [activePortfolioTab, outgoingPortfolioTab, mountedPortfolioTabs]);
+
+  useEffect(() => {
+    if (!portfolioPanelRef.current) {
+      return;
+    }
+
+    portfolioPanelRef.current.classList.add('is-visible');
+  }, [activePortfolioTab]);
 
   if (hasPortfolioError) {
     return <PortfolioError />;
   }
+
+  const startPortfolioTabTransition = (nextTabId) => {
+    if (nextTabId === activePortfolioTab) {
+      return;
+    }
+
+    const currentIndex = portfolioTabs.findIndex((tab) => tab.id === activePortfolioTab);
+    const nextIndex = portfolioTabs.findIndex((tab) => tab.id === nextTabId);
+
+    setPortfolioSlideDirection(nextIndex > currentIndex ? 'forward' : 'backward');
+    setOutgoingPortfolioTab(activePortfolioTab);
+    setMountedPortfolioTabs((current) =>
+      current[nextTabId] ? current : { ...current, [nextTabId]: true }
+    );
+    setActivePortfolioTab(nextTabId);
+
+    if (portfolioTransitionTimeoutRef.current) {
+      window.clearTimeout(portfolioTransitionTimeoutRef.current);
+    }
+
+    portfolioTransitionTimeoutRef.current = window.setTimeout(() => {
+      setOutgoingPortfolioTab(null);
+    }, 420);
+    setIsPortfolioSelectorOpen(false);
+  };
+
+  const scrollElementIntoView = (element, sectionId) => {
+    setRevealedSections((current) => ({ ...current, [sectionId]: true }));
+    element.classList.add('is-visible');
+    setIsMobileMenuOpen(false);
+    setActiveSection(sectionId);
+
+    const header = document.querySelector('.site-header');
+    const headerStyles = header ? window.getComputedStyle(header) : null;
+    const isPinnedHeader = headerStyles
+      ? headerStyles.position === 'sticky' || headerStyles.position === 'fixed'
+      : false;
+    const headerHeight = header && isPinnedHeader ? header.getBoundingClientRect().height : 0;
+    const extraOffset = 24;
+    const targetPosition =
+      element.getBoundingClientRect().top + window.scrollY - headerHeight - extraOffset;
+    const finalTop = Math.max(targetPosition, 0);
+
+    setHighlightedSection('');
+    window.scrollTo({
+      top: finalTop,
+      behavior: 'smooth'
+    });
+
+    let attempts = 0;
+    const maxAttempts = 40;
+    const triggerHighlight = () => {
+      setHighlightedSection(sectionId);
+      window.setTimeout(() => {
+        setHighlightedSection((current) => (current === sectionId ? '' : current));
+      }, 850);
+    };
+
+    const waitForArrival = () => {
+      const distance = Math.abs(window.scrollY - finalTop);
+      attempts += 1;
+
+      if (distance <= 8 || attempts >= maxAttempts) {
+        triggerHighlight();
+        return;
+      }
+
+      window.setTimeout(waitForArrival, 40);
+    };
+
+    window.setTimeout(waitForArrival, 120);
+  };
+
+  const scrollToSection = (sectionId) => {
+    if (portfolioTabIds.has(sectionId)) {
+      if (activePortfolioTab !== sectionId) {
+        setPendingPortfolioScrollSection(sectionId);
+        startPortfolioTabTransition(sectionId);
+        return;
+      }
+
+      if (portfolioPanelRef.current) {
+        scrollElementIntoView(portfolioPanelRef.current, sectionId);
+      }
+
+      return;
+    }
+
+    const section = document.getElementById(sectionId);
+    if (section) {
+      scrollElementIntoView(section, sectionId);
+    }
+  };
+
+  const handlePortfolioTabChange = (nextTabId) => {
+    startPortfolioTabTransition(nextTabId);
+  };
 
   return (
     <div className="site-shell">
@@ -440,65 +730,152 @@ function App() {
           </div>
         </section>
 
-        <div className="content-grid">
-          <div className="primary-column">
-            <section
-              id="experience"
-              className={`module-card ${
-                highlightedSection === 'experience' ? 'section-flash' : ''
-              } ${revealedSections.experience ? 'is-visible' : ''}`}
-              data-reveal
-            >
-              <Experience />
-            </section>
-
-            <section
-              id="projects"
-              className={`module-card ${
-                highlightedSection === 'projects' ? 'section-flash' : ''
-              } ${revealedSections.projects ? 'is-visible' : ''}`}
-              data-reveal
-            >
-              <Projects />
-            </section>
+        <section className="portfolio-tabs-shell" data-reveal>
+          <div className="portfolio-section-bridge" aria-hidden="true">
+            <span />
           </div>
 
-          <aside className="secondary-column">
-            <section className="module-card compact-card is-visible" data-reveal>
-              <AnalyticsDashboard />
-            </section>
+          <div className="portfolio-tabs-header">
+            <div>
+              <span className="eyebrow">Core Portfolio</span>
+              <h2>Review the work, technical depth, and signals that shape the overall engineering story.</h2>
+            </div>
 
-            <section
-              id="skills"
-              className={`module-card compact-card ${
-                highlightedSection === 'skills' ? 'section-flash' : ''
-              } ${revealedSections.skills ? 'is-visible' : ''}`}
-              data-reveal
+            <div
+              ref={portfolioTabsRef}
+              className="portfolio-tabs-row"
+              role="tablist"
+              aria-label="Portfolio sections"
             >
-              <Skills />
-            </section>
+              <span
+                className="portfolio-tabs-indicator"
+                aria-hidden="true"
+                style={{
+                  width: `${portfolioTabIndicator.width}px`,
+                  height: `${portfolioTabIndicator.height}px`,
+                  transform: `translate(${portfolioTabIndicator.left}px, ${portfolioTabIndicator.top}px)`
+                }}
+              />
+              {portfolioTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  ref={(node) => {
+                    if (node) {
+                      portfolioTabButtonRefs.current[tab.id] = node;
+                    }
+                  }}
+                  aria-selected={activePortfolioPanel.id === tab.id}
+                  className={activePortfolioPanel.id === tab.id ? 'active' : ''}
+                  onClick={() => handlePortfolioTabChange(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-            <section
-              id="education"
-              className={`module-card compact-card ${
-                highlightedSection === 'education' ? 'section-flash' : ''
-              } ${revealedSections.education ? 'is-visible' : ''}`}
-              data-reveal
-            >
-              <Education />
-            </section>
+            <div ref={portfolioSelectorRef} className="portfolio-selector">
+              <div className="portfolio-selector-meta">
+                <p>Choose a section to view.</p>
+              </div>
 
-            <section
-              id="achievements"
-              className={`module-card compact-card ${
-                highlightedSection === 'achievements' ? 'section-flash' : ''
-              } ${revealedSections.achievements ? 'is-visible' : ''}`}
-              data-reveal
+              <button
+                type="button"
+                className={`portfolio-selector-trigger ${isPortfolioSelectorOpen ? 'open' : ''}`}
+                aria-expanded={isPortfolioSelectorOpen}
+                aria-haspopup="listbox"
+                onClick={() => setIsPortfolioSelectorOpen((current) => !current)}
+              >
+                <span className="portfolio-selector-kicker">Viewing</span>
+                <strong>{activePortfolioPanel.label}</strong>
+                <span className="portfolio-selector-icon" aria-hidden="true">
+                  <span />
+                  <span />
+                </span>
+              </button>
+
+              <div className={`portfolio-selector-sheet ${isPortfolioSelectorOpen ? 'open' : ''}`}>
+                <div className="portfolio-selector-list" role="listbox" aria-label="Portfolio sections">
+                  {portfolioTabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      role="option"
+                      aria-selected={activePortfolioPanel.id === tab.id}
+                      className={activePortfolioPanel.id === tab.id ? 'active' : ''}
+                      onClick={() => handlePortfolioTabChange(tab.id)}
+                    >
+                      <span>{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <article className="portfolio-narrative-strip" data-reveal>
+            <span className="portfolio-narrative-kicker">{activePortfolioNarrative.kicker}</span>
+            <p>{activePortfolioNarrative.body}</p>
+            <p className="portfolio-narrative-next">{activePortfolioNarrative.next}</p>
+          </article>
+
+          <section
+            ref={portfolioPanelRef}
+            id={
+              activePortfolioPanel.id === 'visitor-signals'
+                ? 'visitor-signals'
+                : activePortfolioPanel.id
+            }
+            className={`module-card portfolio-tab-panel portfolio-tab-panel-${activePortfolioPanel.layout} ${
+              highlightedSection === activePortfolioPanel.id ? 'section-flash' : ''
+            } ${revealedSections[activePortfolioPanel.id] ? 'is-visible' : ''}`}
+            data-reveal
+          >
+            <div
+              className={`portfolio-tab-stage portfolio-tab-stage-${activePortfolioPanel.layout}`}
+              style={portfolioStageHeight ? { minHeight: `${portfolioStageHeight}px` } : undefined}
             >
-              <Achievements />
-            </section>
-          </aside>
-        </div>
+              {portfolioTabs.map((tab) => {
+                if (!mountedPortfolioTabs[tab.id]) {
+                  return null;
+                }
+
+                const isActive = tab.id === activePortfolioTab;
+                const isOutgoing = tab.id === outgoingPortfolioTab;
+                const paneClassName = [
+                  'portfolio-tab-slide',
+                  `portfolio-tab-slide-${tab.layout}`,
+                  isActive && outgoingPortfolioPanel
+                    ? `portfolio-tab-slide-in portfolio-tab-slide-${portfolioSlideDirection}`
+                    : '',
+                  isActive && !outgoingPortfolioPanel ? 'portfolio-tab-slide-static' : '',
+                  isOutgoing
+                    ? `portfolio-tab-slide-out portfolio-tab-slide-${portfolioSlideDirection}`
+                    : '',
+                  !isActive && !isOutgoing ? 'portfolio-tab-slide-hidden' : ''
+                ]
+                  .filter(Boolean)
+                  .join(' ');
+
+                return (
+                  <div
+                    key={tab.id}
+                    ref={(node) => {
+                      if (node) {
+                        portfolioPaneRefs.current[tab.id] = node;
+                      }
+                    }}
+                    className={paneClassName}
+                    aria-hidden={!isActive}
+                  >
+                    <tab.component />
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </section>
       </main>
 
         <button
@@ -521,12 +898,16 @@ function App() {
             )}
           </span>
           <span className="smart-search-launcher-label">{isSmartSearchOpen ? 'Close' : 'AI Search'}</span>
+          {!isSmartSearchOpen ? (
+            <span className="smart-search-launcher-context">{smartSearchContext.label}</span>
+          ) : null}
         </button>
 
       <SmartSearch
         isOpen={isSmartSearchOpen}
         onClose={() => setIsSmartSearchOpen(false)}
         onNavigate={scrollToSection}
+        activeContext={smartSearchContext.context}
       />
 
       <SpeedInsights />

@@ -1,19 +1,19 @@
 @import './colors.css';
 
 .education-container {
-  padding: 24px;
-  border-radius: 20px;
+  padding: var(--card-padding-lg);
+  border-radius: var(--card-radius-md);
 }
 
 .education-container h2 {
-  color: var(--highlight-text-color);
+  color: var(--primary-text-color);
   margin-bottom: 20px;
 }
 
 .education-block {
   margin-bottom: 18px;
-  padding: 16px 18px;
-  border-radius: 16px;
+  padding: var(--card-padding-md);
+  border-radius: var(--card-radius-md);
   background: var(--card-background-softer);
   border: 1px solid var(--soft-border-color);
   transition:
@@ -23,22 +23,54 @@
 }
 
 .education-block:hover {
-  border-color: rgba(100, 255, 218, 0.18);
-  box-shadow: 0 18px 30px var(--box-shadow-color);
+  border-color: var(--accent-border-soft);
+  box-shadow: 0 20px 34px var(--box-shadow-color);
   background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
 }
 
 .education-block h3 {
   color: var(--primary-text-color);
   font-weight: bold;
+  margin: 0 0 8px;
+  line-height: 1.12;
 }
 
 .education-block p {
   color: var(--secondary-text-color);
   margin: 5px 0;
+  line-height: 1.72;
+  max-width: 56ch;
 }
 
 .duration {
   font-style: italic;
   color: var(--secondary-text-color);
+  font-family: var(--font-meta);
+  font-size: var(--type-meta-size);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 560px) {
+  .education-container {
+    padding: 14px;
+  }
+
+  .education-container h2 {
+    margin-bottom: 14px;
+  }
+
+  .education-block {
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .education-block h3 {
+    font-size: 1rem;
+  }
+
+  .education-block p {
+    line-height: 1.58;
+  }
 }

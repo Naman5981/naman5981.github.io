@@ -12,11 +12,12 @@
 
 .smart-search-shell {
   position: fixed;
-  right: 24px;
-  bottom: 94px;
+  right: max(16px, calc((100vw - 1380px) / 2 + 18px));
+  bottom: 88px;
   top: auto;
   left: auto;
   transform: translateY(18px) scale(0.92);
+  filter: blur(12px);
   transform-origin: bottom right;
   z-index: 27;
   width: min(430px, calc(100vw - 32px));
@@ -32,8 +33,9 @@
   opacity: 0;
   pointer-events: none;
   transition:
-    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.28s ease;
+    transform var(--motion-duration-panel) var(--motion-ease-standard),
+    opacity var(--motion-duration-panel) ease,
+    filter var(--motion-duration-panel) var(--motion-ease-standard);
   overflow: hidden;
   overflow-x: clip;
   overscroll-behavior: contain;
@@ -54,6 +56,7 @@
 .smart-search-shell.open {
   transform: translateY(0) scale(1);
   opacity: 1;
+  filter: blur(0);
   pointer-events: auto;
 }
 
@@ -69,9 +72,9 @@
   cursor: pointer;
   pointer-events: none;
   transition:
-    opacity 0.28s ease,
-    backdrop-filter 0.32s ease,
-    -webkit-backdrop-filter 0.32s ease;
+    opacity var(--motion-duration-panel) ease,
+    backdrop-filter var(--motion-duration-panel) var(--motion-ease-standard),
+    -webkit-backdrop-filter var(--motion-duration-panel) var(--motion-ease-standard);
   will-change: opacity, backdrop-filter;
 }
 
@@ -88,52 +91,52 @@
   color: var(--button-text-color);
   cursor: pointer;
   transition:
-    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    min-width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    padding 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    gap 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transform var(--motion-duration-panel) var(--motion-ease-standard),
+    border-color var(--motion-duration-emphasis) ease,
+    box-shadow var(--motion-duration-emphasis) ease,
+    width var(--motion-duration-panel) var(--motion-ease-standard),
+    min-width var(--motion-duration-panel) var(--motion-ease-standard),
+    padding var(--motion-duration-panel) var(--motion-ease-standard),
+    gap var(--motion-duration-panel) var(--motion-ease-standard);
 }
 
 .smart-search-launcher:hover {
-  transform: translateY(-2px);
-  border-color: var(--button-border-hover-color);
-  box-shadow: 0 14px 28px var(--box-shadow-color);
+  transform: translateY(-1px);
+  border-color: var(--accent-border-soft);
+  box-shadow: 0 12px 22px var(--box-shadow-color);
 }
 
 .smart-search-launcher {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  right: max(16px, calc((100vw - 1380px) / 2 + 18px));
+  bottom: 18px;
   z-index: 28;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  min-width: 162px;
-  min-height: 58px;
-  padding: 0 18px 0 12px;
+  gap: 10px;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 14px 0 10px;
   border-radius: 999px;
   font-weight: 600;
   letter-spacing: 0.02em;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.01)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01)),
     var(--glass-panel-background-strong);
   border-color: var(--glass-border-color);
   box-shadow:
-    0 18px 36px var(--box-shadow-color),
+    0 14px 24px var(--box-shadow-color),
     inset 0 1px 0 var(--glass-top-highlight),
-    0 0 0 1px rgba(100, 255, 218, 0.06);
+    0 0 0 1px rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(18px) saturate(1.18);
   -webkit-backdrop-filter: blur(18px) saturate(1.18);
 }
 
 .smart-search-launcher-mark {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   flex: 0 0 auto;
   display: inline-flex;
@@ -141,16 +144,16 @@
   justify-content: center;
   background:
     radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent 38%),
-    linear-gradient(135deg, rgba(100, 255, 218, 0.22), rgba(110, 178, 255, 0.16));
-  border: 1px solid rgba(100, 255, 218, 0.16);
+    linear-gradient(135deg, rgba(84, 216, 191, 0.14), rgba(110, 178, 255, 0.12));
+  border: 1px solid var(--accent-border-soft);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 8px 18px rgba(8, 18, 34, 0.24);
+    0 6px 14px rgba(8, 18, 34, 0.16);
   transition:
-    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
+    transform var(--motion-duration-panel) var(--motion-ease-standard),
+    background var(--motion-duration-panel) ease,
+    border-color var(--motion-duration-panel) ease,
+    box-shadow var(--motion-duration-panel) ease;
 }
 
 .smart-search-launcher-mark svg {
@@ -158,7 +161,9 @@
   height: 16px;
   fill: var(--primary-text-color);
   opacity: 0.92;
-  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity var(--motion-duration-emphasis) ease,
+    transform var(--motion-duration-panel) var(--motion-ease-standard);
 }
 
 .smart-search-launcher-mark span {
@@ -173,14 +178,16 @@
   padding: 0 4px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--module-background) 82%, white 18%);
-  border: 1px solid rgba(100, 255, 218, 0.2);
-  color: var(--highlight-text-color);
+  border: 1px solid var(--accent-border-soft);
+  color: var(--accent-text-subtle);
   font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   line-height: 1;
   box-shadow: 0 8px 14px rgba(8, 18, 34, 0.16);
-  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity var(--motion-duration-emphasis) ease,
+    transform var(--motion-duration-panel) var(--motion-ease-standard);
 }
 
 .smart-search-launcher-close-glyph {
@@ -200,13 +207,22 @@
 }
 
 .smart-search-launcher-label {
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   color: var(--primary-text-color);
   white-space: nowrap;
   transition:
-    opacity 0.2s ease,
-    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    max-width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity var(--motion-duration-emphasis) ease,
+    transform var(--motion-duration-panel) var(--motion-ease-standard),
+    max-width var(--motion-duration-panel) var(--motion-ease-standard);
+}
+
+.smart-search-launcher-context {
+  color: var(--secondary-text-color);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  max-width: 20ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .smart-search-launcher.open {
@@ -215,7 +231,8 @@
   gap: 0;
 }
 
-.smart-search-launcher.open .smart-search-launcher-label {
+.smart-search-launcher.open .smart-search-launcher-label,
+.smart-search-launcher.open .smart-search-launcher-context {
   opacity: 0;
   max-width: 0;
   overflow: hidden;
@@ -248,10 +265,16 @@
 
 .smart-search-header h2 {
   font-size: clamp(1.3rem, 2vw, 1.8rem);
-  max-width: 11ch;
+  max-width: 16ch;
   line-height: 1.05;
   letter-spacing: -0.03em;
-  color: var(--highlight-text-color);
+  color: var(--primary-text-color);
+}
+
+.smart-search-header p {
+  color: var(--secondary-text-color);
+  line-height: 1.6;
+  max-width: 34ch;
 }
 
 .smart-search-empty p,
@@ -423,7 +446,10 @@
   background: var(--glass-button-background-strong);
   color: var(--button-text-color);
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
+    border-color var(--motion-duration-emphasis) ease,
+    box-shadow var(--motion-duration-emphasis) ease;
 }
 
 .smart-search-send:hover {
@@ -440,7 +466,7 @@
 }
 
 .smart-search-input-shell.trace-active::before {
-  animation: smart-search-border-trace 3s linear forwards;
+  opacity: 0.72;
 }
 
 .smart-search-prompt-row {
@@ -456,6 +482,16 @@
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
   scrollbar-gutter: stable;
+  transition:
+    opacity var(--motion-duration-emphasis) ease,
+    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
+    filter var(--motion-duration-emphasis) var(--motion-ease-emphasis);
+}
+
+.smart-search-prompt-row.is-swapping {
+  opacity: 0.28;
+  transform: translateY(4px);
+  filter: blur(6px);
 }
 
 .smart-search-prompt-row button,
@@ -508,11 +544,13 @@
   flex-direction: column;
   gap: 12px;
   transition:
-    border-color 0.24s ease,
-    box-shadow 0.24s ease;
+    border-color var(--motion-duration-emphasis) ease,
+    box-shadow var(--motion-duration-emphasis) ease,
+    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis);
 }
 
 .smart-result-card:hover {
+  transform: translateY(-2px);
   border-color: rgba(100, 255, 218, 0.18);
   box-shadow:
     0 18px 34px var(--box-shadow-color),
@@ -610,6 +648,87 @@
   white-space: pre-line;
 }
 
+.smart-guided-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.smart-guided-label {
+  color: var(--secondary-text-color);
+  font-size: var(--type-meta-size);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-meta);
+  font-weight: 500;
+}
+
+.smart-guided-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.smart-guided-chip,
+.smart-guided-project {
+  border: 1px solid var(--module-border-color);
+  background: var(--glass-chip-background);
+  color: var(--primary-text-color);
+  cursor: pointer;
+  transition:
+    border-color var(--motion-duration-emphasis) ease,
+    box-shadow var(--motion-duration-emphasis) ease,
+    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis);
+}
+
+.smart-guided-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 11px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  line-height: 1.2;
+}
+
+.smart-guided-projects {
+  display: grid;
+  gap: 10px;
+}
+
+.smart-guided-project {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  text-align: left;
+}
+
+.smart-guided-project strong,
+.smart-guided-project span {
+  margin: 0;
+}
+
+.smart-guided-project strong {
+  font-size: 0.96rem;
+  line-height: 1.25;
+}
+
+.smart-guided-project span {
+  color: var(--secondary-text-color);
+  line-height: 1.5;
+}
+
+.smart-guided-chip:hover,
+.smart-guided-project:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-border-soft);
+  box-shadow: 0 10px 18px var(--box-shadow-color);
+}
+
 .smart-response-loading {
   display: flex;
   justify-content: flex-start;
@@ -682,7 +801,10 @@
   background: var(--glass-chip-background);
   color: var(--primary-text-color);
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color var(--motion-duration-emphasis) ease,
+    box-shadow var(--motion-duration-emphasis) ease,
+    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis);
 }
 
 .smart-chat-result:hover {
@@ -824,27 +946,6 @@
   animation-delay: 0.32s;
 }
 
-@keyframes smart-search-border-trace {
-  0% {
-    opacity: 0;
-    transform: rotate(0turn);
-  }
-
-  10% {
-    opacity: 1;
-  }
-
-  78% {
-    opacity: 1;
-    transform: rotate(1turn);
-  }
-
-  100% {
-    opacity: 0;
-    transform: rotate(1.18turn);
-  }
-}
-
 @keyframes smart-chat-dot {
   0%,
   100% {
@@ -862,7 +963,7 @@
 @media (max-width: 900px) {
   .smart-search-shell {
     right: 18px;
-    bottom: 88px;
+    bottom: 82px;
     width: min(400px, calc(100vw - 24px));
   }
 
@@ -885,18 +986,44 @@
 
   .smart-search-launcher {
     right: 14px;
-    bottom: 14px;
+    bottom: 12px;
     left: auto;
-    width: 58px;
-    min-width: 58px;
-    min-height: 58px;
-    padding: 0;
-    border-radius: 50%;
-    gap: 0;
+    width: auto;
+    min-width: 76px;
+    min-height: 54px;
+    padding: 0 14px 0 10px;
+    border-radius: 999px;
+    gap: 10px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02)),
+      var(--glass-panel-background-strong);
+    border-color: var(--accent-border-soft);
+    box-shadow:
+      0 14px 26px var(--box-shadow-color),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+
+  .smart-search-launcher-mark {
+    width: 32px;
+    height: 32px;
   }
 
   .smart-search-launcher-label {
+    display: inline-flex;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .smart-search-launcher-context {
     display: none;
+  }
+
+  .smart-search-launcher.open {
+    min-width: 54px;
+    width: 54px;
+    padding: 0;
+    gap: 0;
   }
 
   .smart-search-shell {
@@ -953,6 +1080,11 @@
   .smart-search-header {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .smart-guided-project {
+    padding: 10px;
+    border-radius: 12px;
   }
 
 }

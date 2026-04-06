@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import DownloadButton from './DownloadButton';
 import { getProfile } from '../services/portfolio';
+import { getAnalyticsSummary } from '../services/analytics';
 
 const iconMap = {
   github: faGithub,
@@ -15,6 +16,7 @@ const About = () => {
   const [hasError, setHasError] = useState(false);
   const [issuesSolvedCount, setIssuesSolvedCount] = useState(0);
   const [copiedField, setCopiedField] = useState('');
+  const [credibilitySignal, setCredibilitySignal] = useState('Live portfolio engagement');
 
   useEffect(() => {
     let isMounted = true;
@@ -35,6 +37,39 @@ const About = () => {
     };
 
     loadProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCredibilitySignal = async () => {
+      try {
+        const summary = await getAnalyticsSummary();
+
+        if (!isMounted) {
+          return;
+        }
+
+        const topProject = summary.topProjects?.[0];
+
+        if (topProject?.target_label) {
+          setCredibilitySignal(`${topProject.target_label} drawing repeat attention`);
+          return;
+        }
+
+        if ((summary.resumeDownloads ?? 0) > 0) {
+          setCredibilitySignal(`${summary.resumeDownloads} resume pulls from portfolio visitors`);
+        }
+      } catch (error) {
+        console.error('Failed to load credibility signal.', error);
+      }
+    };
+
+    loadCredibilitySignal();
 
     return () => {
       isMounted = false;
@@ -75,6 +110,16 @@ const About = () => {
           icon: iconMap[link.platform]
         })),
     [profile]
+  );
+
+  const credibilityItems = useMemo(
+    () => [
+      profile?.yearsExperienceLabel ? `${profile.yearsExperienceLabel} backend systems` : 'Backend systems experience',
+      'Fintech + platform work',
+      'Production support ownership',
+      credibilitySignal
+    ],
+    [credibilitySignal, profile?.yearsExperienceLabel]
   );
 
   const handleCopy = async (label, value) => {
@@ -148,9 +193,18 @@ const About = () => {
             Currently open to backend engineering roles, platform work, and high-ownership product teams
           </div>
 
-          <h1>{profile.fullName}</h1>
-          <h2>{profile.headline}</h2>
-          <p>{profile.bio}</p>
+          <div className="about-credibility-strip" aria-label="Credibility highlights">
+            {credibilityItems.map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </div>
+
+          <div className="about-copy">
+            <span className="about-kicker">Backend engineer</span>
+            <h1>{profile.fullName}</h1>
+            <h2>{profile.headline}</h2>
+            <p>{profile.bio}</p>
+          </div>
 
           <div className="about-stats">
             <div className="about-stat">
@@ -171,26 +225,28 @@ const About = () => {
             </div>
           </div>
 
-          <div className="about-actions">
-            <a className="primary-action" href={profile.email ? `mailto:${profile.email}` : '#'}>
-              Get In Touch
-            </a>
-            <DownloadButton href={profile.resumePath} />
-          </div>
-
-          <div className="social-icons">
-            {socialLinks.map((link) => (
-              <a
-                key={link.platform}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="icon-link"
-                aria-label={link.label ?? link.platform}
-              >
-                <FontAwesomeIcon icon={link.icon} size="2x" />
+          <div className="about-action-row">
+            <div className="about-actions">
+              <a className="primary-action" href={profile.email ? `mailto:${profile.email}` : '#'}>
+                Get In Touch
               </a>
-            ))}
+              <DownloadButton href={profile.resumePath} />
+            </div>
+
+            <div className="social-icons">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.platform}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="icon-link"
+                  aria-label={link.label ?? link.platform}
+                >
+                  <FontAwesomeIcon icon={link.icon} size="2x" />
+                </a>
+              ))}
+            </div>
           </div>
 
           <div className="about-contact-strip">

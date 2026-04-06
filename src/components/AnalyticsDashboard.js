@@ -86,33 +86,83 @@ const AnalyticsDashboard = () => {
     (total, item) => total + Number(item.total_events ?? 0),
     0
   );
+  const topSection = summary.topSections[0];
+  const topProject = summary.topProjects[0];
+  const recentExploration = summary.recentExploration ?? [];
+  const weeklyTopProject = summary.weeklyTopProject;
 
   return (
     <section className="analytics-dashboard">
       <div className="analytics-header">
-        <span className="eyebrow">Visitor Signals</span>
-        <h2>Top viewed content</h2>
-        <p>Live summary of what visitors are exploring most on the portfolio.</p>
+        <span className="eyebrow">Live proof</span>
+        <h2>What visitors are validating right now</h2>
+        <p>Real activity from the portfolio that shows where attention gathers first and what keeps getting opened.</p>
+      </div>
+
+      <article className="analytics-proof-banner">
+        <div className="analytics-proof-kicker">
+          <span className="analytics-live-dot" aria-hidden="true" />
+          <span>Live visitor snapshot</span>
+        </div>
+        <p>
+          {topSection
+            ? `${topSection.target_label} is currently getting the strongest section attention`
+            : 'Section activity will start shaping the story as visitors explore the portfolio'}
+          {topProject ? `, while ${topProject.target_label} is the project drawing the most repeat interest.` : '.'}
+        </p>
+      </article>
+
+      <div className="analytics-context-grid">
+        <article className="analytics-context-card">
+          <span>Recently explored</span>
+          {recentExploration.length ? (
+            <div className="analytics-context-tags">
+              {recentExploration.map((item) => (
+                <span key={`${item.type}:${item.label}`}>{item.label}</span>
+              ))}
+            </div>
+          ) : (
+            <p className="analytics-empty-copy">Fresh exploration patterns will appear here.</p>
+          )}
+        </article>
+
+        <article className="analytics-context-card">
+          <span>Most opened this week</span>
+          <strong>{weeklyTopProject?.target_label ?? 'Waiting for weekly signal'}</strong>
+          <p className="analytics-context-note">
+            {weeklyTopProject
+              ? `${weeklyTopProject.total_events} project opens in the past 7 days`
+              : 'Weekly project attention will show once new visits come in.'}
+          </p>
+        </article>
+
+        <article className="analytics-context-card">
+          <span>Resume follow-through</span>
+          <strong>{summary.resumeFollowThrough}</strong>
+          <p className="analytics-context-note">
+            Sessions that opened a project and then continued to the resume.
+          </p>
+        </article>
       </div>
 
       <div className="analytics-stat-grid">
         <article className="analytics-stat-card">
-          <span>Section views</span>
+          <span>Sections opened</span>
           <strong>{sectionViews}</strong>
         </article>
         <article className="analytics-stat-card">
-          <span>Project views</span>
+          <span>Project attention</span>
           <strong>{projectViews}</strong>
         </article>
         <article className="analytics-stat-card">
-          <span>Resume downloads</span>
+          <span>Resume pulls</span>
           <strong>{summary.resumeDownloads}</strong>
         </article>
       </div>
 
       <div className="analytics-list-grid">
         <div className="analytics-list-card">
-          <h3>Top Sections</h3>
+          <h3>What visitors open first</h3>
           {summary.topSections.length ? (
             <ol>
               {summary.topSections.map((item) => (
@@ -128,7 +178,7 @@ const AnalyticsDashboard = () => {
         </div>
 
         <div className="analytics-list-card">
-          <h3>Top Projects</h3>
+          <h3>What keeps attention longest</h3>
           {summary.topProjects.length ? (
             <ol>
               {summary.topProjects.map((item) => (

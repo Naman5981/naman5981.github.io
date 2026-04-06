@@ -49,7 +49,7 @@ Key folders:
 
 - `src/components`: Portfolio sections such as About, Experience, Education, Skills, and Projects
 - `src/styles`: Section-specific CSS files and shared color tokens
-- `src/assets`: Static assets such as the profile image and resume PDF
+- `src/assets`: Reserved for app-bundled assets if needed in future
 - `public`: Static files used by the app shell, favicon, and manifest
 
 ## Getting Started
@@ -98,7 +98,7 @@ If you want to reuse or update this portfolio, these are the main places to edit
 - Education: `src/components/Education.js`
 - Skills: `src/components/Skills.js`
 - Projects: `src/components/Projects.js`
-- Resume file: `src/assets/Naman_Sanadhya_Resume.pdf`
+- Resume file: `public/Naman_Sanadhya_Resume.pdf` or the Supabase-hosted path returned by the profile record
 - Theme colors: `src/styles/colors.css`
 - Overall layout: `src/styles/App.css`
 

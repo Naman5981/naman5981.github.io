@@ -1,7 +1,7 @@
 @import './colors.css';
 
 .projects {
-  padding: 24px;
+  padding: var(--card-padding-lg);
 }
 
 .projects-header {
@@ -13,14 +13,15 @@
 
 .projects-header h2 {
   margin: 0;
-  color: var(--highlight-text-color);
+  color: var(--primary-text-color);
 }
 
 .projects-header p {
   margin: 0;
-  max-width: 720px;
+  max-width: var(--type-copy-measure);
   color: var(--secondary-text-color);
-  line-height: 1.65;
+  line-height: 1.74;
+  font-size: 1.02rem;
 }
 
 .projects-skeleton .project-grid {
@@ -39,19 +40,45 @@
   flex-direction: column;
   gap: 18px;
   min-height: 100%;
-  padding: 22px;
-  border-radius: 22px;
+  padding: var(--card-padding-lg);
+  border-radius: var(--card-radius-lg);
   background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
   border: 1px solid var(--soft-border-color);
   box-shadow: 0 18px 34px var(--box-shadow-color);
   transition:
     border-color 0.28s ease,
-    box-shadow 0.28s ease;
+    box-shadow 0.28s ease,
+    transform 0.28s ease;
 }
 
 .project:hover {
-  border-color: rgba(100, 255, 218, 0.16);
-  box-shadow: 0 20px 38px var(--box-shadow-color);
+  border-color: var(--accent-border-soft);
+  box-shadow: 0 22px 40px var(--box-shadow-color);
+  transform: translateY(-2px);
+}
+
+.project-featured {
+  grid-column: 1 / -1;
+  padding: 26px;
+  border-radius: 26px;
+}
+
+.project-standard {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent),
+    linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
+}
+
+.project-featured::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.05), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%);
+  opacity: 0.9;
 }
 
 .project::before {
@@ -64,7 +91,7 @@
 }
 
 .project-teal::before {
-  background: linear-gradient(145deg, rgba(100, 255, 218, 0.08), transparent 42%);
+  background: linear-gradient(145deg, var(--accent-surface-soft), transparent 42%);
 }
 
 .project-blue::before {
@@ -85,7 +112,8 @@
 
 .project-topline,
 .project-actions,
-.project-stack {
+.project-stack,
+.project-body {
   position: relative;
   z-index: 1;
 }
@@ -97,9 +125,16 @@
   align-items: center;
 }
 
+.project-meta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
 .project-category,
 .project-status,
-.project-stack span {
+.project-spotlight {
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
@@ -111,10 +146,42 @@
 }
 
 .project-category,
-.project-status {
-  font-size: 0.78rem;
+.project-status,
+.project-spotlight,
+.project-stack-label {
+  font-size: var(--type-meta-size);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-family: var(--font-meta);
+  font-weight: 500;
+}
+
+.project-spotlight {
+  color: var(--accent-text-subtle);
+  border-color: var(--accent-border-soft);
+  background: var(--accent-surface-soft);
+}
+
+.project-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.78fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.project-main,
+.project-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-main {
+  gap: 18px;
+}
+
+.project-side {
+  gap: 10px;
+  padding-top: 2px;
 }
 
 .project-heading,
@@ -138,39 +205,57 @@
 .project-heading h4 {
   font-size: 1.35rem;
   color: var(--primary-text-color);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
 }
 
 .project-heading p,
 .project-impact p {
   color: var(--secondary-text-color);
-  line-height: 1.7;
+  line-height: 1.74;
+  max-width: 54ch;
 }
 
 .project-impact {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid var(--soft-border-color);
+  padding: var(--card-padding-sm);
+  border-radius: var(--card-radius-md);
+  background: color-mix(in srgb, var(--card-background-softer) 82%, white 4%);
+  border: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .project-impact-label {
-  font-size: 0.76rem;
+  font-size: var(--type-meta-size);
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--highlight-text-color);
+  color: var(--accent-text-subtle);
+  font-family: var(--font-meta);
+  font-weight: 500;
+}
+
+.project-stack-label {
+  color: var(--secondary-text-color);
 }
 
 .project-stack {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .project-stack span {
-  font-size: 0.84rem;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--soft-border-color) 84%, transparent);
+  background: color-mix(in srgb, var(--glass-chip-background) 78%, transparent);
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+  line-height: 1;
 }
 
 .project-actions {
@@ -187,7 +272,7 @@
   justify-content: center;
   min-height: 40px;
   padding: 0 14px;
-  border-radius: 12px;
+  border-radius: var(--card-radius-sm);
   border: 1px solid var(--button-border-color);
   background: var(--button-background-color);
   color: var(--button-text-color);
@@ -213,25 +298,101 @@
   .project-grid {
     grid-template-columns: 1fr;
   }
+
+  .project-featured {
+    grid-column: auto;
+  }
+
+  .project-body {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
 }
 
 @media (max-width: 560px) {
   .projects {
-    padding: 16px;
+    padding: 14px;
+  }
+
+  .projects-header {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .projects-header p {
+    font-size: 0.94rem;
+    line-height: 1.6;
+  }
+
+  .project-grid {
+    gap: 12px;
   }
 
   .project {
-    padding: 18px;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .project-featured {
+    padding: 16px;
     border-radius: 18px;
   }
 
   .project-topline {
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+  }
+
+  .project-meta-group {
+    gap: 6px;
+  }
+
+  .project-heading {
+    gap: 8px;
+  }
+
+  .project-heading h4 {
+    font-size: 1.18rem;
+  }
+
+  .project-heading p,
+  .project-impact p {
+    line-height: 1.58;
+  }
+
+  .project-impact {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .project-side {
+    gap: 8px;
+  }
+
+  .project-stack {
+    gap: 8px;
+  }
+
+  .project-category,
+  .project-status,
+  .project-spotlight {
+    padding: 7px 10px;
+  }
+
+  .project-stack span {
+    padding: 6px 9px;
+    font-size: 0.76rem;
+  }
+
+  .project-actions {
+    gap: 8px;
   }
 
   .project-actions a,
   .project-note {
     width: 100%;
+    min-height: 38px;
   }
 }

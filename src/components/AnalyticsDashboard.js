@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAnalyticsSummary } from '../services/analytics';
 import '../styles/AnalyticsDashboard.css';
 
-const AnalyticsDashboard = () => {
+const AnalyticsDashboard = ({ compact = false }) => {
   const [summary, setSummary] = useState(null);
   const [hasError, setHasError] = useState(false);
 
@@ -37,10 +37,10 @@ const AnalyticsDashboard = () => {
 
   if (hasError) {
     return (
-      <section className="analytics-dashboard">
+      <section className={`analytics-dashboard ${compact ? 'analytics-dashboard-compact' : ''}`}>
         <div className="analytics-header">
-          <span className="eyebrow">Visitor Signals</span>
-          <h2>Audience activity</h2>
+          <span className="eyebrow">{compact ? 'Proof Layer' : 'Visitor Signals'}</span>
+          <h2>{compact ? 'Live portfolio proof' : 'Audience activity'}</h2>
         </div>
         <p className="analytics-empty-copy">Analytics could not be loaded right now.</p>
       </section>
@@ -49,31 +49,46 @@ const AnalyticsDashboard = () => {
 
   if (!summary) {
     return (
-      <section className="analytics-dashboard" aria-hidden="true">
+      <section
+        className={`analytics-dashboard ${compact ? 'analytics-dashboard-compact' : ''}`}
+        aria-hidden="true"
+      >
         <div className="analytics-header">
-          <span className="eyebrow">Visitor Signals</span>
+          <span className="eyebrow">{compact ? 'Proof Layer' : 'Visitor Signals'}</span>
           <div className="shimmer-line title" />
         </div>
 
-        <div className="analytics-stat-grid">
-          {[0, 1, 2].map((item) => (
-            <div className="analytics-stat-card" key={item}>
-              <div className="shimmer-line short" />
-              <div className="shimmer-line title" />
+        {compact ? (
+          <div className="analytics-proof-skeleton">
+            {[0, 1, 2].map((item) => (
+              <div className="analytics-proof-chip analytics-proof-chip-skeleton" key={item}>
+                <div className={`shimmer-line ${item === 2 ? 'short' : ''}`} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="analytics-stat-grid">
+              {[0, 1, 2].map((item) => (
+                <div className="analytics-stat-card" key={item}>
+                  <div className="shimmer-line short" />
+                  <div className="shimmer-line title" />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <div className="analytics-list-grid">
-          {[0, 1].map((item) => (
-            <div className="analytics-list-card" key={item}>
-              <div className="shimmer-line short" />
-              <div className="shimmer-line" />
-              <div className="shimmer-line" />
-              <div className="shimmer-line short" />
+            <div className="analytics-list-grid">
+              {[0, 1].map((item) => (
+                <div className="analytics-list-card" key={item}>
+                  <div className="shimmer-line short" />
+                  <div className="shimmer-line" />
+                  <div className="shimmer-line" />
+                  <div className="shimmer-line short" />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </section>
     );
   }
@@ -90,6 +105,49 @@ const AnalyticsDashboard = () => {
   const topProject = summary.topProjects[0];
   const recentExploration = summary.recentExploration ?? [];
   const weeklyTopProject = summary.weeklyTopProject;
+  const proofItems = [
+    topSection ? `${topSection.target_label} is drawing the strongest section attention.` : null,
+    weeklyTopProject
+      ? `${weeklyTopProject.target_label} is the most opened project this week.`
+      : topProject
+        ? `${topProject.target_label} is pulling the most repeat project interest.`
+        : null,
+    summary.resumeFollowThrough
+      ? `${summary.resumeFollowThrough} sessions moved from projects to the resume.`
+      : null
+  ].filter(Boolean);
+
+  if (compact) {
+    return (
+      <section className="analytics-dashboard analytics-dashboard-compact">
+        <div className="analytics-header analytics-header-compact">
+          <span className="eyebrow">Proof Layer</span>
+          <h2>What visitors validate after exploring the work</h2>
+          <p>Live signals that show where attention gathers and what drives follow-through.</p>
+        </div>
+
+        <div className="analytics-proof-strip">
+          {proofItems.map((item) => (
+            <article className="analytics-proof-chip" key={item}>
+              <span className="analytics-live-dot" aria-hidden="true" />
+              <p>{item}</p>
+            </article>
+          ))}
+        </div>
+
+        {recentExploration.length ? (
+          <div className="analytics-proof-footer">
+            <span>Recently explored</span>
+            <div className="analytics-context-tags">
+              {recentExploration.map((item) => (
+                <span key={`${item.type}:${item.label}`}>{item.label}</span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </section>
+    );
+  }
 
   return (
     <section className="analytics-dashboard">

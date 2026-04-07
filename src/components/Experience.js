@@ -98,21 +98,27 @@ const Experience = () => {
       <h2>Work Experience</h2>
       {experiences.map((exp) => (
         <div className="experience-block" key={`${exp.company}-${exp.duration}`} tabIndex={0}>
-          <div className="experience-company">
-            <CompanyLogo src={exp.logo} alt={exp.logoAlt} company={exp.company} />
-            <h3>
-              {exp.website ? (
-                <a href={exp.website} target="_blank" rel="noopener noreferrer">
-                  {exp.company}
-                </a>
-              ) : (
-                exp.company
-              )}
-            </h3>
+          <div className="experience-head">
+            <div className="experience-company">
+              <CompanyLogo src={exp.logo} alt={exp.logoAlt} company={exp.company} />
+              <div className="experience-title-group">
+                <h3>
+                  {exp.website ? (
+                    <a href={exp.website} target="_blank" rel="noopener noreferrer">
+                      {exp.company}
+                    </a>
+                  ) : (
+                    exp.company
+                  )}
+                </h3>
+                <p className="designation">{exp.designation}</p>
+              </div>
+            </div>
+            <div className="experience-meta">
+              <p className="location">{exp.location}</p>
+              <p className="duration">{exp.duration}</p>
+            </div>
           </div>
-          <p className="location">{exp.location}</p>
-          <p className="duration">{exp.duration}</p>
-          <p className="designation">{exp.designation}</p>
           <p className="experience-summary">{exp.summary}</p>
           <div className="experience-details">
             <ul>

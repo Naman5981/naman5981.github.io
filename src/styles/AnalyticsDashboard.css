@@ -7,10 +7,19 @@
   padding: var(--card-padding-lg);
 }
 
+.analytics-dashboard-compact {
+  gap: 16px;
+  padding: var(--card-padding-lg);
+}
+
 .analytics-header {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.analytics-header-compact {
+  gap: 8px;
 }
 
 .analytics-header h2,
@@ -135,6 +144,60 @@
   line-height: 1;
 }
 
+.analytics-proof-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.analytics-proof-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: var(--card-padding-md);
+  border-radius: var(--card-radius-md);
+  border: 1px solid var(--soft-border-color);
+  background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
+}
+
+.analytics-proof-chip p {
+  margin: 0;
+  color: var(--primary-text-color);
+  line-height: 1.62;
+  max-width: 34ch;
+}
+
+.analytics-proof-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.analytics-proof-footer > span {
+  color: var(--secondary-text-color);
+  font-size: var(--type-meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-family: var(--font-meta);
+  font-weight: 500;
+}
+
+.analytics-proof-skeleton {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.analytics-proof-chip-skeleton {
+  display: flex;
+  align-items: center;
+  min-height: 96px;
+}
+
+.analytics-proof-chip-skeleton .shimmer-line {
+  width: 82%;
+}
+
 .analytics-stat-grid,
 .analytics-list-grid {
   display: grid;
@@ -227,6 +290,8 @@
 }
 
 @media (max-width: 900px) {
+  .analytics-proof-strip,
+  .analytics-proof-skeleton,
   .analytics-context-grid,
   .analytics-stat-grid,
   .analytics-list-grid {
@@ -251,6 +316,11 @@
   }
 
   .analytics-context-card {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .analytics-proof-chip {
     padding: 12px;
     border-radius: 14px;
   }
@@ -280,5 +350,10 @@
 
   .analytics-list-card ol {
     gap: 10px;
+  }
+
+  .analytics-proof-chip p {
+    max-width: none;
+    line-height: 1.58;
   }
 }

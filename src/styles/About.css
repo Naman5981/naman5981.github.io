@@ -13,6 +13,52 @@
   gap: 26px;
 }
 
+.hero-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(12px);
+  animation: heroReveal 720ms cubic-bezier(0.2, 0.9, 0.22, 1) forwards;
+  will-change: opacity, transform, filter;
+}
+
+.hero-reveal-portrait {
+  animation-delay: 70ms;
+}
+
+.hero-reveal-banner {
+  animation-delay: 150ms;
+}
+
+.hero-reveal-copy {
+  animation-delay: 250ms;
+}
+
+.hero-reveal-stats {
+  animation-delay: 340ms;
+}
+
+.hero-reveal-actions {
+  animation-delay: 430ms;
+}
+
+.hero-reveal-contact {
+  animation-delay: 500ms;
+}
+
+@keyframes heroReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(12px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
 .profile-image-wrap {
   position: relative;
   display: inline-flex;
@@ -247,19 +293,19 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 14px;
   margin-bottom: 24px;
   width: 100%;
 }
 
 .about-actions {
   display: flex;
+  align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 12px;
 }
 
-.primary-action,
 .about-actions .floating-download-button {
   min-width: 148px;
   min-height: 44px;
@@ -267,57 +313,17 @@
   font-size: 0.92rem;
 }
 
-.primary-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 14px;
-  text-decoration: none;
-  background: var(--button-background-color);
-  color: var(--button-text-color);
-  font-weight: 600;
-  border: 2px solid var(--button-border-color);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 4px 12px var(--box-shadow-color);
-  background-clip: padding-box;
-  transition:
-    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
-    box-shadow var(--motion-duration-emphasis) ease,
-    border-color var(--motion-duration-emphasis) ease,
-    background var(--motion-duration-emphasis) ease;
-}
-
-.primary-action:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px var(--box-shadow-color);
-  border-color: var(--button-border-hover-color);
-}
-
-.primary-action:focus {
-  outline: none;
-  box-shadow: 0 0 8px var(--focus-glow-color), 0 4px 12px var(--box-shadow-color);
-}
-
-.primary-action:active {
-  transform: translateY(3px);
-}
-
-.social-icons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-}
-
 .icon-link {
-  width: 48px;
-  height: 48px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 14px;
   border-radius: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--icon-background);
   color: var(--primary-text-color);
+  text-decoration: none;
   transition:
     transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
     background var(--motion-duration-emphasis) ease,
@@ -342,7 +348,7 @@
   font-size: 0.95rem;
 }
 
-.contact-copy-button {
+.contact-chip-link {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -351,7 +357,7 @@
   border: 1px solid var(--soft-border-color);
   background: var(--glass-chip-background);
   color: var(--secondary-text-color);
-  cursor: pointer;
+  text-decoration: none;
   transition:
     transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
     border-color var(--motion-duration-emphasis) ease,
@@ -359,12 +365,12 @@
     color var(--motion-duration-emphasis) ease;
 }
 
-.contact-copy-button span,
-.contact-copy-button strong {
+.contact-chip-link span,
+.contact-chip-link strong {
   line-height: 1;
 }
 
-.contact-copy-button strong {
+.contact-chip-link strong {
   color: var(--accent-text-subtle);
   font-size: 0.78rem;
   text-transform: uppercase;
@@ -373,8 +379,8 @@
   font-weight: 600;
 }
 
-.contact-copy-button:hover,
-.contact-copy-button:focus-visible {
+.contact-chip-link:hover,
+.contact-chip-link:focus-visible {
   transform: translateY(-2px);
   border-color: var(--accent-border-soft);
   box-shadow: 0 16px 28px var(--box-shadow-color);
@@ -506,10 +512,14 @@
     gap: 10px;
   }
 
-  .primary-action,
   .about-actions .floating-download-button {
     width: 100%;
     max-width: 100%;
+  }
+
+  .icon-link {
+    width: 100%;
+    justify-content: center;
   }
 
   .about-contact-strip {
@@ -518,11 +528,20 @@
     font-size: 0.84rem;
   }
 
-  .contact-copy-button {
+  .contact-chip-link {
     justify-content: space-between;
     width: 100%;
     border-radius: 14px;
     padding: 9px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    animation: none;
   }
 }
 

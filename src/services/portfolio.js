@@ -2,6 +2,11 @@ import { getSupabaseClient, hasSupabaseEnv } from '../lib/supabase';
 
 const PROFILE_SLUG = process.env.REACT_APP_PROFILE_SLUG ?? 'naman-sanadhya';
 const queryCache = new Map();
+const resolvedQueryCache = new Map();
+
+const getResolvedCachedValue = (cacheKey) => {
+  return resolvedQueryCache.get(cacheKey) ?? null;
+};
 
 const getClient = () => {
   const client = getSupabaseClient();
@@ -21,10 +26,12 @@ const getCachedQuery = async (cacheKey, load) => {
   const pending = load()
     .then((result) => {
       queryCache.set(cacheKey, Promise.resolve(result));
+      resolvedQueryCache.set(cacheKey, result);
       return result;
     })
     .catch((error) => {
       queryCache.delete(cacheKey);
+      resolvedQueryCache.delete(cacheKey);
       throw error;
     });
 
@@ -65,7 +72,7 @@ export const getProfile = async () => {
       email: data.email,
       phone: data.phone,
       yearsExperienceLabel: data.years_experience_label,
-      issuesSolvedTarget: data.issues_solved_target,
+      issuesSolvedTarget: Math.max(data.issues_solved_target ?? 0, 120),
       coreDomainsCount: data.core_domains_count,
       backendFocusLabel: data.backend_focus_label,
       profileImagePath: data.profile_image_path,
@@ -268,3 +275,5 @@ export const getAchievements = async () => {
     return (data ?? []).map((achievement) => achievement.raw_text);
   });
 };
+
+export const getCachedAchievements = () => getResolvedCachedValue(`achievements:${PROFILE_SLUG}`);

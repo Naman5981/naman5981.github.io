@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/About.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
@@ -14,7 +14,9 @@ const About = () => {
   const [profile, setProfile] = useState(null);
   const [hasError, setHasError] = useState(false);
   const [issuesSolvedCount, setIssuesSolvedCount] = useState(0);
-  const [copiedField, setCopiedField] = useState('');
+  const [shouldAnimateStats, setShouldAnimateStats] = useState(false);
+  const statsRef = useRef(null);
+  const hasAnimatedStatsRef = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -42,29 +44,68 @@ const About = () => {
   }, []);
 
   useEffect(() => {
+    if (!profile?.issuesSolvedTarget || hasAnimatedStatsRef.current) {
+      return undefined;
+    }
+
+    const statsElement = statsRef.current;
+    if (!statsElement) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting || hasAnimatedStatsRef.current) {
+          return;
+        }
+
+        hasAnimatedStatsRef.current = true;
+        window.setTimeout(() => {
+          setShouldAnimateStats(true);
+        }, 180);
+        observer.disconnect();
+      },
+      {
+        threshold: 0.55
+      }
+    );
+
+    observer.observe(statsElement);
+
+    return () => observer.disconnect();
+  }, [profile?.issuesSolvedTarget]);
+
+  useEffect(() => {
     const targetValue = Math.max(profile?.issuesSolvedTarget ?? 0, 0);
-    if (targetValue === 0) {
+    if (targetValue === 0 || !shouldAnimateStats) {
       setIssuesSolvedCount(0);
       return undefined;
     }
 
-    const animationDuration = 700;
-    const stepDuration = Math.max(Math.floor(animationDuration / targetValue), 16);
-
-    let currentValue = 0;
+    const animationDuration = 960;
+    const animationStart = window.performance.now();
     setIssuesSolvedCount(0);
 
-    const intervalId = window.setInterval(() => {
-      currentValue += 1;
-      setIssuesSolvedCount(currentValue);
+    const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
+    let frameId;
 
-      if (currentValue >= targetValue) {
-        window.clearInterval(intervalId);
+    const tick = (timestamp) => {
+      const elapsed = timestamp - animationStart;
+      const progress = Math.min(elapsed / animationDuration, 1);
+      const easedProgress = easeOutCubic(progress);
+      const nextValue = Math.round(targetValue * easedProgress);
+
+      setIssuesSolvedCount(nextValue);
+
+      if (progress < 1) {
+        frameId = window.requestAnimationFrame(tick);
       }
-    }, stepDuration);
+    };
 
-    return () => window.clearInterval(intervalId);
-  }, [profile?.issuesSolvedTarget]);
+    frameId = window.requestAnimationFrame(tick);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [profile?.issuesSolvedTarget, shouldAnimateStats]);
 
   const socialLinks = useMemo(
     () =>
@@ -76,22 +117,6 @@ const About = () => {
         })),
     [profile]
   );
-
-  const handleCopy = async (label, value) => {
-    if (!value) {
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopiedField(label);
-      window.setTimeout(() => {
-        setCopiedField((current) => (current === label ? '' : current));
-      }, 1800);
-    } catch (error) {
-      console.error(`Failed to copy ${label}.`, error);
-    }
-  };
 
   if (hasError) {
     return (
@@ -133,7 +158,7 @@ const About = () => {
   return (
     <section className="about">
       <div className="about-hero">
-        <div className="profile-image-wrap">
+        <div className="profile-image-wrap hero-reveal hero-reveal-portrait">
           <div className="profile-greeting" aria-hidden="true">
             Hi!!
           </div>
@@ -143,19 +168,23 @@ const About = () => {
         </div>
 
         <div className="about-text">
-          <div className="availability-banner" role="status" aria-label="Current availability">
+          <div
+            className="availability-banner hero-reveal hero-reveal-banner"
+            role="status"
+            aria-label="Current availability"
+          >
             <span className="availability-dot" aria-hidden="true" />
             Currently open to backend engineering roles, platform work, and high-ownership product teams
           </div>
 
-          <div className="about-copy">
+          <div className="about-copy hero-reveal hero-reveal-copy">
             <span className="about-kicker">Backend engineer</span>
             <h1>{profile.fullName}</h1>
             <h2>{profile.headline}</h2>
             <p>{profile.bio}</p>
           </div>
 
-          <div className="about-stats">
+          <div ref={statsRef} className="about-stats hero-reveal hero-reveal-stats">
             <div className="about-stat">
               <strong>{profile.yearsExperienceLabel}</strong>
               <span>Years</span>
@@ -174,15 +203,9 @@ const About = () => {
             </div>
           </div>
 
-          <div className="about-action-row">
+          <div className="about-action-row hero-reveal hero-reveal-actions">
             <div className="about-actions">
-              <a className="primary-action" href={profile.email ? `mailto:${profile.email}` : '#'}>
-                Get In Touch
-              </a>
               <DownloadButton href={profile.resumePath} />
-            </div>
-
-            <div className="social-icons">
               {socialLinks.map((link) => (
                 <a
                   key={link.platform}
@@ -198,19 +221,13 @@ const About = () => {
             </div>
           </div>
 
-          <div className="about-contact-strip">
+          <div className="about-contact-strip hero-reveal hero-reveal-contact">
             <span>{profile.location}</span>
             {profile.email ? (
-              <button type="button" className="contact-copy-button" onClick={() => handleCopy('email', profile.email)}>
+              <a className="contact-chip-link" href={`mailto:${profile.email}`}>
                 <span>{profile.email}</span>
-                <strong>{copiedField === 'email' ? 'Copied' : 'Copy Email'}</strong>
-              </button>
-            ) : null}
-            {profile.phone ? (
-              <button type="button" className="contact-copy-button" onClick={() => handleCopy('phone', profile.phone)}>
-                <span>{profile.phone}</span>
-                <strong>{copiedField === 'phone' ? 'Copied' : 'Copy Phone'}</strong>
-              </button>
+                <strong>Email Me</strong>
+              </a>
             ) : null}
           </div>
         </div>

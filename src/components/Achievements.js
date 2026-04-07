@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Achievements.css';
-import { getAchievements } from '../services/portfolio';
+import { getAchievements, getCachedAchievements } from '../services/portfolio';
 
 const Achievements = () => {
-  const [achievements, setAchievements] = useState(null);
+  const [achievements, setAchievements] = useState(() => getCachedAchievements());
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
@@ -44,11 +44,10 @@ const Achievements = () => {
     return (
       <div className="achievements-container">
         <h2>Achievements</h2>
-        <div className="compact-section-skeleton" aria-hidden="true">
+        <div className="achievements-skeleton" aria-hidden="true">
           {[0, 1, 2].map((item) => (
-            <div className="compact-skeleton-card" key={item}>
-              <div className="shimmer-line" />
-              <div className="shimmer-line" />
+            <div className="achievements-skeleton-item" key={item}>
+              <div className={`shimmer-line ${item === 1 ? 'category' : item === 2 ? 'short' : ''}`} />
             </div>
           ))}
         </div>
@@ -59,11 +58,13 @@ const Achievements = () => {
   return (
     <div className="achievements-container">
       <h2>Achievements</h2>
-      <ul>
+      <div className="achievements-list">
         {achievements.map((achievement) => (
-          <li key={achievement}>{achievement}</li>
+          <div className="achievement-block" key={achievement}>
+            <p>{achievement}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

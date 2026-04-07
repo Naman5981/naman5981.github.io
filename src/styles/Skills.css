@@ -1,15 +1,18 @@
 @import './colors.css';
 
 .skills-container {
-  padding: var(--card-padding-lg);
+  padding: 20px 18px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 14px;
 }
 
 .skills-container h2 {
-  margin-bottom: 15px;
+  margin: 0;
   color: var(--primary-text-color);
+  font-size: 1.7rem;
+  line-height: 1.04;
 }
 
 .skills-container .section-search {
@@ -18,11 +21,11 @@
 
 .skill-category {
   width: 100%;
-  margin-bottom: 18px;
-  padding: var(--card-padding-md);
+  margin-bottom: 0;
+  padding: 14px 14px 12px;
   border-radius: var(--card-radius-md);
-  border: 1px solid transparent;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0));
+  border: 1px solid var(--soft-border-color);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-background-soft) 88%, transparent 12%), var(--card-background-softer));
   transition:
     border-color 0.24s ease,
     background 0.24s ease,
@@ -31,7 +34,7 @@
 
 .skill-category:hover {
   border-color: var(--accent-border-soft);
-  background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-background-soft) 96%, transparent 4%), var(--card-background-softer));
   box-shadow: 0 20px 34px var(--box-shadow-color);
 }
 
@@ -39,6 +42,11 @@
   margin: 0 0 10px;
   color: var(--primary-text-color);
   line-height: 1.12;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-meta);
+  font-weight: 600;
 }
 
 .skills-container ul {
@@ -47,13 +55,13 @@
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
 .skills-container li {
   background: var(--chip-background-soft);
-  padding: 8px 12px;
+  padding: 7px 11px;
   border-radius: 999px;
   color: var(--secondary-text-color);
   text-align: center;
@@ -63,7 +71,7 @@
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   line-height: 1.2;
   transition:
     border-color 0.2s ease,
@@ -83,17 +91,17 @@
 @media (max-width: 560px) {
   .skills-container {
     padding: 14px;
+    gap: 12px;
   }
 
   .skill-category {
-    margin-bottom: 12px;
     padding: 12px;
     border-radius: 14px;
   }
 
   .skill-category h3 {
     margin-bottom: 8px;
-    font-size: 1rem;
+    font-size: 0.74rem;
   }
 
   .skills-container ul {

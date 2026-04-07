@@ -62,12 +62,6 @@ export const workspacePanels = [
   }
 ];
 
-export const portfolioStats = [
-  { value: '5+', label: 'Years shipping backend systems' },
-  { value: '3', label: 'Core tracks: banking, platforms, automation' },
-  { value: '30+', label: 'Production issues investigated and resolved' }
-];
-
 export const projectShowcase = {
   'employee-performance-tracker': {
     category: 'Internal Productivity',

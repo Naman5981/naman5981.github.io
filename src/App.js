@@ -9,7 +9,7 @@ import Achievements from './components/Achievements';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import SmartSearch from './components/SmartSearch';
 import PortfolioError from './components/PortfolioError';
-import { navigationSections, portfolioStats } from './data/portfolioContent';
+import { navigationSections } from './data/portfolioContent';
 import { trackPortfolioEvent } from './services/analytics';
 import { getProfile } from './services/portfolio';
 import javaLogo from './assets/tech-marquee/java.png';
@@ -92,6 +92,8 @@ function App() {
       }, {}),
     []
   );
+  const profileNavigationSection = navigationSections.find((section) => section.id === 'about');
+  const workNavigationSections = navigationSections.filter((section) => section.id !== 'about');
 
   const smartSearchContext = useMemo(() => {
     if (activeSection === 'about') {
@@ -140,12 +142,6 @@ function App() {
         label: 'Achievements',
         layout: 'compact',
         component: Achievements
-      },
-      {
-        id: 'visitor-signals',
-        label: 'Visitor Signals',
-        layout: 'compact',
-        component: AnalyticsDashboard
       }
     ],
     []
@@ -437,6 +433,42 @@ function App() {
   }, [activePortfolioTab, pendingPortfolioScrollSection]);
 
   useLayoutEffect(() => {
+    const headerElement = headerRef.current;
+
+    if (!headerElement) {
+      return undefined;
+    }
+
+    const updateHeaderHeight = () => {
+      const headerHeight = Math.ceil(headerElement.getBoundingClientRect().height);
+      document.documentElement.style.setProperty('--site-header-height', `${headerHeight}px`);
+    };
+
+    updateHeaderHeight();
+
+    let resizeObserver;
+
+    if ('ResizeObserver' in window) {
+      resizeObserver = new window.ResizeObserver(() => {
+        updateHeaderHeight();
+      });
+      resizeObserver.observe(headerElement);
+    } else {
+      window.addEventListener('resize', updateHeaderHeight);
+    }
+
+    return () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      } else {
+        window.removeEventListener('resize', updateHeaderHeight);
+      }
+
+      document.documentElement.style.removeProperty('--site-header-height');
+    };
+  }, [isHeaderCondensed, isMobileMenuOpen]);
+
+  useLayoutEffect(() => {
     const tabRow = portfolioTabsRef.current;
     const activeButton = portfolioTabButtonRefs.current[activePortfolioTab];
 
@@ -468,10 +500,24 @@ function App() {
     const activePane = portfolioPaneRefs.current[activePortfolioTab];
     const outgoingPane = outgoingPortfolioTab ? portfolioPaneRefs.current[outgoingPortfolioTab] : null;
 
+    const measurePaneHeight = (pane) => {
+      if (!pane) {
+        return 0;
+      }
+
+      const content = pane.firstElementChild;
+
+      if (content instanceof HTMLElement) {
+        return Math.ceil(content.getBoundingClientRect().height);
+      }
+
+      return pane.scrollHeight;
+    };
+
     const updateStageHeight = () => {
       const nextHeight = Math.max(
-        activePane?.offsetHeight ?? 0,
-        outgoingPane?.offsetHeight ?? 0
+        measurePaneHeight(activePane),
+        measurePaneHeight(outgoingPane)
       );
 
       if (nextHeight > 0) {
@@ -596,13 +642,20 @@ function App() {
     startPortfolioTabTransition(nextTabId);
   };
 
+  const isPortfolioSectionActive = portfolioTabIds.has(activeSection);
+
   return (
     <div className="site-shell">
       <div className="scroll-progress" aria-hidden="true">
         <span className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
       </div>
 
-      <header ref={headerRef} className={`site-header ${isHeaderCondensed ? 'is-condensed' : ''}`}>
+      <header
+        ref={headerRef}
+        className={`site-header ${isHeaderCondensed ? 'is-condensed' : ''} ${
+          isPortfolioSectionActive ? 'is-portfolio-active' : ''
+        }`.trim()}
+      >
         <div className="brand-lockup">
           <span className="brand-kicker">NS / backend systems</span>
           <h1>{siteOwnerName}</h1>
@@ -654,17 +707,37 @@ function App() {
           aria-label="Primary"
         >
           <div className="site-nav-inner">
-            {navigationSections.map(({ id, label }) => (
-              <button
-                key={id}
-                type="button"
-                className={`${activeSection === id ? 'active' : ''} ${id === 'about' ? 'nav-home-link' : ''}`.trim()}
-                aria-current={activeSection === id ? 'location' : undefined}
-                onClick={() => scrollToSection(id)}
-              >
-                {label}
-              </button>
-            ))}
+            <div className="site-nav-mobile-header">
+              <span className="site-nav-mobile-label">Navigation</span>
+              <p>Choose where you want to continue exploring.</p>
+            </div>
+
+            {profileNavigationSection ? (
+              <div className="site-nav-group site-nav-group-profile">
+                <button
+                  type="button"
+                  className={`${activeSection === profileNavigationSection.id ? 'active' : ''} nav-home-link`.trim()}
+                  aria-current={activeSection === profileNavigationSection.id ? 'location' : undefined}
+                  onClick={() => scrollToSection(profileNavigationSection.id)}
+                >
+                  {profileNavigationSection.label}
+                </button>
+              </div>
+            ) : null}
+
+            <div className="site-nav-group site-nav-group-work">
+              {workNavigationSections.map(({ id, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={activeSection === id ? 'active' : ''}
+                  aria-current={activeSection === id ? 'location' : undefined}
+                  onClick={() => scrollToSection(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="mobile-nav-meta">
             <span className="mobile-nav-caption">Navigate sections</span>
@@ -692,15 +765,6 @@ function App() {
           >
             <About />
           </div>
-        </section>
-
-        <section className="stats-grid" aria-label="Key metrics">
-          {portfolioStats.map((stat) => (
-            <article key={stat.label} className="stat-card" data-reveal>
-              <strong>{stat.value}</strong>
-              <span>{stat.label}</span>
-            </article>
-          ))}
         </section>
 
         <section className="portfolio-tech-strip" aria-hidden="true" data-reveal>
@@ -851,6 +915,14 @@ function App() {
               })}
             </div>
           </section>
+        </section>
+
+        <div className="portfolio-proof-transition" aria-hidden="true" data-reveal>
+          <span className="portfolio-proof-transition-line" />
+        </div>
+
+        <section className="portfolio-proof-shell module-card" data-reveal>
+          <AnalyticsDashboard compact />
         </section>
       </main>
 

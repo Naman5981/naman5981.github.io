@@ -1,43 +1,44 @@
 @import './colors.css';
 
 .achievements-container {
-  padding: var(--card-padding-lg);
+  padding: 20px 18px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
 }
 
 .achievements-container h2 {
-  margin-bottom: 15px;
+  margin: 0 0 16px;
   color: var(--primary-text-color);
+  font-size: 1.7rem;
+  line-height: 1.04;
 }
 
-.achievements-container ul {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
+.achievements-list,
+.achievements-skeleton {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
-.achievements-container li {
+.achievement-block,
+.achievements-skeleton-item {
   position: relative;
-  padding: var(--card-padding-md) var(--card-padding-md) var(--card-padding-md) 42px;
+  padding: 14px 14px 12px 40px;
   border-radius: var(--card-radius-md);
   border: 1px solid var(--soft-border-color);
-  background: var(--card-background-softer);
-  color: var(--secondary-text-color);
-  line-height: 1.72;
-  max-width: 58ch;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-background-soft) 88%, transparent 12%), var(--card-background-softer));
+  width: 100%;
   transition:
     border-color 0.24s ease,
     box-shadow 0.24s ease,
-    color 0.24s ease;
+    background 0.24s ease;
 }
 
-.achievements-container li::before {
+.achievement-block::before,
+.achievements-skeleton-item::before {
   content: '';
   position: absolute;
   top: 22px;
@@ -49,10 +50,37 @@
   box-shadow: 0 0 0 6px var(--accent-surface-soft);
 }
 
-.achievements-container li:hover {
+.achievement-block:hover {
   border-color: var(--accent-border-soft);
   box-shadow: 0 20px 34px var(--box-shadow-color);
-  color: var(--primary-text-color);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-background-soft) 96%, transparent 4%), var(--card-background-softer));
+}
+
+.achievement-block p {
+  margin: 0;
+  color: var(--secondary-text-color);
+  line-height: 1.62;
+  max-width: 56ch;
+}
+
+.achievements-skeleton-item {
+  background: color-mix(in srgb, var(--card-background-softer) 86%, transparent 14%);
+  overflow: hidden;
+}
+
+.achievements-skeleton-item .shimmer-line {
+  height: 18px;
+  width: 72%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--skeleton-base-color) 72%, var(--card-background-soft) 28%);
+}
+
+.achievements-skeleton-item .shimmer-line.short {
+  width: 54%;
+}
+
+.achievements-skeleton-item .shimmer-line.category {
+  width: 64%;
 }
 
 @media (max-width: 560px) {
@@ -61,24 +89,34 @@
   }
 
   .achievements-container h2 {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
-  .achievements-container ul {
-    gap: 10px;
+  .achievements-list,
+  .achievements-skeleton {
+    gap: 12px;
   }
 
-  .achievements-container li {
-    max-width: 100%;
+  .achievement-block,
+  .achievements-skeleton-item {
     padding: 12px 12px 12px 34px;
     border-radius: 14px;
-    line-height: 1.58;
   }
 
-  .achievements-container li::before {
+  .achievement-block::before,
+  .achievements-skeleton-item::before {
     top: 18px;
     left: 14px;
     width: 8px;
     height: 8px;
+  }
+
+  .achievement-block p {
+    line-height: 1.58;
+  }
+
+  .achievements-skeleton-item .shimmer-line {
+    height: 16px;
+    width: 78%;
   }
 }

@@ -72,7 +72,7 @@ export const getProfile = async () => {
       email: data.email,
       phone: data.phone,
       yearsExperienceLabel: data.years_experience_label,
-      issuesSolvedTarget: Math.max(data.issues_solved_target ?? 0, 120),
+      issuesSolvedTarget: data.issues_solved_target ?? 0,
       coreDomainsCount: data.core_domains_count,
       backendFocusLabel: data.backend_focus_label,
       profileImagePath: data.profile_image_path,

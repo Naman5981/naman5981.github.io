@@ -8,8 +8,8 @@
 }
 
 .analytics-dashboard-compact {
-  gap: 16px;
-  padding: var(--card-padding-lg);
+  gap: 12px;
+  padding: var(--card-padding-md);
 }
 
 .analytics-header {
@@ -19,7 +19,7 @@
 }
 
 .analytics-header-compact {
-  gap: 8px;
+  gap: 6px;
 }
 
 .analytics-header h2,
@@ -53,9 +53,7 @@
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent),
     linear-gradient(180deg, color-mix(in srgb, var(--card-background-soft) 96%, white 4%), var(--card-background-softer));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 18px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .analytics-proof-banner p,
@@ -91,7 +89,7 @@
 .analytics-context-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .analytics-context-card {
@@ -101,7 +99,7 @@
   padding: var(--card-padding-md);
   border-radius: var(--card-radius-md);
   border: 1px solid var(--soft-border-color);
-  background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-background-soft) 92%, transparent 8%), var(--card-background-softer));
 }
 
 .analytics-context-card > span {
@@ -147,7 +145,7 @@
 .analytics-proof-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .analytics-proof-chip {
@@ -157,7 +155,7 @@
   padding: var(--card-padding-md);
   border-radius: var(--card-radius-md);
   border: 1px solid var(--soft-border-color);
-  background: linear-gradient(180deg, var(--card-background-soft), var(--card-background-softer));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-background-soft) 90%, transparent 10%), var(--card-background-softer));
 }
 
 .analytics-proof-chip p {
@@ -301,59 +299,61 @@
 
 @media (max-width: 560px) {
   .analytics-dashboard {
-    padding: 14px;
+    padding: 12px;
   }
 
   .analytics-stat-card,
   .analytics-list-card {
-    border-radius: 14px;
-    padding: 12px;
+    border-radius: 13px;
+    padding: 11px;
   }
 
   .analytics-proof-banner {
-    padding: 12px;
-    border-radius: 14px;
+    padding: 11px;
+    border-radius: 13px;
   }
 
   .analytics-context-card {
-    padding: 12px;
-    border-radius: 14px;
+    padding: 11px;
+    border-radius: 13px;
   }
 
   .analytics-proof-chip {
-    padding: 12px;
-    border-radius: 14px;
+    padding: 11px;
+    border-radius: 13px;
+    gap: 10px;
   }
 
   .analytics-header {
-    gap: 8px;
+    gap: 7px;
   }
 
   .analytics-header p,
   .analytics-empty-copy {
-    line-height: 1.58;
-    font-size: 0.92rem;
+    line-height: 1.52;
+    font-size: 0.88rem;
   }
 
   .analytics-stat-grid,
   .analytics-list-grid {
-    gap: 12px;
+    gap: 10px;
   }
 
   .analytics-stat-card strong {
-    font-size: 1.42rem;
+    font-size: 1.34rem;
   }
 
   .analytics-list-card h3 {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .analytics-list-card ol {
-    gap: 10px;
+    gap: 8px;
   }
 
   .analytics-proof-chip p {
     max-width: none;
-    line-height: 1.58;
+    font-size: 0.88rem;
+    line-height: 1.52;
   }
 }

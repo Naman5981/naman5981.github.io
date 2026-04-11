@@ -181,7 +181,23 @@ const About = () => {
             <span className="about-kicker">Backend engineer</span>
             <h1>{profile.fullName}</h1>
             <h2>{profile.headline}</h2>
-            <p>{profile.bio}</p>
+            {(() => {
+              const bioLines = String(profile.bio ?? '')
+                .split('\n')
+                .filter(Boolean);
+
+              if (bioLines.length === 0) {
+                return null;
+              }
+
+              return (
+                <p className="about-lead">
+                  {bioLines.map((line) => (
+                    <span key={line}>{line}</span>
+                  ))}
+                </p>
+              );
+            })()}
           </div>
 
           <div ref={statsRef} className="about-stats hero-reveal hero-reveal-stats">
@@ -222,11 +238,11 @@ const About = () => {
           </div>
 
           <div className="about-contact-strip hero-reveal hero-reveal-contact">
-            <span>{profile.location}</span>
+            <span className="about-contact-location">{profile.location}</span>
             {profile.email ? (
-              <a className="contact-chip-link" href={`mailto:${profile.email}`}>
+              <a className="contact-inline-link" href={`mailto:${profile.email}`}>
+                <strong>Email</strong>
                 <span>{profile.email}</span>
-                <strong>Email Me</strong>
               </a>
             ) : null}
           </div>

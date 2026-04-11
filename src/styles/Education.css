@@ -57,24 +57,29 @@
 
 @media (max-width: 560px) {
   .education-container {
-    padding: 14px;
+    padding: 12px;
   }
 
   .education-container h2 {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .education-block {
-    margin-bottom: 12px;
-    padding: 12px;
-    border-radius: 14px;
+    margin-bottom: 10px;
+    padding: 11px 11px 10px;
+    border-radius: 13px;
   }
 
   .education-block h3 {
-    font-size: 1rem;
+    font-size: 0.96rem;
   }
 
   .education-block p {
-    line-height: 1.58;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .education-block .duration {
+    margin-top: 6px;
   }
 }

@@ -90,26 +90,26 @@
 
 @media (max-width: 560px) {
   .skills-container {
-    padding: 14px;
-    gap: 12px;
+    padding: 12px;
+    gap: 10px;
   }
 
   .skill-category {
-    padding: 12px;
-    border-radius: 14px;
+    padding: 10px 10px 9px;
+    border-radius: 13px;
   }
 
   .skill-category h3 {
-    margin-bottom: 8px;
-    font-size: 0.74rem;
+    margin-bottom: 7px;
+    font-size: 0.7rem;
   }
 
   .skills-container ul {
-    gap: 8px;
+    gap: 6px;
   }
 
   .skills-container li {
-    padding: 7px 10px;
-    font-size: 0.82rem;
+    padding: 6px 9px;
+    font-size: 0.76rem;
   }
 }

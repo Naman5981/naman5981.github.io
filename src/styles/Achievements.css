@@ -85,22 +85,22 @@
 
 @media (max-width: 560px) {
   .achievements-container {
-    padding: 14px;
+    padding: 12px;
   }
 
   .achievements-container h2 {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .achievements-list,
   .achievements-skeleton {
-    gap: 12px;
+    gap: 10px;
   }
 
   .achievement-block,
   .achievements-skeleton-item {
-    padding: 12px 12px 12px 34px;
-    border-radius: 14px;
+    padding: 11px 11px 10px 32px;
+    border-radius: 13px;
   }
 
   .achievement-block::before,
@@ -112,7 +112,8 @@
   }
 
   .achievement-block p {
-    line-height: 1.58;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .achievements-skeleton-item .shimmer-line {

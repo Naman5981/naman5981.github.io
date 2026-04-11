@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import About from './components/About';
 import Education from './components/Education';
@@ -71,14 +71,20 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHeaderCondensed, setIsHeaderCondensed] = useState(false);
   const [siteOwnerName, setSiteOwnerName] = useState('');
+  const [siteOwnerEmail, setSiteOwnerEmail] = useState('');
+  const [siteOwnerResumePath, setSiteOwnerResumePath] = useState('');
   const [hasPortfolioError, setHasPortfolioError] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [revealedSections, setRevealedSections] = useState(() => ({ about: true }));
   const [isSmartSearchOpen, setIsSmartSearchOpen] = useState(false);
   const [portfolioTabIndicator, setPortfolioTabIndicator] = useState({ width: 0, left: 0, top: 0, height: 0 });
+  const [isPortfolioTabsHighlighted, setIsPortfolioTabsHighlighted] = useState(false);
+  const [isPortfolioNavVisible, setIsPortfolioNavVisible] = useState(false);
+  const [isPortfolioTabsDocked, setIsPortfolioTabsDocked] = useState(false);
   const headerRef = useRef(null);
   const portfolioPanelRef = useRef(null);
+  const portfolioEntryRef = useRef(null);
   const portfolioSelectorRef = useRef(null);
   const portfolioTabsRef = useRef(null);
   const portfolioTabButtonRefs = useRef({});
@@ -153,6 +159,16 @@ function App() {
   const outgoingPortfolioPanel = outgoingPortfolioTab
     ? portfolioTabs.find((tab) => tab.id === outgoingPortfolioTab) ?? null
     : null;
+  const portfolioTabContext = useMemo(
+    () => ({
+      experience: 'Roles, systems, and production ownership across backend-heavy work.',
+      projects: 'Selected builds that show execution, product judgment, and technical range.',
+      skills: 'The technical stack and backend depth behind the work.',
+      education: 'The formal foundation supporting the applied engineering path.',
+      achievements: 'Signals of recognition, competitive work, and momentum over time.'
+    }),
+    []
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -162,6 +178,8 @@ function App() {
         const profile = await getProfile();
         if (isMounted) {
           setSiteOwnerName(profile.fullName);
+          setSiteOwnerEmail(profile.email ?? '');
+          setSiteOwnerResumePath(profile.resumePath ?? '');
           setHasPortfolioError(false);
         }
       } catch (error) {
@@ -412,25 +430,69 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!pendingPortfolioScrollSection || activePortfolioTab !== pendingPortfolioScrollSection) {
+    const tabsRow = portfolioTabsRef.current;
+
+    if (!tabsRow) {
       return undefined;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      const panel = portfolioPanelRef.current;
-
-      if (panel) {
-        setOutgoingPortfolioTab(null);
-        scrollElementIntoView(panel, pendingPortfolioScrollSection);
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        setIsPortfolioNavVisible(Boolean(entry?.isIntersecting));
+      },
+      {
+        threshold: 0.2
       }
+    );
 
-      setPendingPortfolioScrollSection('');
-    }, 80);
+    observer.observe(tabsRow);
 
     return () => {
-      window.clearTimeout(timeoutId);
+      observer.disconnect();
     };
-  }, [activePortfolioTab, pendingPortfolioScrollSection]);
+  }, []);
+
+  useEffect(() => {
+    const tabsRow = portfolioTabsRef.current;
+
+    if (!tabsRow) {
+      return undefined;
+    }
+
+    let frameId = null;
+
+    const updateDockedState = () => {
+      frameId = null;
+
+      const headerHeight = headerRef.current?.getBoundingClientRect().height ?? 0;
+      const topOffset = headerHeight + 12;
+      const rowRect = tabsRow.getBoundingClientRect();
+      const nextDocked = rowRect.top <= topOffset + 2 && rowRect.bottom > topOffset + 18;
+
+      setIsPortfolioTabsDocked((current) => (current === nextDocked ? current : nextDocked));
+    };
+
+    const onScroll = () => {
+      if (frameId !== null) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(updateDockedState);
+    };
+
+    updateDockedState();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const headerElement = headerRef.current;
@@ -541,10 +603,6 @@ function App() {
     portfolioPanelRef.current.classList.add('is-visible');
   }, [activePortfolioTab]);
 
-  if (hasPortfolioError) {
-    return <PortfolioError />;
-  }
-
   const startPortfolioTabTransition = (nextTabId) => {
     if (nextTabId === activePortfolioTab) {
       return;
@@ -570,7 +628,14 @@ function App() {
     setIsPortfolioSelectorOpen(false);
   };
 
-  const scrollElementIntoView = (element, sectionId) => {
+  const triggerPortfolioTabsHighlight = useCallback(() => {
+    setIsPortfolioTabsHighlighted(true);
+    window.setTimeout(() => {
+      setIsPortfolioTabsHighlighted(false);
+    }, 900);
+  }, []);
+
+  const scrollElementIntoView = useCallback((element, sectionId) => {
     setRevealedSections((current) => ({ ...current, [sectionId]: true }));
     element.classList.add('is-visible');
     setIsMobileMenuOpen(false);
@@ -615,7 +680,68 @@ function App() {
     };
 
     window.setTimeout(waitForArrival, 120);
-  };
+  }, []);
+
+  const scrollPortfolioTabsIntoView = useCallback((sectionId, { highlightTabs = false } = {}) => {
+    const tabsRow = portfolioTabsRef.current;
+
+    if (!tabsRow) {
+      if (portfolioEntryRef.current) {
+        scrollElementIntoView(portfolioEntryRef.current, sectionId);
+      }
+      return;
+    }
+
+    setRevealedSections((current) => ({ ...current, [sectionId]: true }));
+    tabsRow.classList.add('is-visible');
+    setIsMobileMenuOpen(false);
+    setActiveSection(sectionId);
+
+    const header = document.querySelector('.site-header');
+    const headerStyles = header ? window.getComputedStyle(header) : null;
+    const isPinnedHeader = headerStyles
+      ? headerStyles.position === 'sticky' || headerStyles.position === 'fixed'
+      : false;
+    const headerHeight = header && isPinnedHeader ? header.getBoundingClientRect().height : 0;
+    const stickyGap = 12;
+    const targetPosition =
+      tabsRow.getBoundingClientRect().top + window.scrollY - headerHeight - stickyGap;
+    const finalTop = Math.max(targetPosition, 0);
+
+    setHighlightedSection('');
+    window.scrollTo({
+      top: finalTop,
+      behavior: 'smooth'
+    });
+
+    let attempts = 0;
+    const maxAttempts = 40;
+
+    const finalizeArrival = () => {
+      if (highlightTabs) {
+        triggerPortfolioTabsHighlight();
+      }
+
+      setHighlightedSection(sectionId);
+      window.setTimeout(() => {
+        setHighlightedSection((current) => (current === sectionId ? '' : current));
+      }, 850);
+    };
+
+    const waitForArrival = () => {
+      const distance = Math.abs(window.scrollY - finalTop);
+      attempts += 1;
+
+      if (distance <= 8 || attempts >= maxAttempts) {
+        finalizeArrival();
+        return;
+      }
+
+      window.setTimeout(waitForArrival, 40);
+    };
+
+    window.setTimeout(waitForArrival, 120);
+  }, [scrollElementIntoView, triggerPortfolioTabsHighlight]);
 
   const scrollToSection = (sectionId) => {
     if (portfolioTabIds.has(sectionId)) {
@@ -625,9 +751,7 @@ function App() {
         return;
       }
 
-      if (portfolioPanelRef.current) {
-        scrollElementIntoView(portfolioPanelRef.current, sectionId);
-      }
+      scrollPortfolioTabsIntoView(sectionId);
 
       return;
     }
@@ -642,7 +766,32 @@ function App() {
     startPortfolioTabTransition(nextTabId);
   };
 
-  const isPortfolioSectionActive = portfolioTabIds.has(activeSection);
+  const handlePortfolioSummaryClick = () => {
+    scrollPortfolioTabsIntoView(activePortfolioTab, { highlightTabs: true });
+  };
+
+  useEffect(() => {
+    if (!pendingPortfolioScrollSection || activePortfolioTab !== pendingPortfolioScrollSection) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      if (portfolioTabsRef.current || portfolioEntryRef.current || portfolioPanelRef.current) {
+        setOutgoingPortfolioTab(null);
+        scrollPortfolioTabsIntoView(pendingPortfolioScrollSection);
+      }
+
+      setPendingPortfolioScrollSection('');
+    }, 80);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [activePortfolioTab, pendingPortfolioScrollSection, scrollPortfolioTabsIntoView]);
+
+  if (hasPortfolioError) {
+    return <PortfolioError />;
+  }
 
   return (
     <div className="site-shell">
@@ -653,7 +802,7 @@ function App() {
       <header
         ref={headerRef}
         className={`site-header ${isHeaderCondensed ? 'is-condensed' : ''} ${
-          isPortfolioSectionActive ? 'is-portfolio-active' : ''
+          isPortfolioNavVisible ? 'is-portfolio-active' : ''
         }`.trim()}
       >
         <div className="brand-lockup">
@@ -726,17 +875,26 @@ function App() {
             ) : null}
 
             <div className="site-nav-group site-nav-group-work">
-              {workNavigationSections.map(({ id, label }) => (
-                <button
-                  key={id}
-                  type="button"
-                  className={activeSection === id ? 'active' : ''}
-                  aria-current={activeSection === id ? 'location' : undefined}
-                  onClick={() => scrollToSection(id)}
-                >
-                  {label}
-                </button>
-              ))}
+              <div className="site-nav-work-track" aria-hidden={isPortfolioNavVisible}>
+                {workNavigationSections.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`site-nav-work-button ${activeSection === id ? 'active' : ''}`.trim()}
+                    aria-current={activeSection === id ? 'location' : undefined}
+                    onClick={() => scrollToSection(id)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="site-nav-portfolio-button"
+                onClick={handlePortfolioSummaryClick}
+              >
+                Portfolio
+              </button>
             </div>
           </div>
           <div className="mobile-nav-meta">
@@ -767,155 +925,168 @@ function App() {
           </div>
         </section>
 
-        <section className="portfolio-tech-strip" aria-hidden="true" data-reveal>
-          <div className="portfolio-tech-strip-track">
-            {[...transitionTechnologies, ...transitionTechnologies, ...transitionTechnologies].map((technology, index) => (
-              <React.Fragment key={`portfolio-tech-${index}`}>
-                <div className="portfolio-tech-pill">
-                  <img src={technology.logo} alt="" loading="lazy" />
-                  <span>{technology.name}</span>
-                </div>
-                <span className="portfolio-tech-separator" aria-hidden="true" />
-              </React.Fragment>
-            ))}
+        <div ref={portfolioEntryRef} className="portfolio-entry-shell" data-reveal>
+          <div className="portfolio-entry-bridge" aria-hidden="true">
+            <span className="portfolio-entry-bridge-stem" />
+            <span className="portfolio-entry-bridge-glow" />
           </div>
-        </section>
 
-        <section className="portfolio-tabs-shell" data-reveal>
-          <div className="portfolio-tabs-header">
-            <div>
-              <span className="eyebrow">Core Portfolio</span>
-            </div>
-
-            <div
-              ref={portfolioTabsRef}
-              className="portfolio-tabs-row"
-              role="tablist"
-              aria-label="Portfolio sections"
-            >
-              <span
-                className="portfolio-tabs-indicator"
-                aria-hidden="true"
-                style={{
-                  width: `${portfolioTabIndicator.width}px`,
-                  height: `${portfolioTabIndicator.height}px`,
-                  transform: `translate(${portfolioTabIndicator.left}px, ${portfolioTabIndicator.top}px)`
-                }}
-              />
-              {portfolioTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  role="tab"
-                  ref={(node) => {
-                    if (node) {
-                      portfolioTabButtonRefs.current[tab.id] = node;
-                    }
-                  }}
-                  aria-selected={activePortfolioPanel.id === tab.id}
-                  className={activePortfolioPanel.id === tab.id ? 'active' : ''}
-                  onClick={() => handlePortfolioTabChange(tab.id)}
-                >
-                  {tab.label}
-                </button>
+          <section className="portfolio-tech-strip" aria-hidden="true">
+            <div className="portfolio-tech-strip-track">
+              {[...transitionTechnologies, ...transitionTechnologies, ...transitionTechnologies].map((technology, index) => (
+                <React.Fragment key={`portfolio-tech-${index}`}>
+                  <div className="portfolio-tech-pill">
+                    <img src={technology.logo} alt="" loading="lazy" />
+                    <span>{technology.name}</span>
+                  </div>
+                  <span className="portfolio-tech-separator" aria-hidden="true" />
+                </React.Fragment>
               ))}
             </div>
+          </section>
 
-            <div ref={portfolioSelectorRef} className="portfolio-selector">
-              <div className="portfolio-selector-meta">
-                <p>Choose a section to view.</p>
+          <section className="portfolio-tabs-shell">
+            <div className="portfolio-tabs-header">
+              <div>
+                <span className="eyebrow">Core Portfolio</span>
               </div>
 
-              <button
-                type="button"
-                className={`portfolio-selector-trigger ${isPortfolioSelectorOpen ? 'open' : ''}`}
-                aria-expanded={isPortfolioSelectorOpen}
-                aria-haspopup="listbox"
-                onClick={() => setIsPortfolioSelectorOpen((current) => !current)}
+              <div
+                ref={portfolioTabsRef}
+                className={`portfolio-tabs-row ${isPortfolioTabsHighlighted ? 'is-highlighted' : ''} ${
+                  isPortfolioTabsDocked ? 'is-docked' : ''
+                }`.trim()}
+                role="tablist"
+                aria-label="Portfolio sections"
               >
-                <span className="portfolio-selector-kicker">Viewing</span>
-                <strong>{activePortfolioPanel.label}</strong>
-                <span className="portfolio-selector-icon" aria-hidden="true">
-                  <span />
-                  <span />
-                </span>
-              </button>
+                <span
+                  className="portfolio-tabs-indicator"
+                  aria-hidden="true"
+                  style={{
+                    width: `${portfolioTabIndicator.width}px`,
+                    height: `${portfolioTabIndicator.height}px`,
+                    transform: `translate(${portfolioTabIndicator.left}px, ${portfolioTabIndicator.top}px)`
+                  }}
+                />
+                {portfolioTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    role="tab"
+                    ref={(node) => {
+                      if (node) {
+                        portfolioTabButtonRefs.current[tab.id] = node;
+                      }
+                    }}
+                    aria-selected={activePortfolioPanel.id === tab.id}
+                    className={activePortfolioPanel.id === tab.id ? 'active' : ''}
+                    onClick={() => handlePortfolioTabChange(tab.id)}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
-              <div className={`portfolio-selector-sheet ${isPortfolioSelectorOpen ? 'open' : ''}`}>
-                <div className="portfolio-selector-list" role="listbox" aria-label="Portfolio sections">
-                  {portfolioTabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      role="option"
-                      aria-selected={activePortfolioPanel.id === tab.id}
-                      className={activePortfolioPanel.id === tab.id ? 'active' : ''}
-                      onClick={() => handlePortfolioTabChange(tab.id)}
-                    >
-                      <span>{tab.label}</span>
-                    </button>
-                  ))}
+              <p className="portfolio-tabs-context" aria-live="polite">
+                {portfolioTabContext[activePortfolioPanel.id]}
+              </p>
+
+              <div ref={portfolioSelectorRef} className="portfolio-selector">
+                <div className="portfolio-selector-meta">
+                  <p>Choose a section to view.</p>
+                </div>
+
+                <button
+                  type="button"
+                  className={`portfolio-selector-trigger ${isPortfolioSelectorOpen ? 'open' : ''}`}
+                  aria-expanded={isPortfolioSelectorOpen}
+                  aria-haspopup="listbox"
+                  onClick={() => setIsPortfolioSelectorOpen((current) => !current)}
+                >
+                  <span className="portfolio-selector-kicker">Viewing</span>
+                  <strong>{activePortfolioPanel.label}</strong>
+                  <span className="portfolio-selector-icon" aria-hidden="true">
+                    <span />
+                    <span />
+                  </span>
+                </button>
+
+                <div className={`portfolio-selector-sheet ${isPortfolioSelectorOpen ? 'open' : ''}`}>
+                  <div className="portfolio-selector-list" role="listbox" aria-label="Portfolio sections">
+                    {portfolioTabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        role="option"
+                        aria-selected={activePortfolioPanel.id === tab.id}
+                        className={activePortfolioPanel.id === tab.id ? 'active' : ''}
+                        onClick={() => handlePortfolioTabChange(tab.id)}
+                      >
+                        <span>{tab.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <section
-            ref={portfolioPanelRef}
-            id={
-              activePortfolioPanel.id === 'visitor-signals'
-                ? 'visitor-signals'
-                : activePortfolioPanel.id
-            }
-            className={`module-card portfolio-tab-panel portfolio-tab-panel-${activePortfolioPanel.layout} ${
-              highlightedSection === activePortfolioPanel.id ? 'section-flash' : ''
-            } ${revealedSections[activePortfolioPanel.id] ? 'is-visible' : ''}`}
-            data-reveal
-          >
-            <div
-              className={`portfolio-tab-stage portfolio-tab-stage-${activePortfolioPanel.layout}`}
-              style={portfolioStageHeight ? { minHeight: `${portfolioStageHeight}px` } : undefined}
+            <section
+              ref={portfolioPanelRef}
+              id={
+                activePortfolioPanel.id === 'visitor-signals'
+                  ? 'visitor-signals'
+                  : activePortfolioPanel.id
+              }
+              className={`module-card portfolio-tab-panel portfolio-tab-panel-${activePortfolioPanel.layout} ${
+                highlightedSection === activePortfolioPanel.id ? 'section-flash' : ''
+              } ${revealedSections[activePortfolioPanel.id] ? 'is-visible' : ''}`}
+              data-reveal
             >
-              {portfolioTabs.map((tab) => {
-                if (!mountedPortfolioTabs[tab.id]) {
-                  return null;
-                }
+              <div
+                className={`portfolio-tab-stage portfolio-tab-stage-${activePortfolioPanel.layout}`}
+                style={portfolioStageHeight ? { minHeight: `${portfolioStageHeight}px` } : undefined}
+              >
+                {portfolioTabs.map((tab) => {
+                  if (!mountedPortfolioTabs[tab.id]) {
+                    return null;
+                  }
 
-                const isActive = tab.id === activePortfolioTab;
-                const isOutgoing = tab.id === outgoingPortfolioTab;
-                const paneClassName = [
-                  'portfolio-tab-slide',
-                  `portfolio-tab-slide-${tab.layout}`,
-                  isActive && outgoingPortfolioPanel
-                    ? `portfolio-tab-slide-in portfolio-tab-slide-${portfolioSlideDirection}`
-                    : '',
-                  isActive && !outgoingPortfolioPanel ? 'portfolio-tab-slide-static' : '',
-                  isOutgoing
-                    ? `portfolio-tab-slide-out portfolio-tab-slide-${portfolioSlideDirection}`
-                    : '',
-                  !isActive && !isOutgoing ? 'portfolio-tab-slide-hidden' : ''
-                ]
-                  .filter(Boolean)
-                  .join(' ');
+                  const isActive = tab.id === activePortfolioTab;
+                  const isOutgoing = tab.id === outgoingPortfolioTab;
+                  const paneClassName = [
+                    'portfolio-tab-slide',
+                    `portfolio-tab-slide-${tab.layout}`,
+                    isActive && outgoingPortfolioPanel
+                      ? `portfolio-tab-slide-in portfolio-tab-slide-${portfolioSlideDirection}`
+                      : '',
+                    isActive && !outgoingPortfolioPanel ? 'portfolio-tab-slide-static' : '',
+                    isOutgoing
+                      ? `portfolio-tab-slide-out portfolio-tab-slide-${portfolioSlideDirection}`
+                      : '',
+                    !isActive && !isOutgoing ? 'portfolio-tab-slide-hidden' : ''
+                  ]
+                    .filter(Boolean)
+                    .join(' ');
 
-                return (
-                  <div
-                    key={tab.id}
-                    ref={(node) => {
-                      if (node) {
-                        portfolioPaneRefs.current[tab.id] = node;
-                      }
-                    }}
-                    className={paneClassName}
-                    aria-hidden={!isActive}
-                  >
-                    <tab.component />
-                  </div>
-                );
-              })}
-            </div>
+                  return (
+                    <div
+                      key={tab.id}
+                      ref={(node) => {
+                        if (node) {
+                          portfolioPaneRefs.current[tab.id] = node;
+                        }
+                      }}
+                      className={paneClassName}
+                      aria-hidden={!isActive}
+                    >
+                      <tab.component />
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
           </section>
-        </section>
+        </div>
 
         <div className="portfolio-proof-transition" aria-hidden="true" data-reveal>
           <span className="portfolio-proof-transition-line" />
@@ -923,6 +1094,35 @@ function App() {
 
         <section className="portfolio-proof-shell module-card" data-reveal>
           <AnalyticsDashboard compact />
+        </section>
+
+        <section className="portfolio-closing-shell" data-reveal>
+          <div className="portfolio-closing-copy">
+            <span className="eyebrow">Next Step</span>
+            <h2>Want the complete backend story?</h2>
+            <p>
+              If the work here feels relevant, the resume is the quickest way to get the full picture.
+            </p>
+          </div>
+
+          <div className="portfolio-closing-actions">
+            {siteOwnerResumePath ? (
+              <a
+                className="portfolio-closing-cta"
+                href={siteOwnerResumePath}
+                download={siteOwnerResumePath.split('/').pop() || 'resume.pdf'}
+                target={/^https?:\/\//i.test(siteOwnerResumePath) ? '_blank' : undefined}
+                rel={/^https?:\/\//i.test(siteOwnerResumePath) ? 'noopener noreferrer' : undefined}
+              >
+                Download Resume
+              </a>
+            ) : null}
+            {siteOwnerEmail ? (
+              <a className="portfolio-closing-link" href={`mailto:${siteOwnerEmail}`}>
+                Or reach out by email
+              </a>
+            ) : null}
+          </div>
         </section>
       </main>
 

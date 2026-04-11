@@ -3,9 +3,9 @@
   color-scheme: dark;
 
   /* Background Colors */
-  --background-color: #0a1018;
-  --dark-background-color: #04070d;
-  --card-background-color: #1b2430;
+  --background-color: #091019;
+  --dark-background-color: #03060c;
+  --card-background-color: #1d2734;
 
   /* Text Colors */
   --primary-text-color: #edf2f8;
@@ -14,48 +14,48 @@
   --link-hover-color: #e1b88f;
   --accent-strong: #d2a06a;
   --accent-text-subtle: #ddb488;
-  --accent-border-strong: rgba(210, 160, 106, 0.3);
-  --accent-border-soft: rgba(210, 160, 106, 0.16);
-  --accent-surface-soft: rgba(210, 160, 106, 0.08);
-  --accent-surface-mix: linear-gradient(135deg, rgba(210, 160, 106, 0.14), rgba(122, 139, 160, 0.08));
-  --accent-glow-soft: rgba(210, 160, 106, 0.16);
-  --surface-neutral-strong: rgba(20, 28, 39, 0.94);
-  --surface-neutral-soft: rgba(26, 35, 47, 0.84);
+  --accent-border-strong: rgba(210, 160, 106, 0.34);
+  --accent-border-soft: rgba(210, 160, 106, 0.18);
+  --accent-surface-soft: rgba(210, 160, 106, 0.072);
+  --accent-surface-mix: linear-gradient(135deg, rgba(210, 160, 106, 0.12), rgba(126, 145, 167, 0.06));
+  --accent-glow-soft: rgba(210, 160, 106, 0.14);
+  --surface-neutral-strong: rgba(18, 25, 35, 0.96);
+  --surface-neutral-soft: rgba(23, 31, 43, 0.9);
 
   /* Button Colors */
-  --button-background-color: rgba(25, 34, 46, 0.82);
+  --button-background-color: rgba(20, 28, 39, 0.9);
   --button-text-color: rgba(233, 239, 247, 0.98);
   --button-hover-text-color: rgba(244, 248, 252, 1);
-  --button-border-color: rgba(149, 164, 184, 0.28);
-  --button-border-hover-color: rgba(210, 160, 106, 0.38);
+  --button-border-color: rgba(166, 181, 201, 0.18);
+  --button-border-hover-color: rgba(210, 160, 106, 0.32);
 
   /* Box Shadow Colors */
-  --box-shadow-color: rgba(3, 6, 12, 0.42);
-  --box-shadow-hover-color: rgba(3, 6, 12, 0.54);
+  --box-shadow-color: rgba(2, 5, 11, 0.5);
+  --box-shadow-hover-color: rgba(2, 5, 11, 0.62);
 
   /* Focus Glow */
   --focus-glow-color: rgba(210, 160, 106, 0.24);
 
   /* Shell / Layout */
   --page-background:
-    radial-gradient(circle at top left, rgba(96, 116, 142, 0.1), transparent 24%),
-    radial-gradient(circle at bottom right, rgba(210, 160, 106, 0.05), transparent 16%),
-    linear-gradient(180deg, #070d14 0%, #0a121c 42%, #04080f 100%);
-  --glass-border-color: rgba(237, 242, 248, 0.1);
-  --glass-top-highlight: rgba(255, 255, 255, 0.06);
-  --glass-bottom-highlight: rgba(255, 255, 255, 0.02);
-  --glass-panel-background: rgba(12, 17, 25, 0.5);
-  --glass-panel-background-strong: rgba(14, 20, 29, 0.62);
-  --glass-button-background: rgba(24, 33, 45, 0.82);
-  --glass-button-background-strong: rgba(25, 34, 47, 0.92);
-  --glass-chip-background: rgba(30, 40, 53, 0.94);
-  --module-background: rgba(14, 20, 29, 0.94);
-  --module-border-color: rgba(237, 242, 248, 0.07);
-  --soft-border-color: rgba(237, 242, 248, 0.055);
-  --experience-gradient: linear-gradient(180deg, rgba(23, 31, 43, 0.985), rgba(13, 19, 28, 0.995));
-  --card-background-soft: rgba(24, 33, 45, 0.86);
-  --card-background-softer: rgba(20, 28, 39, 0.84);
-  --chip-background-soft: rgba(29, 39, 52, 0.92);
+    radial-gradient(circle at top left, rgba(103, 123, 149, 0.08), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(210, 160, 106, 0.04), transparent 17%),
+    linear-gradient(180deg, #050a11 0%, #0a111a 38%, #03070d 100%);
+  --glass-border-color: rgba(237, 242, 248, 0.09);
+  --glass-top-highlight: rgba(255, 255, 255, 0.05);
+  --glass-bottom-highlight: rgba(255, 255, 255, 0.016);
+  --glass-panel-background: rgba(10, 15, 23, 0.54);
+  --glass-panel-background-strong: rgba(12, 18, 27, 0.7);
+  --glass-button-background: rgba(20, 28, 39, 0.78);
+  --glass-button-background-strong: rgba(18, 26, 37, 0.9);
+  --glass-chip-background: rgba(27, 36, 49, 0.96);
+  --module-background: rgba(14, 20, 29, 0.98);
+  --module-border-color: rgba(237, 242, 248, 0.082);
+  --soft-border-color: rgba(237, 242, 248, 0.06);
+  --experience-gradient: linear-gradient(180deg, rgba(21, 29, 40, 0.992), rgba(12, 18, 27, 0.998));
+  --card-background-soft: rgba(27, 36, 49, 0.9);
+  --card-background-softer: rgba(19, 27, 38, 0.92);
+  --chip-background-soft: rgba(31, 41, 55, 0.96);
   --font-body: 'Manrope', 'Segoe UI', 'Helvetica Neue', sans-serif;
   --font-display: 'Sora', 'Manrope', 'Segoe UI', sans-serif;
   --font-meta: 'IBM Plex Mono', 'SFMono-Regular', 'Consolas', monospace;
@@ -77,19 +77,19 @@
   --card-padding-lg: 24px;
   --card-padding-md: 18px;
   --card-padding-sm: 14px;
-  --icon-background: rgba(237, 242, 248, 0.05);
-  --icon-background-hover: rgba(210, 160, 106, 0.09);
+  --icon-background: rgba(237, 242, 248, 0.04);
+  --icon-background-hover: rgba(210, 160, 106, 0.075);
   --hero-subtitle-color: rgba(237, 242, 248, 0.88);
   --tooltip-background: #f3ebe3;
   --tooltip-text-color: #12161d;
   --backdrop-overlay: rgba(5, 8, 13, 0.44);
-  --progress-track-color: rgba(237, 242, 248, 0.04);
+  --progress-track-color: rgba(237, 242, 248, 0.032);
   --progress-accent-color: #9aadc4;
   --progress-glow-color: rgba(210, 160, 106, 0.18);
-  --search-input-background: rgba(13, 19, 28, 0.92);
-  --search-empty-background: rgba(237, 242, 248, 0.025);
-  --skeleton-base-color: rgba(237, 242, 248, 0.06);
-  --skeleton-highlight-color: rgba(237, 242, 248, 0.11);
+  --search-input-background: rgba(12, 18, 27, 0.95);
+  --search-empty-background: rgba(237, 242, 248, 0.02);
+  --skeleton-base-color: rgba(237, 242, 248, 0.05);
+  --skeleton-highlight-color: rgba(237, 242, 248, 0.095);
 }
 
 :root[data-theme='light'] {

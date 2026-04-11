@@ -69,7 +69,6 @@ function App() {
   const [portfolioStageHeight, setPortfolioStageHeight] = useState(0);
   const [highlightedSection, setHighlightedSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isHeaderCondensed, setIsHeaderCondensed] = useState(false);
   const [siteOwnerName, setSiteOwnerName] = useState('');
   const [siteOwnerEmail, setSiteOwnerEmail] = useState('');
   const [siteOwnerResumePath, setSiteOwnerResumePath] = useState('');
@@ -79,8 +78,6 @@ function App() {
   const [revealedSections, setRevealedSections] = useState(() => ({ about: true }));
   const [isSmartSearchOpen, setIsSmartSearchOpen] = useState(false);
   const [portfolioTabIndicator, setPortfolioTabIndicator] = useState({ width: 0, left: 0, top: 0, height: 0 });
-  const [isPortfolioTabsHighlighted, setIsPortfolioTabsHighlighted] = useState(false);
-  const [isPortfolioNavVisible, setIsPortfolioNavVisible] = useState(false);
   const [isPortfolioTabsDocked, setIsPortfolioTabsDocked] = useState(false);
   const headerRef = useRef(null);
   const portfolioPanelRef = useRef(null);
@@ -239,19 +236,6 @@ function App() {
       document.documentElement.removeAttribute('data-mobile-menu-open');
     };
   }, [isMobileMenuOpen]);
-
-  useEffect(() => {
-    const syncHeaderState = () => {
-      setIsHeaderCondensed(window.scrollY > 20);
-    };
-
-    syncHeaderState();
-    window.addEventListener('scroll', syncHeaderState, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', syncHeaderState);
-    };
-  }, []);
 
   useEffect(() => {
     if (!isSmartSearchOpen) {
@@ -436,29 +420,6 @@ function App() {
       return undefined;
     }
 
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        setIsPortfolioNavVisible(Boolean(entry?.isIntersecting));
-      },
-      {
-        threshold: 0.2
-      }
-    );
-
-    observer.observe(tabsRow);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    const tabsRow = portfolioTabsRef.current;
-
-    if (!tabsRow) {
-      return undefined;
-    }
-
     let frameId = null;
 
     const updateDockedState = () => {
@@ -528,7 +489,7 @@ function App() {
 
       document.documentElement.style.removeProperty('--site-header-height');
     };
-  }, [isHeaderCondensed, isMobileMenuOpen]);
+  }, [isMobileMenuOpen]);
 
   useLayoutEffect(() => {
     const tabRow = portfolioTabsRef.current;
@@ -628,13 +589,6 @@ function App() {
     setIsPortfolioSelectorOpen(false);
   };
 
-  const triggerPortfolioTabsHighlight = useCallback(() => {
-    setIsPortfolioTabsHighlighted(true);
-    window.setTimeout(() => {
-      setIsPortfolioTabsHighlighted(false);
-    }, 900);
-  }, []);
-
   const scrollElementIntoView = useCallback((element, sectionId) => {
     setRevealedSections((current) => ({ ...current, [sectionId]: true }));
     element.classList.add('is-visible');
@@ -682,7 +636,7 @@ function App() {
     window.setTimeout(waitForArrival, 120);
   }, []);
 
-  const scrollPortfolioTabsIntoView = useCallback((sectionId, { highlightTabs = false } = {}) => {
+  const scrollPortfolioTabsIntoView = useCallback((sectionId) => {
     const tabsRow = portfolioTabsRef.current;
 
     if (!tabsRow) {
@@ -718,10 +672,6 @@ function App() {
     const maxAttempts = 40;
 
     const finalizeArrival = () => {
-      if (highlightTabs) {
-        triggerPortfolioTabsHighlight();
-      }
-
       setHighlightedSection(sectionId);
       window.setTimeout(() => {
         setHighlightedSection((current) => (current === sectionId ? '' : current));
@@ -741,7 +691,7 @@ function App() {
     };
 
     window.setTimeout(waitForArrival, 120);
-  }, [scrollElementIntoView, triggerPortfolioTabsHighlight]);
+  }, [scrollElementIntoView]);
 
   const scrollToSection = (sectionId) => {
     if (portfolioTabIds.has(sectionId)) {
@@ -764,10 +714,6 @@ function App() {
 
   const handlePortfolioTabChange = (nextTabId) => {
     startPortfolioTabTransition(nextTabId);
-  };
-
-  const handlePortfolioSummaryClick = () => {
-    scrollPortfolioTabsIntoView(activePortfolioTab, { highlightTabs: true });
   };
 
   useEffect(() => {
@@ -799,12 +745,7 @@ function App() {
         <span className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
       </div>
 
-      <header
-        ref={headerRef}
-        className={`site-header ${isHeaderCondensed ? 'is-condensed' : ''} ${
-          isPortfolioNavVisible ? 'is-portfolio-active' : ''
-        }`.trim()}
-      >
+      <header ref={headerRef} className="site-header">
         <div className="brand-lockup">
           <span className="brand-kicker">NS / backend systems</span>
           <h1>{siteOwnerName}</h1>
@@ -875,7 +816,7 @@ function App() {
             ) : null}
 
             <div className="site-nav-group site-nav-group-work">
-              <div className="site-nav-work-track" aria-hidden={isPortfolioNavVisible}>
+              <div className="site-nav-work-track">
                 {workNavigationSections.map(({ id, label }) => (
                   <button
                     key={id}
@@ -888,13 +829,6 @@ function App() {
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
-                className="site-nav-portfolio-button"
-                onClick={handlePortfolioSummaryClick}
-              >
-                Portfolio
-              </button>
             </div>
           </div>
           <div className="mobile-nav-meta">
@@ -953,9 +887,7 @@ function App() {
 
               <div
                 ref={portfolioTabsRef}
-                className={`portfolio-tabs-row ${isPortfolioTabsHighlighted ? 'is-highlighted' : ''} ${
-                  isPortfolioTabsDocked ? 'is-docked' : ''
-                }`.trim()}
+                className={`portfolio-tabs-row ${isPortfolioTabsDocked ? 'is-docked' : ''}`.trim()}
                 role="tablist"
                 aria-label="Portfolio sections"
               >

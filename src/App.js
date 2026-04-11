@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import About from './components/About';
 import Education from './components/Education';
@@ -1092,6 +1093,7 @@ function App() {
         activeContext={smartSearchContext.context}
       />
 
+      <Analytics />
       <SpeedInsights />
     </div>
   );

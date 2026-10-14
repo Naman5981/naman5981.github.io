@@ -2,14 +2,6 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import About from './components/About';
-import Education from './components/Education';
-import Experience from './components/Experience';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import Achievements from './components/Achievements';
-import AnalyticsDashboard from './components/AnalyticsDashboard';
-import SmartSearch from './components/SmartSearch';
-import PortfolioError from './components/PortfolioError';
 import { navigationSections } from './data/portfolioContent';
 import { trackPortfolioEvent } from './services/analytics';
 import { getProfile } from './services/portfolio';
@@ -31,6 +23,15 @@ import firebaseLogo from './assets/tech-marquee/firebase.png';
 import n8nLogo from './assets/tech-marquee/n8n.png';
 import claudeLogo from './assets/tech-marquee/claude.png';
 import './styles/App.css';
+
+const Experience = React.lazy(() => import('./components/Experience'));
+const Projects = React.lazy(() => import('./components/Projects'));
+const Skills = React.lazy(() => import('./components/Skills'));
+const Education = React.lazy(() => import('./components/Education'));
+const Achievements = React.lazy(() => import('./components/Achievements'));
+const AnalyticsDashboard = React.lazy(() => import('./components/AnalyticsDashboard'));
+const SmartSearch = React.lazy(() => import('./components/SmartSearch'));
+const PortfolioError = React.lazy(() => import('./components/PortfolioError'));
 
 const transitionTechnologies = [
   { name: 'Java', logo: javaLogo },
@@ -737,7 +738,11 @@ function App() {
   }, [activePortfolioTab, pendingPortfolioScrollSection, scrollPortfolioTabsIntoView]);
 
   if (hasPortfolioError) {
-    return <PortfolioError />;
+    return (
+      <React.Suspense fallback={null}>
+        <PortfolioError />
+      </React.Suspense>
+    );
   }
 
   return (
@@ -871,7 +876,7 @@ function App() {
               {[...transitionTechnologies, ...transitionTechnologies, ...transitionTechnologies].map((technology, index) => (
                 <React.Fragment key={`portfolio-tech-${index}`}>
                   <div className="portfolio-tech-pill">
-                    <img src={technology.logo} alt="" loading="lazy" />
+                    <img src={technology.logo} alt="" loading="lazy" decoding="async" width="20" height="20" />
                     <span>{technology.name}</span>
                   </div>
                   <span className="portfolio-tech-separator" aria-hidden="true" />
@@ -1012,7 +1017,17 @@ function App() {
                       className={paneClassName}
                       aria-hidden={!isActive}
                     >
-                      <tab.component />
+                      <React.Suspense
+                        fallback={
+                          <div
+                            className="skeleton-tab-loader shimmer-block"
+                            style={{ minHeight: '280px', borderRadius: '12px' }}
+                            aria-busy="true"
+                          />
+                        }
+                      >
+                        <tab.component />
+                      </React.Suspense>
                     </div>
                   );
                 })}
@@ -1026,7 +1041,9 @@ function App() {
         </div>
 
         <section className="portfolio-proof-shell module-card" data-reveal>
-          <AnalyticsDashboard compact />
+          <React.Suspense fallback={<div className="shimmer-block" style={{ minHeight: '120px', borderRadius: '12px' }} />}>
+            <AnalyticsDashboard compact />
+          </React.Suspense>
         </section>
 
         <section className="portfolio-closing-shell" data-reveal>
@@ -1086,12 +1103,16 @@ function App() {
           ) : null}
         </button>
 
-      <SmartSearch
-        isOpen={isSmartSearchOpen}
-        onClose={() => setIsSmartSearchOpen(false)}
-        onNavigate={scrollToSection}
-        activeContext={smartSearchContext.context}
-      />
+      {isSmartSearchOpen && (
+        <React.Suspense fallback={null}>
+          <SmartSearch
+            isOpen={isSmartSearchOpen}
+            onClose={() => setIsSmartSearchOpen(false)}
+            onNavigate={scrollToSection}
+            activeContext={smartSearchContext.context}
+          />
+        </React.Suspense>
+      )}
 
       <Analytics />
       <SpeedInsights />

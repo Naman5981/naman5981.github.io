@@ -18,12 +18,26 @@ const sectionLabels = {
   'visitor-signals': 'Visitor Signals'
 };
 
+const shouldShowContactActions = (query = '', answer = '') => {
+  const combined = `${query} ${answer}`.toLowerCase();
+  return (
+    combined.includes('email') ||
+    combined.includes('contact') ||
+    combined.includes('resume') ||
+    combined.includes('reach') ||
+    combined.includes('phone') ||
+    combined.includes('hire') ||
+    combined.includes('hiring')
+  );
+};
+
 const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' }) => {
   const [query, setQuery] = useState('');
   const [isTraceActive, setIsTraceActive] = useState(false);
   const [activeResponse, setActiveResponse] = useState(null);
-  const [promptSuggestions, setPromptSuggestions] = useState(defaultSmartSearchPrompts.slice(0, 3));
-  const [promptDeck, setPromptDeck] = useState(defaultSmartSearchPrompts.slice(0, 3));
+  const [isCopiedEmail, setIsCopiedEmail] = useState(false);
+  const [promptSuggestions, setPromptSuggestions] = useState(defaultSmartSearchPrompts.slice(0, 4));
+  const [promptDeck, setPromptDeck] = useState(defaultSmartSearchPrompts.slice(0, 4));
   const [isPromptDeckTransitioning, setIsPromptDeckTransitioning] = useState(false);
   const [portfolioContext, setPortfolioContext] = useState({
     profile: null,
@@ -32,6 +46,7 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
     experiences: []
   });
   const promptRowRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -57,19 +72,17 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
         });
 
         const nextPrompts = getDynamicSmartSearchPrompts({
-          profile,
           projects,
-          skillCategories,
-          experiences
+          activeContext
         });
 
-        setPromptSuggestions(nextPrompts.slice(0, 3));
-        setPromptDeck(nextPrompts.slice(0, 3));
+        setPromptSuggestions(nextPrompts.slice(0, 4));
+        setPromptDeck(nextPrompts.slice(0, 4));
       } catch (error) {
         console.error('Failed to load dynamic AI search prompts.', error);
 
         if (isMounted) {
-          const fallbackPrompts = defaultSmartSearchPrompts.slice(0, 3);
+          const fallbackPrompts = defaultSmartSearchPrompts.slice(0, 4);
           setPromptSuggestions(fallbackPrompts);
           setPromptDeck(fallbackPrompts);
         }
@@ -81,7 +94,7 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [activeContext]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -90,12 +103,40 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
     }
 
     setIsTraceActive(true);
-    const timeoutId = window.setTimeout(() => {
+    const traceTimeout = window.setTimeout(() => {
       setIsTraceActive(false);
     }, 3000);
 
-    return () => window.clearTimeout(timeoutId);
-  }, [isOpen]);
+    const focusTimeout = window.setTimeout(() => {
+      inputRef.current?.focus();
+    }, 90);
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose?.();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.clearTimeout(traceTimeout);
+      window.clearTimeout(focusTimeout);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (activeResponse) {
+      return;
+    }
+    const nextPrompts = getDynamicSmartSearchPrompts({
+      projects: portfolioContext.projects,
+      activeContext
+    });
+    setPromptSuggestions(nextPrompts.slice(0, 4));
+    setPromptDeck(nextPrompts.slice(0, 4));
+  }, [activeContext, portfolioContext, activeResponse]);
 
   useEffect(() => {
     const nextPromptDeck =
@@ -135,6 +176,15 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
       promptRow.removeEventListener('wheel', handleWheel);
     };
   }, []);
+
+  const handleCopyEmail = () => {
+    const email = portfolioContext.profile?.email || 'namansanadhya@gmail.com';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(email);
+    }
+    setIsCopiedEmail(true);
+    window.setTimeout(() => setIsCopiedEmail(false), 2200);
+  };
 
   const buildGuidedExploration = (trimmedQuery) => {
     const matches = getSmartSearchResults({
@@ -199,6 +249,7 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
     setActiveResponse({
       query: trimmedQuery,
       answer: '',
+      mode: 'copilot-local',
       isPending: true,
       hasError: false,
       errorMessage: '',
@@ -210,12 +261,14 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
 
     try {
       const nextSearch = await getAISearchResults({
-        query: trimmedQuery
+        query: trimmedQuery,
+        context: portfolioContext
       });
 
       setActiveResponse({
         query: trimmedQuery,
         answer: nextSearch.answer,
+        mode: nextSearch.mode,
         isPending: false,
         hasError: false,
         errorMessage: '',
@@ -224,13 +277,14 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
         suggestedPrompts: guidedExploration.suggestedPrompts
       });
     } catch (error) {
-      console.error('Gemini AI search failed.', error);
+      console.error('AI search failed.', error);
       setActiveResponse({
         query: trimmedQuery,
         answer: '',
+        mode: 'copilot-local',
         isPending: false,
         hasError: true,
-        errorMessage: error instanceof Error ? error.message : 'Gemini AI search is unavailable right now.',
+        errorMessage: error instanceof Error ? error.message : 'AI search is unavailable right now.',
         matchingSections: guidedExploration.matchingSections,
         matchingProjects: guidedExploration.matchingProjects,
         suggestedPrompts: guidedExploration.suggestedPrompts
@@ -268,7 +322,26 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
             <div className="smart-search-messages">
               {activeResponse ? (
                 <div className="smart-response-card">
-                  <p className="smart-response-query">{activeResponse.query}</p>
+                  <div className="smart-response-header">
+                    <span className="smart-response-badge">
+                      <span className="smart-response-badge-dot" />
+                      {activeResponse.mode === 'gemini' ? 'Gemini 2.5 Flash' : 'Portfolio Copilot'}
+                    </span>
+                    <button
+                      type="button"
+                      className="smart-response-clear"
+                      onClick={() => setActiveResponse(null)}
+                      title="Ask another question"
+                      aria-label="Ask another question"
+                    >
+                      <span>Ask another</span>
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true">
+                        <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <p className="smart-response-query">"{activeResponse.query}"</p>
                   {activeResponse.isPending ? (
                     <div className="smart-response-loading" aria-hidden="true">
                       <div className="smart-chat-loading">
@@ -277,59 +350,83 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
                         <span />
                       </div>
                     </div>
-                ) : (
-                  <>
-                    <p className="smart-response-summary">
-                      {activeResponse.hasError
-                        ? activeResponse.errorMessage || 'Gemini AI search is unavailable right now.'
-                        : activeResponse.answer || 'I could not find a strong answer for this query.'}
-                    </p>
-                    {activeResponse.matchingSections?.length ? (
-                      <div className="smart-guided-group">
-                        <span className="smart-guided-label">Matching sections</span>
-                        <div className="smart-guided-links">
-                          {activeResponse.matchingSections.map((section) => (
-                            <button
-                              key={section.id}
-                              type="button"
-                              className="smart-guided-chip"
-                              onClick={() => {
-                                onNavigate?.(section.id);
-                                onClose?.();
-                              }}
-                            >
-                              {section.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
+                  ) : (
+                    <>
+                      <p className="smart-response-summary">
+                        {activeResponse.hasError
+                          ? activeResponse.errorMessage || 'AI search is unavailable right now.'
+                          : activeResponse.answer || 'I could not find a strong answer for this query.'}
+                      </p>
 
-                    {activeResponse.matchingProjects?.length ? (
-                      <div className="smart-guided-group">
-                        <span className="smart-guided-label">Matching projects</span>
-                        <div className="smart-guided-projects">
-                          {activeResponse.matchingProjects.map((project) => (
-                            <button
-                              key={project.id}
-                              type="button"
-                              className="smart-guided-project"
-                              onClick={() => {
-                                onNavigate?.(project.targetSection);
-                                onClose?.();
-                              }}
-                            >
-                              <strong>{project.title}</strong>
-                              <span>{project.description}</span>
-                            </button>
-                          ))}
+                      {shouldShowContactActions(activeResponse.query, activeResponse.answer) ? (
+                        <div className="smart-response-actions">
+                          <button
+                            type="button"
+                            className="smart-action-btn"
+                            onClick={handleCopyEmail}
+                          >
+                            {isCopiedEmail ? 'Email Copied!' : 'Copy Email'}
+                          </button>
+                          <a
+                            href="/Naman_Sanadhya_Resume.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="smart-action-btn primary"
+                          >
+                            Preview Resume ↗
+                          </a>
                         </div>
-                      </div>
-                    ) : null}
+                      ) : null}
 
-                  </>
-                )}
-              </div>
+                      {activeResponse.matchingSections?.length ? (
+                        <div className="smart-guided-group">
+                          <span className="smart-guided-label">Matching sections</span>
+                          <div className="smart-guided-links">
+                            {activeResponse.matchingSections.map((section) => (
+                              <button
+                                key={section.id}
+                                type="button"
+                                className="smart-guided-chip"
+                                onClick={() => {
+                                  onNavigate?.(section.id);
+                                  onClose?.();
+                                }}
+                              >
+                                <span>{section.label}</span>
+                                <span className="smart-guided-arrow" aria-hidden="true">→</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+
+                      {activeResponse.matchingProjects?.length ? (
+                        <div className="smart-guided-group">
+                          <span className="smart-guided-label">Matching projects</span>
+                          <div className="smart-guided-projects">
+                            {activeResponse.matchingProjects.map((project) => (
+                              <button
+                                key={project.id}
+                                type="button"
+                                className="smart-guided-project"
+                                onClick={() => {
+                                  onNavigate?.(project.targetSection || 'projects');
+                                  onClose?.();
+                                }}
+                              >
+                                <div className="smart-guided-project-top">
+                                  <strong>{project.title}</strong>
+                                  <span className="smart-guided-arrow" aria-hidden="true">→</span>
+                                </div>
+                                <span>{project.description}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+                    </>
+                  )}
+                </div>
               ) : (
                 <div className="smart-search-empty">
                   <h3>Try queries like</h3>
@@ -348,6 +445,7 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
                   </svg>
                 </span>
                 <input
+                  ref={inputRef}
                   id="smart-search-input"
                   type="search"
                   value={query}

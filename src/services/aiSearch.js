@@ -1,43 +1,49 @@
-const providerLabel = 'Gemini AI search';
+import { synthesizeLocalSmartAnswer } from '../lib/smartSearch.js';
+
+const providerLabel = 'AI Search Copilot';
 
 export const getAISearchProviderLabel = () => providerLabel;
 
-export const getAISearchResults = async ({ query }) => {
-  const trimmedQuery = query.trim();
+export const getAISearchResults = async ({ query, context = {} }) => {
+  const trimmedQuery = `${query ?? ''}`.trim();
 
   if (!trimmedQuery) {
     return {
-      mode: 'gemini',
+      mode: 'empty',
       answer: ''
     };
   }
 
-  const response = await fetch('/api/ai-search', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ query: trimmedQuery })
-  });
+  try {
+    const response = await fetch('/api/ai-search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query: trimmedQuery })
+    });
 
-  if (!response.ok) {
-    const errorPayload = await response.json().catch(() => null);
-    const isLikelyLocalCraDev =
-      typeof window !== 'undefined' &&
-      (window.location.port === '3000' || window.location.port === '3001') &&
-      response.status === 404;
-
-    if (isLikelyLocalCraDev) {
-      throw new Error('Local API route not running. Start this project with `vercel dev` instead of `npm start`.');
+    if (response.ok) {
+      const data = await response.json();
+      if (typeof data?.answer === 'string' && data.answer.trim()) {
+        return {
+          mode: data.mode ?? 'gemini',
+          answer: data.answer.trim()
+        };
+      }
     }
-
-    throw new Error(errorPayload?.error || `AI search request failed with status ${response.status}`);
+  } catch (error) {
+    // API route unavailable (CRA dev server on localhost:3000, GitHub Pages static hosting, or offline)
   }
 
-  const data = await response.json();
+  // Zero-failure fallback to intelligent client-side smart synthesis copilot
+  const synthesized = synthesizeLocalSmartAnswer({
+    query: trimmedQuery,
+    context
+  });
 
   return {
-    mode: data.mode ?? 'gemini',
-    answer: typeof data.answer === 'string' ? data.answer : ''
+    mode: 'copilot-local',
+    answer: synthesized
   };
 };

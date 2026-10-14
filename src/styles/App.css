@@ -1762,6 +1762,10 @@ h6 {
   outline: none;
 }
 
+.portfolio-closing-cta:active {
+  transform: translateY(2px);
+}
+
 .portfolio-closing-link {
   color: color-mix(in srgb, var(--secondary-text-color) 78%, var(--accent-text-subtle) 22%);
   text-decoration: none;
@@ -2808,6 +2812,16 @@ h6 {
   background: var(--accent-surface-soft);
   border-color: var(--accent-border-soft);
   transform: translateY(-1px);
+}
+
+.portfolio-closing-secondary-btn:active {
+  transform: translateY(2px);
+}
+
+.portfolio-closing-secondary-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 8px var(--focus-glow-color);
+  border-color: var(--accent-border-soft);
 }
 
 .portfolio-closing-copy-btn {

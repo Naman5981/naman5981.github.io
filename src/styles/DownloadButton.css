@@ -1,38 +1,60 @@
 @import './colors.css';
 
-.floating-download-button {
+.floating-download-button,
+.floating-preview-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 28px;
-  background: var(--button-background-color); /* Updated to use button background color */
-  color: var(--button-text-color); /* Updated to use button text color */
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 22px;
+  background: var(--button-background-color);
+  color: var(--button-text-color);
+  font-family: inherit;
+  font-size: 0.92rem;
   font-weight: 600;
+  line-height: 1;
   text-decoration: none;
   border-radius: 12px;
-  backdrop-filter: blur(6px); /* Frosted glass effect */
-  box-shadow: 0 4px 12px var(--box-shadow-color); /* Using centralized box shadow */
+  border: 2px solid var(--button-border-color);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px var(--box-shadow-color);
   cursor: pointer;
+  background-clip: padding-box;
+  box-sizing: border-box;
   transition:
     transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
     box-shadow var(--motion-duration-emphasis) ease,
     border-color var(--motion-duration-emphasis) ease,
-    background var(--motion-duration-emphasis) ease;
-  border: 2px solid var(--button-border-color); /* Updated to use button border color */
-  background-clip: padding-box;
+    background var(--motion-duration-emphasis) ease,
+    color var(--motion-duration-emphasis) ease;
 }
 
-.floating-download-button:hover {
+.floating-download-button svg,
+.floating-preview-button svg {
+  flex-shrink: 0;
+  transition: transform var(--motion-duration-emphasis) ease;
+}
+
+.floating-download-button:hover,
+.floating-preview-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 24px var(--box-shadow-hover-color);
   border-color: var(--button-border-hover-color);
+  color: var(--button-hover-text-color);
 }
 
-.floating-download-button:focus {
+.floating-download-button:focus,
+.floating-download-button:focus-visible,
+.floating-preview-button:focus,
+.floating-preview-button:focus-visible {
   outline: none;
   box-shadow: 0 0 8px var(--focus-glow-color), 0 4px 12px var(--box-shadow-color);
 }
 
-.floating-download-button:active {
+.floating-download-button:active,
+.floating-preview-button:active {
   transform: translateY(3px);
+  box-shadow: 0 2px 6px var(--box-shadow-color);
 }

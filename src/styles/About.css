@@ -314,35 +314,9 @@
   gap: 12px;
 }
 
-.about-actions .floating-download-button {
-  min-width: 148px;
+.about-actions .floating-download-button,
+.about-actions .floating-preview-button {
   min-height: 44px;
-  border-radius: 12px;
-  font-size: 0.92rem;
-}
-
-.floating-preview-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 10px 20px;
-  background: var(--button-background-color);
-  color: var(--button-text-color);
-  font-weight: 600;
-  font-size: 0.92rem;
-  border-radius: 12px;
-  border: 1px solid var(--button-border-color);
-  cursor: pointer;
-  box-shadow: 0 4px 14px var(--box-shadow-color);
-  transition: all var(--motion-duration-emphasis) ease;
-}
-
-.floating-preview-button:hover {
-  background: var(--button-background-hover-color);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px var(--box-shadow-hover-color);
 }
 
 .copy-email-btn {
@@ -588,7 +562,8 @@
     gap: 10px;
   }
 
-  .about-actions .floating-download-button {
+  .about-actions .floating-download-button,
+  .about-actions .floating-preview-button {
     width: min(100%, 280px);
     max-width: 280px;
   }

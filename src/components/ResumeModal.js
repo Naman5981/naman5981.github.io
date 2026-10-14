@@ -49,21 +49,21 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
       }
     };
 
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    const originalBodyOverflow = document.body.style.overflow;
-    const originalBodyPaddingRight = document.body.style.paddingRight;
-
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-    document.body.style.overflow = 'hidden';
+    const handleWheel = (event) => {
+      // Prevent background scrolling when scrolling on the overlay backdrop
+      if (event.target && event.target.classList && event.target.classList.contains('resume-modal-overlay')) {
+        event.preventDefault();
+      }
+    };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchmove', handleWheel, { passive: false });
 
     return () => {
-      document.body.style.overflow = originalBodyOverflow;
-      document.body.style.paddingRight = originalBodyPaddingRight;
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchmove', handleWheel);
     };
   }, [isRendered, isClosing, handleRequestClose]);
 

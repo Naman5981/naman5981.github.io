@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import '../styles/ResumeModal.css';
 import { trackPortfolioEvent } from '../services/analytics';
 
@@ -34,7 +35,7 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || !resumeUrl) {
+  if (!isOpen || !resumeUrl || typeof document === 'undefined') {
     return null;
   }
 
@@ -47,14 +48,24 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
     });
   };
 
-  return (
-    <div className="resume-modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="Resume Preview">
+  const modalContent = (
+    <div
+      className="resume-modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Resume Preview Modal"
+    >
       <div className="resume-modal-container" onClick={(e) => e.stopPropagation()}>
-        <div className="resume-modal-header">
+        <header className="resume-modal-header">
           <div className="resume-modal-title-group">
             <span className="resume-modal-badge">Resume</span>
-            <h3>Naman Sanadhya — Backend Engineer</h3>
+            <div className="resume-modal-heading-text">
+              <h3>Naman Sanadhya</h3>
+              <span className="resume-modal-subtitle">Backend Engineer</span>
+            </div>
           </div>
+
           <div className="resume-modal-actions">
             <a
               href={resumeUrl}
@@ -63,13 +74,24 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
               className="resume-modal-btn secondary"
               title="Open full PDF in a new tab"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                 <polyline points="15 3 21 3 21 9" />
                 <line x1="10" y1="14" x2="21" y2="3" />
               </svg>
               <span>Full Screen</span>
             </a>
+
             <a
               href={resumeUrl}
               download={fileName}
@@ -77,23 +99,49 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
               className="resume-modal-btn primary"
               title="Download PDF to device"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
               <span>Download PDF</span>
             </a>
+
             <button
               type="button"
               className="resume-modal-close"
               onClick={onClose}
               aria-label="Close resume preview (Esc)"
+              title="Close (Esc)"
             >
-              ✕
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+              <span className="resume-modal-close-label">Close</span>
             </button>
           </div>
-        </div>
+        </header>
 
         <div className="resume-modal-body">
           {isLoading && (
@@ -109,9 +157,26 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
             onLoad={() => setIsLoading(false)}
           />
         </div>
+
+        <footer className="resume-modal-footer">
+          <span className="resume-modal-footer-hint">
+            Press <kbd>Esc</kbd> or click outside to close
+          </span>
+          <div className="resume-modal-footer-actions">
+            <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
+              Open in New Tab
+            </a>
+            <span aria-hidden="true">•</span>
+            <a href={resumeUrl} download={fileName} onClick={handleDownload}>
+              Download Copy
+            </a>
+          </div>
+        </footer>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default ResumeModal;

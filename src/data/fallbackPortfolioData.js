@@ -3,7 +3,7 @@ export const fallbackProfile = {
   fullName: 'Naman Sanadhya',
   headline: 'Java Backend Developer',
   bio: "I build reliable backend systems for banking and transaction-heavy platforms.\nOver the last 5+ years, I've worked across Spring Boot microservices, API design, transaction safety, production debugging, and modular service architecture.",
-  location: 'Jaipur, Rajasthan',
+  location: 'Bengaluru, Karnataka',
   email: 'namansanadhya@gmail.com',
   phone: '+91 76651 55815',
   yearsExperienceLabel: '5+',

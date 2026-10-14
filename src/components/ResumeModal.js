@@ -49,12 +49,20 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
       }
     };
 
-    const originalOverflow = document.body.style.overflow;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalBodyPaddingRight = document.body.style.paddingRight;
+
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
     document.body.style.overflow = 'hidden';
+
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.body.style.overflow = originalOverflow;
+      document.body.style.overflow = originalBodyOverflow;
+      document.body.style.paddingRight = originalBodyPaddingRight;
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isRendered, isClosing, handleRequestClose]);

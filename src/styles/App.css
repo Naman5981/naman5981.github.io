@@ -15,6 +15,7 @@ body {
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 *,
@@ -81,8 +82,10 @@ h6 {
 .site-header {
   position: fixed;
   top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
   width: min(1380px, calc(100% - 24px));
   z-index: 10;
   display: grid;
@@ -2013,8 +2016,10 @@ h6 {
 
   .site-header {
     top: 10px;
-    left: 50%;
-    right: auto;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
     width: calc(100% - 28px);
     grid-template-areas:
       'brand utilities'

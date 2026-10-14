@@ -12,7 +12,7 @@
 
 .smart-search-shell {
   position: fixed;
-  right: max(16px, calc((100vw - 1380px) / 2 + 18px));
+  right: max(16px, calc((100% - 1380px) / 2 + 18px));
   bottom: 88px;
   top: auto;
   left: auto;
@@ -108,7 +108,7 @@
 
 .smart-search-launcher {
   position: fixed;
-  right: max(16px, calc((100vw - 1380px) / 2 + 18px));
+  right: max(16px, calc((100% - 1380px) / 2 + 18px));
   bottom: 18px;
   z-index: 28;
   display: inline-flex;

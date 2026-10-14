@@ -4,23 +4,46 @@
   position: fixed;
   inset: 0;
   z-index: 999999;
-  background: rgba(3, 8, 15, 0.85);
+  background: rgba(3, 8, 15, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  animation: resumeFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   box-sizing: border-box;
+  opacity: 0;
+  animation: resumeOverlayEnter 320ms var(--motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)) forwards;
 }
 
-@keyframes resumeFadeIn {
-  from {
+.resume-modal-overlay.is-closing {
+  animation: resumeOverlayExit 220ms var(--motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)) forwards;
+  pointer-events: none;
+}
+
+@keyframes resumeOverlayEnter {
+  0% {
     opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
   }
-  to {
+  100% {
     opacity: 1;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+}
+
+@keyframes resumeOverlayExit {
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
   }
 }
 
@@ -38,16 +61,41 @@
   box-shadow:
     0 32px 72px -16px rgba(0, 0, 0, 0.75),
     0 0 0 1px rgba(255, 255, 255, 0.08);
-  animation: resumeScaleUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   position: relative;
+  opacity: 0;
+  transform: translateY(28px) scale(0.95);
+  filter: blur(12px);
+  animation: resumeContainerEnter 380ms var(--motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)) forwards;
+  will-change: transform, opacity, filter;
 }
 
-@keyframes resumeScaleUp {
-  from {
-    transform: scale(0.97) translateY(14px);
+.resume-modal-overlay.is-closing .resume-modal-container {
+  animation: resumeContainerExit 220ms var(--motion-ease-emphasis, cubic-bezier(0.2, 0.9, 0.24, 1)) forwards;
+}
+
+@keyframes resumeContainerEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.95);
+    filter: blur(12px);
   }
-  to {
-    transform: scale(1) translateY(0);
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes resumeContainerExit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+    filter: blur(10px);
   }
 }
 
@@ -132,10 +180,10 @@
   cursor: pointer;
   box-sizing: border-box;
   transition:
-    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
-    background var(--motion-duration-emphasis) ease,
-    border-color var(--motion-duration-emphasis) ease,
-    color var(--motion-duration-emphasis) ease;
+    transform var(--motion-duration-emphasis, 220ms) var(--motion-ease-emphasis, cubic-bezier(0.2, 0.9, 0.24, 1)),
+    background var(--motion-duration-emphasis, 220ms) ease,
+    border-color var(--motion-duration-emphasis, 220ms) ease,
+    color var(--motion-duration-emphasis, 220ms) ease;
 }
 
 .resume-modal-btn.primary {
@@ -190,11 +238,11 @@
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition:
-    transform var(--motion-duration-emphasis) var(--motion-ease-emphasis),
-    background var(--motion-duration-emphasis) ease,
-    border-color var(--motion-duration-emphasis) ease,
-    color var(--motion-duration-emphasis) ease,
-    box-shadow var(--motion-duration-emphasis) ease;
+    transform var(--motion-duration-emphasis, 220ms) var(--motion-ease-emphasis, cubic-bezier(0.2, 0.9, 0.24, 1)),
+    background var(--motion-duration-emphasis, 220ms) ease,
+    border-color var(--motion-duration-emphasis, 220ms) ease,
+    color var(--motion-duration-emphasis, 220ms) ease,
+    box-shadow var(--motion-duration-emphasis, 220ms) ease;
 }
 
 .resume-modal-close svg {
@@ -314,5 +362,18 @@
 
   .resume-modal-close {
     padding: 0 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-modal-overlay,
+  .resume-modal-overlay.is-closing,
+  .resume-modal-container,
+  .resume-modal-overlay.is-closing .resume-modal-container {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
   }
 }

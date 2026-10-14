@@ -1,14 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import '../styles/ResumeModal.css';
 import { trackPortfolioEvent } from '../services/analytics';
 
 const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Resume.pdf' }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isRendered, setIsRendered] = useState(isOpen);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      setIsRendered(true);
+      setIsClosing(false);
       setIsLoading(true);
+    } else if (isRendered) {
+      setIsClosing(true);
+      const timer = window.setTimeout(() => {
+        setIsRendered(false);
+        setIsClosing(false);
+      }, 240);
+      return () => window.clearTimeout(timer);
+    }
+  }, [isOpen, isRendered]);
+
+  const handleRequestClose = useCallback(() => {
+    if (isClosing) return;
+    setIsClosing(true);
+    window.setTimeout(() => {
+      onClose();
+    }, 220);
+  }, [isClosing, onClose]);
+
+  useEffect(() => {
+    if (!isRendered || isClosing) {
       return undefined;
     }
 
@@ -21,7 +45,7 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        onClose();
+        handleRequestClose();
       }
     };
 
@@ -33,9 +57,9 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
       document.body.style.overflow = originalOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isRendered, isClosing, handleRequestClose]);
 
-  if (!isOpen || !resumeUrl || typeof document === 'undefined') {
+  if (!isRendered || !resumeUrl || typeof document === 'undefined') {
     return null;
   }
 
@@ -50,8 +74,8 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
 
   const modalContent = (
     <div
-      className="resume-modal-overlay"
-      onClick={onClose}
+      className={`resume-modal-overlay ${isClosing ? 'is-closing' : ''}`}
+      onClick={handleRequestClose}
       role="dialog"
       aria-modal="true"
       aria-label="Resume Preview Modal"
@@ -120,7 +144,7 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
             <button
               type="button"
               className="resume-modal-close"
-              onClick={onClose}
+              onClick={handleRequestClose}
               aria-label="Close resume preview (Esc)"
               title="Close (Esc)"
             >

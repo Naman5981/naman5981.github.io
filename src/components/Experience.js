@@ -30,6 +30,29 @@ const CompanyLogo = ({ src, alt, company }) => {
   return <img className="company-logo" src={src} alt={alt} loading="lazy" onError={() => setHasError(true)} />;
 };
 
+
+const companyImpactBadges = {
+  'Xebia (AU Small Finance Bank)': [
+    { label: '⚡ -30% Latency', type: 'impact' },
+    { label: '🔒 Zero Deployment Failures', type: 'security' },
+    { label: 'Java 17 & Spring Boot 3', type: 'tech' }
+  ],
+  'Infosys Limited': [
+    { label: '⚡ -40% Latency (Redis)', type: 'impact' },
+    { label: '🛡️ BFSI Microservices', type: 'security' },
+    { label: '35% Fewer Incidents', type: 'impact' }
+  ],
+  'Tech Mahindra': [
+    { label: '🌐 1M+ Concurrent Users', type: 'impact' },
+    { label: '⏱️ 99.9% Uptime', type: 'impact' },
+    { label: 'Live BCCI & IPL Events', type: 'tech' }
+  ],
+  'FoGraph': [
+    { label: '📱 Android & Firebase', type: 'tech' },
+    { label: 'Co-founder', type: 'impact' }
+  ]
+};
+
 const Experience = () => {
   const [experiences, setExperiences] = useState(null);
   const [hasError, setHasError] = useState(false);
@@ -120,6 +143,15 @@ const Experience = () => {
             </div>
           </div>
           <p className="experience-summary">{exp.summary}</p>
+          {companyImpactBadges[exp.company] && (
+            <div className="experience-impact-badges">
+              {companyImpactBadges[exp.company].map((badge) => (
+                <span key={badge.label} className={`impact-badge impact-badge-${badge.type}`}>
+                  {badge.label}
+                </span>
+              ))}
+            </div>
+          )}
           <div className="experience-details">
             <ul>
               {exp.description.map((item) => (

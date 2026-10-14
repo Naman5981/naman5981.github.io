@@ -380,3 +380,40 @@
     padding-left: 15px;
   }
 }
+
+
+.experience-impact-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 14px;
+}
+
+.impact-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-meta);
+  letter-spacing: 0.02em;
+}
+
+.impact-badge-impact {
+  background: color-mix(in srgb, #10b981 14%, transparent);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.32);
+}
+
+.impact-badge-security {
+  background: color-mix(in srgb, #3b82f6 14%, transparent);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.32);
+}
+
+.impact-badge-tech {
+  background: var(--accent-surface-mix);
+  color: var(--primary-text-color);
+  border: 1px solid var(--soft-border-color);
+}

@@ -32,6 +32,7 @@ const Achievements = React.lazy(() => import('./components/Achievements'));
 const AnalyticsDashboard = React.lazy(() => import('./components/AnalyticsDashboard'));
 const SmartSearch = React.lazy(() => import('./components/SmartSearch'));
 const PortfolioError = React.lazy(() => import('./components/PortfolioError'));
+const ResumeModal = React.lazy(() => import('./components/ResumeModal'));
 
 const transitionTechnologies = [
   { name: 'Java', logo: javaLogo },
@@ -75,6 +76,8 @@ function App() {
   const [siteOwnerEmail, setSiteOwnerEmail] = useState('');
   const [siteOwnerResumePath, setSiteOwnerResumePath] = useState('');
   const [hasPortfolioError, setHasPortfolioError] = useState(false);
+  const [isFooterResumeOpen, setIsFooterResumeOpen] = useState(false);
+  const [isFooterCopiedEmail, setIsFooterCopiedEmail] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [revealedSections, setRevealedSections] = useState(() => ({ about: true }));
@@ -99,6 +102,15 @@ function App() {
   );
   const profileNavigationSection = navigationSections.find((section) => section.id === 'about');
   const workNavigationSections = navigationSections.filter((section) => section.id !== 'about');
+
+  const handleFooterCopyEmail = (event) => {
+    event.preventDefault();
+    if (!siteOwnerEmail) return;
+    navigator.clipboard.writeText(siteOwnerEmail).then(() => {
+      setIsFooterCopiedEmail(true);
+      window.setTimeout(() => setIsFooterCopiedEmail(false), 2200);
+    });
+  };
 
   const smartSearchContext = useMemo(() => {
     if (activeSection === 'about') {
@@ -1057,22 +1069,52 @@ function App() {
 
           <div className="portfolio-closing-actions">
             {siteOwnerResumePath ? (
-              <a
-                className="portfolio-closing-cta"
-                href={siteOwnerResumePath}
-                download={siteOwnerResumePath.split('/').pop() || 'resume.pdf'}
-                target={/^https?:\/\//i.test(siteOwnerResumePath) ? '_blank' : undefined}
-                rel={/^https?:\/\//i.test(siteOwnerResumePath) ? 'noopener noreferrer' : undefined}
-              >
-                Download Resume
-              </a>
+              <>
+                <button
+                  type="button"
+                  className="portfolio-closing-cta"
+                  onClick={() => setIsFooterResumeOpen(true)}
+                  aria-label="Preview resume in browser"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                  </svg>
+                  Preview Resume
+                </button>
+                <a
+                  className="portfolio-closing-secondary-btn"
+                  href={siteOwnerResumePath}
+                  download={siteOwnerResumePath.split('/').pop() || 'resume.pdf'}
+                  target={/^https?:\/\//i.test(siteOwnerResumePath) ? '_blank' : undefined}
+                  rel={/^https?:\/\//i.test(siteOwnerResumePath) ? 'noopener noreferrer' : undefined}
+                >
+                  Download PDF
+                </a>
+              </>
             ) : null}
             {siteOwnerEmail ? (
-              <a className="portfolio-closing-link" href={`mailto:${siteOwnerEmail}`}>
-                Or reach out by email
-              </a>
+              <button
+                type="button"
+                className={`portfolio-closing-copy-btn ${isFooterCopiedEmail ? 'is-copied' : ''}`}
+                onClick={handleFooterCopyEmail}
+                title="Copy email to clipboard"
+              >
+                {isFooterCopiedEmail ? '✓ Email Copied!' : `Copy Email (${siteOwnerEmail})`}
+              </button>
             ) : null}
           </div>
+          {isFooterResumeOpen && siteOwnerResumePath && (
+            <React.Suspense fallback={null}>
+              <ResumeModal
+                isOpen={isFooterResumeOpen}
+                onClose={() => setIsFooterResumeOpen(false)}
+                resumeUrl={siteOwnerResumePath}
+              />
+            </React.Suspense>
+          )}
         </section>
       </main>
 

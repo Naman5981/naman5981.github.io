@@ -2786,3 +2786,55 @@ h6 {
 
 
 
+
+
+.portfolio-closing-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--soft-border-color);
+  background: var(--accent-surface-mix);
+  color: var(--primary-text-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: all var(--motion-duration-emphasis) ease;
+}
+
+.portfolio-closing-secondary-btn:hover {
+  background: var(--accent-surface-soft);
+  border-color: var(--accent-border-soft);
+  transform: translateY(-1px);
+}
+
+.portfolio-closing-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--soft-border-color);
+  background: transparent;
+  color: var(--secondary-text-color);
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: var(--font-meta);
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.portfolio-closing-copy-btn:hover {
+  background: var(--accent-surface-soft);
+  color: var(--primary-text-color);
+  border-color: var(--accent-border-soft);
+}
+
+.portfolio-closing-copy-btn.is-copied {
+  background: color-mix(in srgb, #10b981 18%, transparent);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.4);
+}

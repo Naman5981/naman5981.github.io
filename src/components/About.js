@@ -3,6 +3,7 @@ import '../styles/About.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import DownloadButton from './DownloadButton';
+import ResumeModal from './ResumeModal';
 import { getProfile } from '../services/portfolio';
 
 const iconMap = {
@@ -13,6 +14,8 @@ const iconMap = {
 const About = () => {
   const [profile, setProfile] = useState(null);
   const [hasError, setHasError] = useState(false);
+  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
   const [issuesSolvedCount, setIssuesSolvedCount] = useState(0);
   const [shouldAnimateStats, setShouldAnimateStats] = useState(false);
   const statsRef = useRef(null);
@@ -106,6 +109,19 @@ const About = () => {
 
     return () => window.cancelAnimationFrame(frameId);
   }, [profile?.issuesSolvedTarget, shouldAnimateStats]);
+
+  const handleCopyEmail = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!profile?.email) {
+      return;
+    }
+
+    navigator.clipboard.writeText(profile.email).then(() => {
+      setCopiedEmail(true);
+      window.setTimeout(() => setCopiedEmail(false), 2200);
+    });
+  };
 
   const socialLinks = useMemo(
     () =>
@@ -221,6 +237,23 @@ const About = () => {
 
           <div className="about-action-row hero-reveal hero-reveal-actions">
             <div className="about-actions">
+              {profile.resumePath ? (
+                <button
+                  type="button"
+                  className="floating-preview-button"
+                  onClick={() => setIsResumeModalOpen(true)}
+                  aria-label="Preview resume in browser"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                  <span>Preview Resume</span>
+                </button>
+              ) : null}
               <DownloadButton href={profile.resumePath} />
               {socialLinks.map((link) => (
                 <a
@@ -240,14 +273,45 @@ const About = () => {
           <div className="about-contact-strip hero-reveal hero-reveal-contact">
             <span className="about-contact-location">{profile.location}</span>
             {profile.email ? (
-              <a className="contact-inline-link" href={`mailto:${profile.email}`}>
-                <strong>Email</strong>
-                <span>{profile.email}</span>
-              </a>
+              <span className="contact-inline-link-wrap" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <a className="contact-inline-link" href={`mailto:${profile.email}`}>
+                  <strong>Email</strong>
+                  <span>{profile.email}</span>
+                </a>
+                <button
+                  type="button"
+                  className={`copy-email-btn ${copiedEmail ? 'is-copied' : ''}`}
+                  onClick={handleCopyEmail}
+                  title="Copy email to clipboard"
+                  aria-label="Copy email address"
+                >
+                  {copiedEmail ? (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </svg>
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
+              </span>
             ) : null}
           </div>
         </div>
       </div>
+      <ResumeModal
+        isOpen={isResumeModalOpen}
+        onClose={() => setIsResumeModalOpen(false)}
+        resumeUrl={profile.resumePath}
+      />
     </section>
   );
 };

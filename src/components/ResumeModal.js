@@ -157,21 +157,6 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, fileName = 'Naman_Sanadhya_Re
             onLoad={() => setIsLoading(false)}
           />
         </div>
-
-        <footer className="resume-modal-footer">
-          <span className="resume-modal-footer-hint">
-            Press <kbd>Esc</kbd> or click outside to close
-          </span>
-          <div className="resume-modal-footer-actions">
-            <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
-              Open in New Tab
-            </a>
-            <span aria-hidden="true">•</span>
-            <a href={resumeUrl} download={fileName} onClick={handleDownload}>
-              Download Copy
-            </a>
-          </div>
-        </footer>
       </div>
     </div>
   );

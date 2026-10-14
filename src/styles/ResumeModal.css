@@ -263,48 +263,6 @@
   display: block;
 }
 
-.resume-modal-footer {
-  flex-shrink: 0;
-  padding: 10px 20px;
-  background: var(--surface-neutral-strong);
-  border-top: 1px solid var(--soft-border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.8rem;
-  color: var(--secondary-text-color);
-}
-
-.resume-modal-footer-hint kbd {
-  display: inline-block;
-  padding: 1px 6px;
-  background: var(--card-background-soft);
-  border: 1px solid var(--soft-border-color);
-  border-radius: 5px;
-  font-family: var(--font-meta);
-  font-size: 0.75rem;
-  color: var(--primary-text-color);
-}
-
-.resume-modal-footer-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.resume-modal-footer-actions a {
-  color: var(--highlight-text-color);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.15s ease;
-}
-
-.resume-modal-footer-actions a:hover {
-  color: var(--link-hover-color);
-  text-decoration: underline;
-}
-
 @media (max-width: 768px) {
   .resume-modal-overlay {
     padding: 12px;
@@ -329,10 +287,6 @@
 
   .resume-modal-btn {
     padding: 0 10px;
-  }
-
-  .resume-modal-footer-hint {
-    display: none;
   }
 }
 

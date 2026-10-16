@@ -12,6 +12,7 @@ import { getProfile } from './services/portfolio';
 import { useTheme } from './hooks/useTheme';
 import { useScrollProgress } from './hooks/useScrollProgress';
 import './styles/App.css';
+import './styles/SmartSearch.css';
 
 const Experience = React.lazy(() => import('./components/Experience'));
 const Projects = React.lazy(() => import('./components/Projects'));
@@ -634,7 +635,7 @@ function App() {
             <span className="smart-search-launcher-close-glyph">✕</span>
           ) : (
             <>
-              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+              <svg width="16" height="16" viewBox="0 0 24 24" role="presentation" focusable="false">
                 <path d="M10.5 4.75a5.75 5.75 0 1 0 0 11.5a5.75 5.75 0 0 0 0-11.5Zm0-1.5a7.25 7.25 0 1 1 0 14.5a7.25 7.25 0 0 1 0-14.5Zm6.31 12.5l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 1.06-1.06Z" />
               </svg>
               <span>⌘K</span>

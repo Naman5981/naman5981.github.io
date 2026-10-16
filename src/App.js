@@ -131,6 +131,19 @@ function App() {
     };
   }, [isSmartSearchOpen]);
 
+  // Global Cmd+K / Ctrl+K shortcut to toggle tech search
+  useEffect(() => {
+    const handleGlobalShortcuts = (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setIsSmartSearchOpen((current) => !current);
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalShortcuts);
+    return () => window.removeEventListener('keydown', handleGlobalShortcuts);
+  }, []);
+
   // 3. Active section observer: synchronously binds to active tab and about section
   useEffect(() => {
     const sectionIds = ['about', activePortfolioTab];
@@ -464,10 +477,10 @@ function App() {
 
   const smartSearchContext = useMemo(() => {
     if (activeSection === 'about') {
-      return { label: 'Ask about the portfolio', context: 'Profile' };
+      return { label: 'Search Stack, Scale & Code', context: 'Profile' };
     }
     const sectionLabel = SECTION_MAP[activeSection] || 'Portfolio';
-    return { label: `Ask about ${sectionLabel}`, context: sectionLabel };
+    return { label: `Search ${sectionLabel} & Stack`, context: sectionLabel };
   }, [activeSection]);
 
   if (hasPortfolioError) {
@@ -612,23 +625,23 @@ function App() {
       <button
         type="button"
         className={`smart-search-launcher ${isSmartSearchOpen ? 'open' : ''}`}
-        aria-label={isSmartSearchOpen ? 'Close AI search' : 'Open AI search'}
+        aria-label={isSmartSearchOpen ? 'Close tech search (Esc)' : 'Open tech search (Ctrl+K)'}
         aria-expanded={isSmartSearchOpen}
         onClick={() => setIsSmartSearchOpen((current) => !current)}
       >
         <span className="smart-search-launcher-mark" aria-hidden="true">
           {isSmartSearchOpen ? (
-            <span className="smart-search-launcher-close-glyph">X</span>
+            <span className="smart-search-launcher-close-glyph">✕</span>
           ) : (
             <>
               <svg viewBox="0 0 24 24" role="presentation" focusable="false">
                 <path d="M10.5 4.75a5.75 5.75 0 1 0 0 11.5a5.75 5.75 0 0 0 0-11.5Zm0-1.5a7.25 7.25 0 1 1 0 14.5a7.25 7.25 0 0 1 0-14.5Zm6.31 12.5l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 1.06-1.06Z" />
               </svg>
-              <span>AI</span>
+              <span>⌘K</span>
             </>
           )}
         </span>
-        <span className="smart-search-launcher-label">{isSmartSearchOpen ? 'Close' : 'AI Search'}</span>
+        <span className="smart-search-launcher-label">{isSmartSearchOpen ? 'Close' : 'Tech Search'}</span>
         {!isSmartSearchOpen ? (
           <span className="smart-search-launcher-context">{smartSearchContext.label}</span>
         ) : null}

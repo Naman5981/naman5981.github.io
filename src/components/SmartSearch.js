@@ -312,9 +312,9 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
         <section className="smart-search" aria-label="AI portfolio search">
           <div className="smart-search-header">
             <div>
-              <span className="eyebrow">Portfolio copilot</span>
-              <h2>Ask about {activeContext}</h2>
-              <p>Pulls the most relevant context from the portfolio without losing your place.</p>
+              <span className="eyebrow">Architecture & Stack Query</span>
+              <h2>Search {activeContext === 'Profile' ? 'Backend Background' : activeContext}</h2>
+              <p>Explore microservices, technical decisions, incidents, and system metrics directly.</p>
             </div>
           </div>
 
@@ -325,7 +325,7 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
                   <div className="smart-response-header">
                     <span className="smart-response-badge">
                       <span className="smart-response-badge-dot" />
-                      {activeResponse.mode === 'gemini' ? 'Gemini 2.5 Flash' : 'Portfolio Copilot'}
+                      {activeResponse.mode === 'gemini' ? 'Gemini 2.5 Flash' : 'System Knowledge Index'}
                     </span>
                     <button
                       type="button"
@@ -429,9 +429,9 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
                 </div>
               ) : (
                 <div className="smart-search-empty">
-                  <h3>Try queries like</h3>
+                  <h3>Indexed Technical Queries</h3>
                   <p>
-                    Fintech backend work, Java with PostgreSQL, production support, or platform engineering.
+                    Try: <strong>"AU Small Finance Bank features"</strong>, <strong>"1M+ live concurrency"</strong>, <strong>"Redis caching & latency"</strong>, or <strong>"Spring Security & OpenAPI"</strong>.
                   </p>
                 </div>
               )}
@@ -450,7 +450,7 @@ const SmartSearch = ({ isOpen, onClose, onNavigate, activeContext = 'Portfolio' 
                   type="search"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder={`Ask about ${activeContext.toLowerCase()}`}
+                  placeholder="Search stack, APIs, scale, e.g. 'Kafka', 'Spring Boot 3', 'latency'..."
                 />
                 <button type="submit" className="smart-search-send" aria-label="Send AI search">
                   Go

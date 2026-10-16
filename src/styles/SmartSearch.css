@@ -1203,5 +1203,18 @@
     padding: 10px;
     border-radius: 12px;
   }
+}
 
+@media (prefers-reduced-motion: reduce) {
+  .smart-search-shell,
+  .smart-search-backdrop,
+  .smart-search-launcher,
+  .smart-search-launcher-mark,
+  .smart-search-prompt-row button,
+  .smart-chat-loading span {
+    transition: opacity 0.15s ease !important;
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
 }

@@ -1,7 +1,8 @@
 @import './colors.css';
 
 .about {
-  padding: 24px 16px;
+  padding-block: 24px;
+  padding-inline: 16px;
 }
 
 .about-hero {
@@ -285,6 +286,7 @@
   color: var(--highlight-text-color);
   line-height: 0.92;
   letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
 }
 
 .about-stat span {
@@ -555,6 +557,17 @@
     min-width: 0;
     min-height: 74px;
     padding: 10px 10px 9px;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .about-stat:nth-child(odd) {
+    border-right: 1px solid var(--soft-border-color);
+  }
+
+  .about-stat:nth-child(1),
+  .about-stat:nth-child(2) {
+    border-bottom: 1px solid var(--soft-border-color);
   }
 
   .about-stat strong {

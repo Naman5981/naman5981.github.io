@@ -155,7 +155,7 @@ const About = () => {
       <div className="about-hero">
         <div className="profile-image-wrap hero-reveal hero-reveal-portrait">
           <div className="profile-greeting" aria-hidden="true">
-            Hi!!
+            Hi!
           </div>
           <div className="profile-image">
             {profile.profileImagePath ? <img src={profile.profileImagePath} alt="Profile" /> : null}

@@ -9,10 +9,11 @@ import {
 } from '../data/fallbackPortfolioData';
 
 const PROFILE_SLUG = process.env.REACT_APP_PROFILE_SLUG ?? 'naman-sanadhya';
-const queryCache = new Map();
-const resolvedQueryCache = new Map();
-
 const CACHE_PREFIX = 'portfolio_cache_v1_';
+const NETWORK_TIMEOUT_MS = 4000;
+
+const inFlightQueries = new Map();
+const resolvedQueryCache = new Map();
 
 const getFromStorage = (key) => {
   try {
@@ -23,7 +24,7 @@ const getFromStorage = (key) => {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     return parsed?.data ?? null;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -40,8 +41,8 @@ const saveToStorage = (key, data) => {
         timestamp: Date.now()
       })
     );
-  } catch (error) {
-    // Ignore storage quota/security errors
+  } catch {
+    // Gracefully handle storage quota or privacy restriction errors
   }
 };
 
@@ -51,61 +52,63 @@ const getResolvedCachedValue = (cacheKey) => {
 
 const getClient = () => {
   const client = getSupabaseClient();
-
   if (!hasSupabaseEnv || !client) {
     throw new Error('Supabase environment variables are not configured.');
   }
-
   return client;
+};
+
+const executeWithTimeout = async (asyncOperation, timeoutMs = NETWORK_TIMEOUT_MS) => {
+  let timerId;
+  const timeoutPromise = new Promise((_, reject) => {
+    timerId = setTimeout(() => reject(new Error('Supabase request timed out.')), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([asyncOperation(), timeoutPromise]);
+  } finally {
+    clearTimeout(timerId);
+  }
 };
 
 /**
  * Executes a query with:
  * 1. Immediate in-memory cache return
- * 2. Stored localStorage fallback if available
- * 3. Supabase network query with timeout
- * 4. Automatic fallback to static data if Supabase is offline/cold-starting
+ * 2. In-flight request deduplication
+ * 3. Network fetch bounded by timeout
+ * 4. Fallback to localStorage and then static data
  */
 const getCachedQueryWithFallback = async (cacheKey, loadFromSupabase, fallbackData) => {
-  // 1. Check in-memory resolved cache
   if (resolvedQueryCache.has(cacheKey)) {
     return resolvedQueryCache.get(cacheKey);
   }
 
-  // 2. Check in-flight promise
-  if (queryCache.has(cacheKey)) {
-    return queryCache.get(cacheKey);
+  if (inFlightQueries.has(cacheKey)) {
+    return inFlightQueries.get(cacheKey);
   }
 
-  // 3. Check persistent localStorage cache for instant availability
   const storedData = getFromStorage(cacheKey);
 
-  const fetchWithTimeout = async () => {
-    // Wrap Supabase load with a 4s timeout to prevent hanging on cold starts
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Supabase request timed out.')), 4000)
-    );
-
+  const fetchWithFallback = async () => {
     try {
-      const freshData = await Promise.race([loadFromSupabase(), timeoutPromise]);
+      const freshData = await executeWithTimeout(loadFromSupabase);
       if (freshData) {
         resolvedQueryCache.set(cacheKey, freshData);
         saveToStorage(cacheKey, freshData);
         return freshData;
       }
     } catch (error) {
-      console.warn(`[Portfolio Service] Live fetch failed for "${cacheKey}", using cached/fallback data:`, error.message);
+      console.warn(`[Portfolio Service] Live fetch failed for "${cacheKey}", using cached/fallback:`, error.message);
     }
 
-    // If live fetch fails, prefer stored cache, then static fallback
     const resolvedFallback = storedData ?? fallbackData;
     resolvedQueryCache.set(cacheKey, resolvedFallback);
     return resolvedFallback;
   };
 
-  const pending = fetchWithTimeout()
+  const pending = fetchWithFallback()
     .then((result) => {
-      queryCache.set(cacheKey, Promise.resolve(result));
+      inFlightQueries.set(cacheKey, Promise.resolve(result));
       return result;
     })
     .catch(() => {
@@ -114,8 +117,28 @@ const getCachedQueryWithFallback = async (cacheKey, loadFromSupabase, fallbackDa
       return resolvedFallback;
     });
 
-  queryCache.set(cacheKey, pending);
+  inFlightQueries.set(cacheKey, pending);
   return pending;
+};
+
+const getProfileId = async (supabase) => {
+  const profileKey = `profile_id:${PROFILE_SLUG}`;
+  if (resolvedQueryCache.has(profileKey)) {
+    return resolvedQueryCache.get(profileKey);
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('slug', PROFILE_SLUG)
+    .single();
+
+  if (error || !data) {
+    throw error || new Error('Profile not found');
+  }
+
+  resolvedQueryCache.set(profileKey, data.id);
+  return data.id;
 };
 
 export const getProfile = async () => {
@@ -170,21 +193,12 @@ export const getExperiences = async () => {
     `experiences:${PROFILE_SLUG}`,
     async () => {
       const supabase = getClient();
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('slug', PROFILE_SLUG)
-        .single();
-
-      if (profileError || !profile) {
-        throw profileError || new Error('Profile not found');
-      }
+      const profileId = await getProfileId(supabase);
 
       const { data: experiences, error: experiencesError } = await supabase
         .from('experiences')
         .select('id, company, website, logo_path, logo_alt, location, duration_label, designation, summary, sort_order')
-        .eq('profile_id', profile.id)
+        .eq('profile_id', profileId)
         .order('sort_order', { ascending: true });
 
       if (experiencesError || !experiences || experiences.length === 0) {
@@ -261,21 +275,12 @@ export const getSkillCategories = async () => {
     `skills:${PROFILE_SLUG}`,
     async () => {
       const supabase = getClient();
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('slug', PROFILE_SLUG)
-        .single();
-
-      if (profileError || !profile) {
-        throw profileError || new Error('Profile not found');
-      }
+      const profileId = await getProfileId(supabase);
 
       const { data: categories, error: categoriesError } = await supabase
         .from('skill_categories')
         .select('id, name, sort_order')
-        .eq('profile_id', profile.id)
+        .eq('profile_id', profileId)
         .order('sort_order', { ascending: true });
 
       if (categoriesError || !categories || categories.length === 0) {
@@ -316,21 +321,12 @@ export const getEducation = async () => {
     `education:${PROFILE_SLUG}`,
     async () => {
       const supabase = getClient();
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('slug', PROFILE_SLUG)
-        .single();
-
-      if (profileError || !profile) {
-        throw profileError || new Error('Profile not found');
-      }
+      const profileId = await getProfileId(supabase);
 
       const { data, error } = await supabase
         .from('education')
         .select('degree, institution, duration_label, sort_order')
-        .eq('profile_id', profile.id)
+        .eq('profile_id', profileId)
         .order('sort_order', { ascending: true });
 
       if (error || !data || data.length === 0) {
@@ -352,21 +348,12 @@ export const getAchievements = async () => {
     `achievements:${PROFILE_SLUG}`,
     async () => {
       const supabase = getClient();
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('slug', PROFILE_SLUG)
-        .single();
-
-      if (profileError || !profile) {
-        throw profileError || new Error('Profile not found');
-      }
+      const profileId = await getProfileId(supabase);
 
       const { data, error } = await supabase
         .from('achievements')
         .select('raw_text, sort_order')
-        .eq('profile_id', profile.id)
+        .eq('profile_id', profileId)
         .order('sort_order', { ascending: true });
 
       if (error || !data || data.length === 0) {

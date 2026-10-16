@@ -1,35 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import '../styles/Education.css';
 import { getEducation } from '../services/portfolio';
+import { useAsyncData } from '../hooks/useAsyncData';
 
 const Education = () => {
-  const [educationData, setEducationData] = useState(null);
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadEducation = async () => {
-      try {
-        const nextEducationData = await getEducation();
-        if (isMounted) {
-          setEducationData(nextEducationData);
-          setHasError(false);
-        }
-      } catch (error) {
-        console.error('Failed to load education from Supabase.', error);
-        if (isMounted) {
-          setHasError(true);
-        }
-      }
-    };
-
-    loadEducation();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { data: educationData, hasError } = useAsyncData(getEducation);
 
   if (hasError) {
     return (

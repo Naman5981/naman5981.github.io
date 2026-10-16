@@ -1,38 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import '../styles/Projects.css';
 import { projectAliases, projectShowcase } from '../data/portfolioContent';
 import { trackPortfolioEvent } from '../services/analytics';
 import { getProjects } from '../services/portfolio';
+import { useAsyncData } from '../hooks/useAsyncData';
 
 const Projects = () => {
-  const [projects, setProjects] = useState(null);
-  const [hasError, setHasError] = useState(false);
+  const { data: projects, hasError } = useAsyncData(getProjects);
   const trackedProjectViews = useRef(new Set());
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadProjects = async () => {
-      try {
-        const nextProjects = await getProjects();
-        if (isMounted) {
-          setProjects(nextProjects);
-          setHasError(false);
-        }
-      } catch (error) {
-        console.error('Failed to load projects from Supabase.', error);
-        if (isMounted) {
-          setHasError(true);
-        }
-      }
-    };
-
-    loadProjects();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const decoratedProjects = useMemo(
     () =>

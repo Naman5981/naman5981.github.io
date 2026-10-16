@@ -1,27 +1,16 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import Header from './components/Header';
 import About from './components/About';
+import TechStrip from './components/TechStrip';
+import PortfolioTabsNav from './components/PortfolioTabsNav';
+import PortfolioClosing from './components/PortfolioClosing';
 import { navigationSections } from './data/portfolioContent';
 import { trackPortfolioEvent } from './services/analytics';
 import { getProfile } from './services/portfolio';
-import javaLogo from './assets/tech-marquee/java.png';
-import springBootLogo from './assets/tech-marquee/springboot.png';
-import postgresqlLogo from './assets/tech-marquee/postgresql.png';
-import mysqlLogo from './assets/tech-marquee/mysql.png';
-import dockerLogo from './assets/tech-marquee/docker.png';
-import redisLogo from './assets/tech-marquee/redis.png';
-import gitLogo from './assets/tech-marquee/git.png';
-import kafkaLogo from './assets/tech-marquee/kafka.png';
-import linuxLogo from './assets/tech-marquee/linux.png';
-import postmanLogo from './assets/tech-marquee/postman.png';
-import junitLogo from './assets/tech-marquee/junit.png';
-import githubLogo from './assets/tech-marquee/github.png';
-import mavenLogo from './assets/tech-marquee/maven.png';
-import chatgptLogo from './assets/tech-marquee/chatgpt.png';
-import firebaseLogo from './assets/tech-marquee/firebase.png';
-import n8nLogo from './assets/tech-marquee/n8n.png';
-import claudeLogo from './assets/tech-marquee/claude.png';
+import { useTheme } from './hooks/useTheme';
+import { useScrollProgress } from './hooks/useScrollProgress';
 import './styles/App.css';
 
 const Experience = React.lazy(() => import('./components/Experience'));
@@ -32,165 +21,79 @@ const Achievements = React.lazy(() => import('./components/Achievements'));
 const AnalyticsDashboard = React.lazy(() => import('./components/AnalyticsDashboard'));
 const SmartSearch = React.lazy(() => import('./components/SmartSearch'));
 const PortfolioError = React.lazy(() => import('./components/PortfolioError'));
-const ResumeModal = React.lazy(() => import('./components/ResumeModal'));
 
-const transitionTechnologies = [
-  { name: 'Java', logo: javaLogo },
-  { name: 'Spring Boot', logo: springBootLogo },
-  { name: 'PostgreSQL', logo: postgresqlLogo },
-  { name: 'MySQL', logo: mysqlLogo },
-  { name: 'Docker', logo: dockerLogo },
-  { name: 'Redis', logo: redisLogo },
-  { name: 'Git', logo: gitLogo },
-  { name: 'Kafka', logo: kafkaLogo },
-  { name: 'Linux', logo: linuxLogo },
-  { name: 'Postman', logo: postmanLogo },
-  { name: 'JUnit', logo: junitLogo },
-  { name: 'GitHub', logo: githubLogo },
-  { name: 'Maven', logo: mavenLogo },
-  { name: 'ChatGPT', logo: chatgptLogo },
-  { name: 'Firebase', logo: firebaseLogo },
-  { name: 'n8n', logo: n8nLogo },
-  { name: 'Claude', logo: claudeLogo }
+const PORTFOLIO_TABS = [
+  { id: 'experience', label: 'Experience', layout: 'wide', component: Experience },
+  { id: 'projects', label: 'Projects', layout: 'wide', component: Projects },
+  { id: 'skills', label: 'Skills', layout: 'compact', component: Skills },
+  { id: 'education', label: 'Education', layout: 'compact', component: Education },
+  { id: 'achievements', label: 'Achievements', layout: 'compact', component: Achievements }
 ];
 
-function App() {
-  const [theme, setTheme] = useState(() => {
-    const storedTheme = window.localStorage.getItem('theme-preference');
-    if (storedTheme === 'light' || storedTheme === 'dark') {
-      return storedTheme;
-    }
+const TAB_CONTEXT_DESCRIPTIONS = {
+  experience: 'Roles, systems, and production ownership across backend-heavy work.',
+  projects: 'Selected builds that show execution, product judgment, and technical range.',
+  skills: 'The technical stack and backend depth behind the work.',
+  education: 'The formal foundation supporting the applied engineering path.',
+  achievements: 'Signals of recognition, competitive work, and momentum over time.'
+};
 
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  });
+const TAB_IDS = new Set(PORTFOLIO_TABS.map((tab) => tab.id));
+const SECTION_MAP = navigationSections.reduce((acc, section) => {
+  acc[section.id] = section.label;
+  return acc;
+}, {});
+
+const PROFILE_SECTION = navigationSections.find((section) => section.id === 'about');
+const WORK_SECTIONS = navigationSections.filter((section) => section.id !== 'about');
+
+function App() {
+  const { theme, toggleTheme } = useTheme();
+  const scrollProgress = useScrollProgress();
+
   const [activePortfolioTab, setActivePortfolioTab] = useState('experience');
   const [mountedPortfolioTabs, setMountedPortfolioTabs] = useState(() => ({ experience: true }));
   const [outgoingPortfolioTab, setOutgoingPortfolioTab] = useState(null);
   const [portfolioSlideDirection, setPortfolioSlideDirection] = useState('forward');
-  const [pendingPortfolioScrollSection, setPendingPortfolioScrollSection] = useState('');
+  const [pendingScrollSection, setPendingScrollSection] = useState('');
   const [isPortfolioSelectorOpen, setIsPortfolioSelectorOpen] = useState(false);
   const [portfolioStageHeight, setPortfolioStageHeight] = useState(0);
   const [highlightedSection, setHighlightedSection] = useState('');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [siteOwnerName, setSiteOwnerName] = useState('');
-  const [siteOwnerEmail, setSiteOwnerEmail] = useState('');
-  const [siteOwnerResumePath, setSiteOwnerResumePath] = useState('');
+  const [siteOwner, setSiteOwner] = useState({ name: '', email: '', resumePath: '' });
   const [hasPortfolioError, setHasPortfolioError] = useState(false);
-  const [isFooterResumeOpen, setIsFooterResumeOpen] = useState(false);
-  const [isFooterCopiedEmail, setIsFooterCopiedEmail] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [revealedSections, setRevealedSections] = useState(() => ({ about: true }));
   const [isSmartSearchOpen, setIsSmartSearchOpen] = useState(false);
-  const [portfolioTabIndicator, setPortfolioTabIndicator] = useState({ width: 0, left: 0, top: 0, height: 0 });
-  const [isPortfolioTabsDocked, setIsPortfolioTabsDocked] = useState(false);
+  const [tabIndicator, setTabIndicator] = useState({ width: 0, left: 0, top: 0, height: 0 });
+  const [isTabsDocked, setIsTabsDocked] = useState(false);
+
   const headerRef = useRef(null);
   const portfolioPanelRef = useRef(null);
   const portfolioEntryRef = useRef(null);
-  const portfolioSelectorRef = useRef(null);
   const portfolioTabsRef = useRef(null);
   const portfolioTabButtonRefs = useRef({});
   const portfolioPaneRefs = useRef({});
-  const portfolioTransitionTimeoutRef = useRef(null);
-  const sectionMap = useMemo(
-    () =>
-      navigationSections.reduce((lookup, section) => {
-        lookup[section.id] = section.label;
-        return lookup;
-      }, {}),
-    []
-  );
-  const profileNavigationSection = navigationSections.find((section) => section.id === 'about');
-  const workNavigationSections = navigationSections.filter((section) => section.id !== 'about');
-
-  const handleFooterCopyEmail = (event) => {
-    event.preventDefault();
-    if (!siteOwnerEmail) return;
-    navigator.clipboard.writeText(siteOwnerEmail).then(() => {
-      setIsFooterCopiedEmail(true);
-      window.setTimeout(() => setIsFooterCopiedEmail(false), 2200);
-    });
-  };
-
-  const smartSearchContext = useMemo(() => {
-    if (activeSection === 'about') {
-      return {
-        label: 'Ask about the portfolio',
-        context: 'Profile'
-      };
-    }
-
-    const sectionLabel = sectionMap[activeSection] || 'Portfolio';
-
-    return {
-      label: `Ask about ${sectionLabel}`,
-      context: sectionLabel
-    };
-  }, [activeSection, sectionMap]);
-
-  const portfolioTabs = useMemo(
-    () => [
-      {
-        id: 'experience',
-        label: 'Experience',
-        layout: 'wide',
-        component: Experience
-      },
-      {
-        id: 'projects',
-        label: 'Projects',
-        layout: 'wide',
-        component: Projects
-      },
-      {
-        id: 'skills',
-        label: 'Skills',
-        layout: 'compact',
-        component: Skills
-      },
-      {
-        id: 'education',
-        label: 'Education',
-        layout: 'compact',
-        component: Education
-      },
-      {
-        id: 'achievements',
-        label: 'Achievements',
-        layout: 'compact',
-        component: Achievements
-      }
-    ],
-    []
-  );
+  const transitionTimeoutRef = useRef(null);
 
   const activePortfolioPanel =
-    portfolioTabs.find((tab) => tab.id === activePortfolioTab) ?? portfolioTabs[0];
-  const portfolioTabIds = useMemo(() => new Set(portfolioTabs.map((tab) => tab.id)), [portfolioTabs]);
+    PORTFOLIO_TABS.find((tab) => tab.id === activePortfolioTab) ?? PORTFOLIO_TABS[0];
   const outgoingPortfolioPanel = outgoingPortfolioTab
-    ? portfolioTabs.find((tab) => tab.id === outgoingPortfolioTab) ?? null
+    ? PORTFOLIO_TABS.find((tab) => tab.id === outgoingPortfolioTab) ?? null
     : null;
-  const portfolioTabContext = useMemo(
-    () => ({
-      experience: 'Roles, systems, and production ownership across backend-heavy work.',
-      projects: 'Selected builds that show execution, product judgment, and technical range.',
-      skills: 'The technical stack and backend depth behind the work.',
-      education: 'The formal foundation supporting the applied engineering path.',
-      achievements: 'Signals of recognition, competitive work, and momentum over time.'
-    }),
-    []
-  );
 
+  // 1. Fetch site owner profile for top-level brand lockup
   useEffect(() => {
     let isMounted = true;
 
-    const loadHeaderProfile = async () => {
+    const loadSiteOwner = async () => {
       try {
         const profile = await getProfile();
         if (isMounted) {
-          setSiteOwnerName(profile.fullName);
-          setSiteOwnerEmail(profile.email ?? '');
-          setSiteOwnerResumePath(profile.resumePath ?? '');
+          setSiteOwner({
+            name: profile.fullName ?? '',
+            email: profile.email ?? '',
+            resumePath: profile.resumePath ?? ''
+          });
           setHasPortfolioError(false);
         }
       } catch (error) {
@@ -201,56 +104,13 @@ function App() {
       }
     };
 
-    loadHeaderProfile();
-
+    loadSiteOwner();
     return () => {
       isMounted = false;
     };
   }, []);
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    window.localStorage.setItem('theme-preference', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    if (!isPortfolioSelectorOpen) {
-      return undefined;
-    }
-
-    const handlePointerDown = (event) => {
-      if (!portfolioSelectorRef.current?.contains(event.target)) {
-        setIsPortfolioSelectorOpen(false);
-      }
-    };
-
-    const handleEscape = (event) => {
-      if (event.key === 'Escape') {
-        setIsPortfolioSelectorOpen(false);
-      }
-    };
-
-    window.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('keydown', handleEscape);
-
-    return () => {
-      window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('keydown', handleEscape);
-    };
-  }, [isPortfolioSelectorOpen]);
-
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.documentElement.setAttribute('data-mobile-menu-open', 'true');
-    } else {
-      document.documentElement.removeAttribute('data-mobile-menu-open');
-    }
-
-    return () => {
-      document.documentElement.removeAttribute('data-mobile-menu-open');
-    };
-  }, [isMobileMenuOpen]);
-
+  // 2. Track smart search keyboard escape & attribute
   useEffect(() => {
     if (!isSmartSearchOpen) {
       document.documentElement.removeAttribute('data-ai-search-open');
@@ -258,7 +118,6 @@ function App() {
     }
 
     document.documentElement.setAttribute('data-ai-search-open', 'true');
-
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
         setIsSmartSearchOpen(false);
@@ -266,18 +125,16 @@ function App() {
     };
 
     window.addEventListener('keydown', handleEscape);
-
     return () => {
       document.documentElement.removeAttribute('data-ai-search-open');
       window.removeEventListener('keydown', handleEscape);
     };
   }, [isSmartSearchOpen]);
 
+  // 3. Active section observer
   useEffect(() => {
     const sectionIds = navigationSections.map((section) => section.id);
-    const sections = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean);
+    const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
 
     if (!sections.length) {
       return undefined;
@@ -293,25 +150,17 @@ function App() {
           setActiveSection(visibleEntries[0].target.id);
         }
       },
-      {
-        rootMargin: '-22% 0px -58% 0px',
-        threshold: [0.15, 0.32, 0.5]
-      }
+      { rootMargin: '-22% 0px -58% 0px', threshold: [0.15, 0.32, 0.5] }
     );
 
     sections.forEach((section) => observer.observe(section));
-
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
 
+  // 4. Analytics: track section view
   useEffect(() => {
-    const sectionLabel = sectionMap[activeSection];
-
-    if (!sectionLabel) {
-      return;
-    }
+    const sectionLabel = SECTION_MAP[activeSection];
+    if (!sectionLabel) return;
 
     trackPortfolioEvent({
       eventType: 'section_view',
@@ -320,77 +169,12 @@ function App() {
       source: 'section_navigation',
       oncePerSession: true
     });
-  }, [activeSection, sectionMap]);
+  }, [activeSection]);
 
-  useEffect(() => {
-    if (!isMobileMenuOpen) {
-      return undefined;
-    }
-
-    const handlePointerDown = (event) => {
-      if (!headerRef.current?.contains(event.target)) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    const handleEscape = (event) => {
-      if (event.key === 'Escape') {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('keydown', handleEscape);
-
-    return () => {
-      window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('keydown', handleEscape);
-    };
-  }, [isMobileMenuOpen]);
-
-  useEffect(() => {
-    let frameId = null;
-
-    const updateScrollProgress = () => {
-      frameId = null;
-      const scrollTop = window.scrollY;
-      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-
-      if (documentHeight <= 0) {
-        setScrollProgress(0);
-        return;
-      }
-
-      const nextProgress = Math.min((scrollTop / documentHeight) * 100, 100);
-      setScrollProgress(nextProgress);
-    };
-
-    const handleScrollOrResize = () => {
-      if (frameId !== null) {
-        return;
-      }
-      frameId = window.requestAnimationFrame(updateScrollProgress);
-    };
-
-    updateScrollProgress();
-    window.addEventListener('scroll', handleScrollOrResize, { passive: true });
-    window.addEventListener('resize', handleScrollOrResize);
-
-    return () => {
-      window.removeEventListener('scroll', handleScrollOrResize);
-      window.removeEventListener('resize', handleScrollOrResize);
-      if (frameId !== null) {
-        window.cancelAnimationFrame(frameId);
-      }
-    };
-  }, []);
-
+  // 5. Scroll reveal observer
   useEffect(() => {
     const revealItems = Array.from(document.querySelectorAll('[data-reveal]'));
-
-    if (!revealItems.length) {
-      return undefined;
-    }
+    if (!revealItems.length) return undefined;
 
     const observer = new window.IntersectionObserver(
       (entries) => {
@@ -405,66 +189,34 @@ function App() {
                 current[sectionId] ? current : { ...current, [sectionId]: true }
               );
             }
-
             observer.unobserve(entry.target);
           }
         });
       },
-      {
-        rootMargin: '0px 0px -10% 0px',
-        threshold: 0.18
-      }
+      { rootMargin: '0px 0px -10% 0px', threshold: 0.18 }
     );
 
     revealItems.forEach((item) => observer.observe(item));
-
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    setRevealedSections((current) =>
-      current[activePortfolioTab] ? current : { ...current, [activePortfolioTab]: true }
-    );
-    setMountedPortfolioTabs((current) =>
-      current[activePortfolioTab] ? current : { ...current, [activePortfolioTab]: true }
-    );
-  }, [activePortfolioTab]);
-
-  useEffect(() => {
-    return () => {
-      if (portfolioTransitionTimeoutRef.current) {
-        window.clearTimeout(portfolioTransitionTimeoutRef.current);
-      }
-    };
-  }, []);
-
+  // 6. Docked tabs tracking
   useEffect(() => {
     const tabsRow = portfolioTabsRef.current;
-
-    if (!tabsRow) {
-      return undefined;
-    }
+    if (!tabsRow) return undefined;
 
     let frameId = null;
-
     const updateDockedState = () => {
       frameId = null;
-
       const headerHeight = headerRef.current?.getBoundingClientRect().height ?? 0;
       const topOffset = headerHeight + 12;
       const rowRect = tabsRow.getBoundingClientRect();
       const nextDocked = rowRect.top <= topOffset + 2 && rowRect.bottom > topOffset + 18;
-
-      setIsPortfolioTabsDocked((current) => (current === nextDocked ? current : nextDocked));
+      setIsTabsDocked((current) => (current === nextDocked ? current : nextDocked));
     };
 
     const onScroll = () => {
-      if (frameId !== null) {
-        return;
-      }
-
+      if (frameId !== null) return;
       frameId = window.requestAnimationFrame(updateDockedState);
     };
 
@@ -475,19 +227,14 @@ function App() {
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
-
-      if (frameId !== null) {
-        window.cancelAnimationFrame(frameId);
-      }
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
     };
   }, []);
 
+  // 7. Measure site header height for CSS variable
   useLayoutEffect(() => {
     const headerElement = headerRef.current;
-
-    if (!headerElement) {
-      return undefined;
-    }
+    if (!headerElement) return undefined;
 
     const updateHeaderHeight = () => {
       const headerHeight = Math.ceil(headerElement.getBoundingClientRect().height);
@@ -495,13 +242,10 @@ function App() {
     };
 
     updateHeaderHeight();
-
     let resizeObserver;
 
     if ('ResizeObserver' in window) {
-      resizeObserver = new window.ResizeObserver(() => {
-        updateHeaderHeight();
-      });
+      resizeObserver = new window.ResizeObserver(updateHeaderHeight);
       resizeObserver.observe(headerElement);
     } else {
       window.addEventListener('resize', updateHeaderHeight);
@@ -513,24 +257,21 @@ function App() {
       } else {
         window.removeEventListener('resize', updateHeaderHeight);
       }
-
       document.documentElement.style.removeProperty('--site-header-height');
     };
-  }, [isMobileMenuOpen]);
+  }, []);
 
+  // 8. Measure tab indicator position
   useLayoutEffect(() => {
     const tabRow = portfolioTabsRef.current;
     const activeButton = portfolioTabButtonRefs.current[activePortfolioTab];
-
-    if (!tabRow || !activeButton) {
-      return undefined;
-    }
+    if (!tabRow || !activeButton) return undefined;
 
     const updateIndicator = () => {
       const rowRect = tabRow.getBoundingClientRect();
       const buttonRect = activeButton.getBoundingClientRect();
 
-      setPortfolioTabIndicator({
+      setTabIndicator({
         width: buttonRect.width,
         left: buttonRect.left - rowRect.left,
         top: buttonRect.top - rowRect.top,
@@ -540,36 +281,24 @@ function App() {
 
     updateIndicator();
     window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [activePortfolioTab]);
 
-    return () => {
-      window.removeEventListener('resize', updateIndicator);
-    };
-  }, [activePortfolioTab, portfolioTabs]);
-
+  // 9. Measure tab stage transition height
   useLayoutEffect(() => {
     const activePane = portfolioPaneRefs.current[activePortfolioTab];
     const outgoingPane = outgoingPortfolioTab ? portfolioPaneRefs.current[outgoingPortfolioTab] : null;
 
     const measurePaneHeight = (pane) => {
-      if (!pane) {
-        return 0;
-      }
-
+      if (!pane) return 0;
       const content = pane.firstElementChild;
-
-      if (content instanceof HTMLElement) {
-        return Math.ceil(content.getBoundingClientRect().height);
-      }
-
-      return pane.scrollHeight;
+      return content instanceof HTMLElement
+        ? Math.ceil(content.getBoundingClientRect().height)
+        : pane.scrollHeight;
     };
 
     const updateStageHeight = () => {
-      const nextHeight = Math.max(
-        measurePaneHeight(activePane),
-        measurePaneHeight(outgoingPane)
-      );
-
+      const nextHeight = Math.max(measurePaneHeight(activePane), measurePaneHeight(outgoingPane));
       if (nextHeight > 0) {
         setPortfolioStageHeight(nextHeight);
       }
@@ -577,27 +306,23 @@ function App() {
 
     updateStageHeight();
     window.addEventListener('resize', updateStageHeight);
-
-    return () => {
-      window.removeEventListener('resize', updateStageHeight);
-    };
+    return () => window.removeEventListener('resize', updateStageHeight);
   }, [activePortfolioTab, outgoingPortfolioTab, mountedPortfolioTabs]);
 
+  // Cleanup tab transition timer on unmount
   useEffect(() => {
-    if (!portfolioPanelRef.current) {
-      return;
-    }
-
-    portfolioPanelRef.current.classList.add('is-visible');
-  }, [activePortfolioTab]);
+    return () => {
+      if (transitionTimeoutRef.current) {
+        window.clearTimeout(transitionTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const startPortfolioTabTransition = (nextTabId) => {
-    if (nextTabId === activePortfolioTab) {
-      return;
-    }
+    if (nextTabId === activePortfolioTab) return;
 
-    const currentIndex = portfolioTabs.findIndex((tab) => tab.id === activePortfolioTab);
-    const nextIndex = portfolioTabs.findIndex((tab) => tab.id === nextTabId);
+    const currentIndex = PORTFOLIO_TABS.findIndex((tab) => tab.id === activePortfolioTab);
+    const nextIndex = PORTFOLIO_TABS.findIndex((tab) => tab.id === nextTabId);
 
     setPortfolioSlideDirection(nextIndex > currentIndex ? 'forward' : 'backward');
     setOutgoingPortfolioTab(activePortfolioTab);
@@ -606,11 +331,11 @@ function App() {
     );
     setActivePortfolioTab(nextTabId);
 
-    if (portfolioTransitionTimeoutRef.current) {
-      window.clearTimeout(portfolioTransitionTimeoutRef.current);
+    if (transitionTimeoutRef.current) {
+      window.clearTimeout(transitionTimeoutRef.current);
     }
 
-    portfolioTransitionTimeoutRef.current = window.setTimeout(() => {
+    transitionTimeoutRef.current = window.setTimeout(() => {
       setOutgoingPortfolioTab(null);
     }, 420);
     setIsPortfolioSelectorOpen(false);
@@ -619,7 +344,6 @@ function App() {
   const scrollElementIntoView = useCallback((element, sectionId) => {
     setRevealedSections((current) => ({ ...current, [sectionId]: true }));
     element.classList.add('is-visible');
-    setIsMobileMenuOpen(false);
     setActiveSection(sectionId);
 
     const header = document.querySelector('.site-header');
@@ -628,19 +352,14 @@ function App() {
       ? headerStyles.position === 'sticky' || headerStyles.position === 'fixed'
       : false;
     const headerHeight = header && isPinnedHeader ? header.getBoundingClientRect().height : 0;
-    const extraOffset = 24;
     const targetPosition =
-      element.getBoundingClientRect().top + window.scrollY - headerHeight - extraOffset;
+      element.getBoundingClientRect().top + window.scrollY - headerHeight - 24;
     const finalTop = Math.max(targetPosition, 0);
 
     setHighlightedSection('');
-    window.scrollTo({
-      top: finalTop,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: finalTop, behavior: 'smooth' });
 
     let attempts = 0;
-    const maxAttempts = 40;
     const triggerHighlight = () => {
       setHighlightedSection(sectionId);
       window.setTimeout(() => {
@@ -651,12 +370,10 @@ function App() {
     const waitForArrival = () => {
       const distance = Math.abs(window.scrollY - finalTop);
       attempts += 1;
-
-      if (distance <= 8 || attempts >= maxAttempts) {
+      if (distance <= 8 || attempts >= 40) {
         triggerHighlight();
         return;
       }
-
       window.setTimeout(waitForArrival, 40);
     };
 
@@ -665,7 +382,6 @@ function App() {
 
   const scrollPortfolioTabsIntoView = useCallback((sectionId) => {
     const tabsRow = portfolioTabsRef.current;
-
     if (!tabsRow) {
       if (portfolioEntryRef.current) {
         scrollElementIntoView(portfolioEntryRef.current, sectionId);
@@ -675,7 +391,6 @@ function App() {
 
     setRevealedSections((current) => ({ ...current, [sectionId]: true }));
     tabsRow.classList.add('is-visible');
-    setIsMobileMenuOpen(false);
     setActiveSection(sectionId);
 
     const header = document.querySelector('.site-header');
@@ -684,20 +399,14 @@ function App() {
       ? headerStyles.position === 'sticky' || headerStyles.position === 'fixed'
       : false;
     const headerHeight = header && isPinnedHeader ? header.getBoundingClientRect().height : 0;
-    const stickyGap = 12;
     const targetPosition =
-      tabsRow.getBoundingClientRect().top + window.scrollY - headerHeight - stickyGap;
+      tabsRow.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
     const finalTop = Math.max(targetPosition, 0);
 
     setHighlightedSection('');
-    window.scrollTo({
-      top: finalTop,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: finalTop, behavior: 'smooth' });
 
     let attempts = 0;
-    const maxAttempts = 40;
-
     const finalizeArrival = () => {
       setHighlightedSection(sectionId);
       window.setTimeout(() => {
@@ -708,12 +417,10 @@ function App() {
     const waitForArrival = () => {
       const distance = Math.abs(window.scrollY - finalTop);
       attempts += 1;
-
-      if (distance <= 8 || attempts >= maxAttempts) {
+      if (distance <= 8 || attempts >= 40) {
         finalizeArrival();
         return;
       }
-
       window.setTimeout(waitForArrival, 40);
     };
 
@@ -721,15 +428,13 @@ function App() {
   }, [scrollElementIntoView]);
 
   const scrollToSection = (sectionId) => {
-    if (portfolioTabIds.has(sectionId)) {
+    if (TAB_IDS.has(sectionId)) {
       if (activePortfolioTab !== sectionId) {
-        setPendingPortfolioScrollSection(sectionId);
+        setPendingScrollSection(sectionId);
         startPortfolioTabTransition(sectionId);
         return;
       }
-
       scrollPortfolioTabsIntoView(sectionId);
-
       return;
     }
 
@@ -739,28 +444,29 @@ function App() {
     }
   };
 
-  const handlePortfolioTabChange = (nextTabId) => {
-    startPortfolioTabTransition(nextTabId);
-  };
-
   useEffect(() => {
-    if (!pendingPortfolioScrollSection || activePortfolioTab !== pendingPortfolioScrollSection) {
+    if (!pendingScrollSection || activePortfolioTab !== pendingScrollSection) {
       return undefined;
     }
 
     const timeoutId = window.setTimeout(() => {
       if (portfolioTabsRef.current || portfolioEntryRef.current || portfolioPanelRef.current) {
         setOutgoingPortfolioTab(null);
-        scrollPortfolioTabsIntoView(pendingPortfolioScrollSection);
+        scrollPortfolioTabsIntoView(pendingScrollSection);
       }
-
-      setPendingPortfolioScrollSection('');
+      setPendingScrollSection('');
     }, 80);
 
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [activePortfolioTab, pendingPortfolioScrollSection, scrollPortfolioTabsIntoView]);
+    return () => window.clearTimeout(timeoutId);
+  }, [activePortfolioTab, pendingScrollSection, scrollPortfolioTabsIntoView]);
+
+  const smartSearchContext = useMemo(() => {
+    if (activeSection === 'about') {
+      return { label: 'Ask about the portfolio', context: 'Profile' };
+    }
+    const sectionLabel = SECTION_MAP[activeSection] || 'Portfolio';
+    return { label: `Ask about ${sectionLabel}`, context: sectionLabel };
+  }, [activeSection]);
 
   if (hasPortfolioError) {
     return (
@@ -776,106 +482,16 @@ function App() {
         <span className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
       </div>
 
-      <header ref={headerRef} className="site-header">
-        <div className="brand-lockup">
-          <span className="brand-kicker">NS / backend systems</span>
-          <h1>{siteOwnerName}</h1>
-        </div>
-
-        <div className="header-actions">
-          <button
-            type="button"
-            className={`theme-toggle ${theme === 'light' ? 'light' : 'dark'}`}
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
-          >
-            <span className="theme-toggle-track" aria-hidden="true">
-              <span className="theme-toggle-thumb">
-                <span className="theme-toggle-thumb-core">
-                  <span className="theme-toggle-thumb-symbol theme-toggle-thumb-sun-symbol">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="4.1" />
-                      <path d="M12 2.6v2.4M12 19v2.4M4.85 4.85l1.7 1.7M17.45 17.45l1.7 1.7M2.6 12H5M19 12h2.4M4.85 19.15l1.7-1.7M17.45 6.55l1.7-1.7" />
-                    </svg>
-                  </span>
-                  <span className="theme-toggle-thumb-symbol theme-toggle-thumb-moon-symbol">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M16.8 14.7A7.2 7.2 0 0 1 9.3 7.2 7.6 7.6 0 1 0 16.8 14.7Z" />
-                    </svg>
-                  </span>
-                </span>
-              </span>
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className={`menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="primary-navigation"
-            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            onClick={() => setIsMobileMenuOpen((current) => !current)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-        </div>
-
-        <nav
-          id="primary-navigation"
-          className={`site-nav ${isMobileMenuOpen ? 'menu-open' : ''}`}
-          aria-label="Primary"
-        >
-          <div className="site-nav-inner">
-            <div className="site-nav-mobile-header">
-              <span className="site-nav-mobile-label">Navigation</span>
-              <p>Choose where you want to continue exploring.</p>
-            </div>
-
-            {profileNavigationSection ? (
-              <div className="site-nav-group site-nav-group-profile">
-                <button
-                  type="button"
-                  className={`${activeSection === profileNavigationSection.id ? 'active' : ''} nav-home-link`.trim()}
-                  aria-current={activeSection === profileNavigationSection.id ? 'location' : undefined}
-                  onClick={() => scrollToSection(profileNavigationSection.id)}
-                >
-                  {profileNavigationSection.label}
-                </button>
-              </div>
-            ) : null}
-
-            <div className="site-nav-group site-nav-group-work">
-              <div className="site-nav-work-track">
-                {workNavigationSections.map(({ id, label }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    className={`site-nav-work-button ${activeSection === id ? 'active' : ''}`.trim()}
-                    aria-current={activeSection === id ? 'location' : undefined}
-                    onClick={() => scrollToSection(id)}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="mobile-nav-meta">
-            <span className="mobile-nav-caption">Navigate sections</span>
-            <span className="mobile-nav-active">{sectionMap[activeSection]}</span>
-          </div>
-        </nav>
-      </header>
-
-      <button
-        type="button"
-        className={`menu-backdrop ${isMobileMenuOpen ? 'open' : ''}`}
-        aria-label="Close navigation menu"
-        aria-hidden={!isMobileMenuOpen}
-        tabIndex={isMobileMenuOpen ? 0 : -1}
-        onClick={() => setIsMobileMenuOpen(false)}
+      <Header
+        headerRef={headerRef}
+        siteOwnerName={siteOwner.name}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        activeSection={activeSection}
+        onSelectSection={scrollToSection}
+        sectionMap={SECTION_MAP}
+        profileSection={PROFILE_SECTION}
+        workSections={WORK_SECTIONS}
       />
 
       <main className="site-main">
@@ -896,110 +512,26 @@ function App() {
             <span className="portfolio-entry-bridge-glow" />
           </div>
 
-          <section className="portfolio-tech-strip" aria-hidden="true">
-            <div className="portfolio-tech-strip-track">
-              {[...transitionTechnologies, ...transitionTechnologies, ...transitionTechnologies].map((technology, index) => (
-                <React.Fragment key={`portfolio-tech-${index}`}>
-                  <div className="portfolio-tech-pill">
-                    <img src={technology.logo} alt="" loading="lazy" decoding="async" width="20" height="20" />
-                    <span>{technology.name}</span>
-                  </div>
-                  <span className="portfolio-tech-separator" aria-hidden="true" />
-                </React.Fragment>
-              ))}
-            </div>
-          </section>
+          <TechStrip />
 
           <section className="portfolio-tabs-shell">
-            <div className="portfolio-tabs-header">
-              <div>
-                <span className="eyebrow">Core Portfolio</span>
-              </div>
-
-              <div
-                ref={portfolioTabsRef}
-                className={`portfolio-tabs-row ${isPortfolioTabsDocked ? 'is-docked' : ''}`.trim()}
-                role="tablist"
-                aria-label="Portfolio sections"
-              >
-                <span
-                  className="portfolio-tabs-indicator"
-                  aria-hidden="true"
-                  style={{
-                    width: `${portfolioTabIndicator.width}px`,
-                    height: `${portfolioTabIndicator.height}px`,
-                    transform: `translate(${portfolioTabIndicator.left}px, ${portfolioTabIndicator.top}px)`
-                  }}
-                />
-                {portfolioTabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    role="tab"
-                    ref={(node) => {
-                      if (node) {
-                        portfolioTabButtonRefs.current[tab.id] = node;
-                      }
-                    }}
-                    aria-selected={activePortfolioPanel.id === tab.id}
-                    className={activePortfolioPanel.id === tab.id ? 'active' : ''}
-                    onClick={() => handlePortfolioTabChange(tab.id)}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-
-              <p className="portfolio-tabs-context" aria-live="polite">
-                {portfolioTabContext[activePortfolioPanel.id]}
-              </p>
-
-              <div ref={portfolioSelectorRef} className="portfolio-selector">
-                <div className="portfolio-selector-meta">
-                  <p>Choose a section to view.</p>
-                </div>
-
-                <button
-                  type="button"
-                  className={`portfolio-selector-trigger ${isPortfolioSelectorOpen ? 'open' : ''}`}
-                  aria-expanded={isPortfolioSelectorOpen}
-                  aria-haspopup="listbox"
-                  onClick={() => setIsPortfolioSelectorOpen((current) => !current)}
-                >
-                  <span className="portfolio-selector-kicker">Viewing</span>
-                  <strong>{activePortfolioPanel.label}</strong>
-                  <span className="portfolio-selector-icon" aria-hidden="true">
-                    <span />
-                    <span />
-                  </span>
-                </button>
-
-                <div className={`portfolio-selector-sheet ${isPortfolioSelectorOpen ? 'open' : ''}`}>
-                  <div className="portfolio-selector-list" role="listbox" aria-label="Portfolio sections">
-                    {portfolioTabs.map((tab) => (
-                      <button
-                        key={tab.id}
-                        type="button"
-                        role="option"
-                        aria-selected={activePortfolioPanel.id === tab.id}
-                        className={activePortfolioPanel.id === tab.id ? 'active' : ''}
-                        onClick={() => handlePortfolioTabChange(tab.id)}
-                      >
-                        <span>{tab.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <PortfolioTabsNav
+              tabs={PORTFOLIO_TABS}
+              activeTabId={activePortfolioTab}
+              onTabChange={startPortfolioTabTransition}
+              tabContextMap={TAB_CONTEXT_DESCRIPTIONS}
+              tabsRowRef={portfolioTabsRef}
+              tabButtonRefs={portfolioTabButtonRefs}
+              tabIndicator={tabIndicator}
+              isDocked={isTabsDocked}
+              isSelectorOpen={isPortfolioSelectorOpen}
+              onToggleSelector={() => setIsPortfolioSelectorOpen((prev) => !prev)}
+              onCloseSelector={() => setIsPortfolioSelectorOpen(false)}
+            />
 
             <section
               ref={portfolioPanelRef}
-              id={
-                activePortfolioPanel.id === 'visitor-signals'
-                  ? 'visitor-signals'
-                  : activePortfolioPanel.id
-              }
+              id={activePortfolioPanel.id}
               className={`module-card portfolio-tab-panel portfolio-tab-panel-${activePortfolioPanel.layout} ${
                 highlightedSection === activePortfolioPanel.id ? 'section-flash' : ''
               } ${revealedSections[activePortfolioPanel.id] ? 'is-visible' : ''}`}
@@ -1009,10 +541,8 @@ function App() {
                 className={`portfolio-tab-stage portfolio-tab-stage-${activePortfolioPanel.layout}`}
                 style={portfolioStageHeight ? { minHeight: `${portfolioStageHeight}px` } : undefined}
               >
-                {portfolioTabs.map((tab) => {
-                  if (!mountedPortfolioTabs[tab.id]) {
-                    return null;
-                  }
+                {PORTFOLIO_TABS.map((tab) => {
+                  if (!mountedPortfolioTabs[tab.id]) return null;
 
                   const isActive = tab.id === activePortfolioTab;
                   const isOutgoing = tab.id === outgoingPortfolioTab;
@@ -1035,9 +565,7 @@ function App() {
                     <div
                       key={tab.id}
                       ref={(node) => {
-                        if (node) {
-                          portfolioPaneRefs.current[tab.id] = node;
-                        }
+                        if (node) portfolioPaneRefs.current[tab.id] = node;
                       }}
                       className={paneClassName}
                       aria-hidden={!isActive}
@@ -1071,114 +599,38 @@ function App() {
           </React.Suspense>
         </section>
 
-        <section className="portfolio-closing-shell" data-reveal>
-          <div className="portfolio-closing-copy">
-            <span className="eyebrow">Next Step</span>
-            <h2>Want the complete backend story?</h2>
-            <p>
-              If the work here feels relevant, the resume is the quickest way to get the full picture.
-            </p>
-          </div>
-
-          <div className="portfolio-closing-actions">
-            {siteOwnerResumePath ? (
-              <>
-                <button
-                  type="button"
-                  className="portfolio-closing-cta"
-                  onClick={() => {
-                    trackPortfolioEvent({
-                      eventType: 'resume_preview',
-                      targetKey: 'resume',
-                      targetLabel: 'Resume Modal Preview',
-                      source: 'footer_closing_cta'
-                    });
-                    setIsFooterResumeOpen(true);
-                  }}
-                  aria-label="Preview resume in browser"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }} aria-hidden="true">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                  </svg>
-                  Preview Resume
-                </button>
-                <a
-                  className="portfolio-closing-secondary-btn"
-                  href={siteOwnerResumePath}
-                  download={siteOwnerResumePath.split('/').pop() || 'resume.pdf'}
-                  target={/^https?:\/\//i.test(siteOwnerResumePath) ? '_blank' : undefined}
-                  rel={/^https?:\/\//i.test(siteOwnerResumePath) ? 'noopener noreferrer' : undefined}
-                  onClick={() => {
-                    trackPortfolioEvent({
-                      eventType: 'resume_download',
-                      targetKey: 'resume',
-                      targetLabel: 'Resume PDF',
-                      source: 'footer_closing_download'
-                    });
-                  }}
-                  aria-label="Download resume PDF"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }} aria-hidden="true">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  Download PDF
-                </a>
-              </>
-            ) : null}
-            {siteOwnerEmail ? (
-              <button
-                type="button"
-                className={`portfolio-closing-copy-btn ${isFooterCopiedEmail ? 'is-copied' : ''}`}
-                onClick={handleFooterCopyEmail}
-                title="Copy email to clipboard"
-              >
-                {isFooterCopiedEmail ? '✓ Email Copied!' : `Copy Email (${siteOwnerEmail})`}
-              </button>
-            ) : null}
-          </div>
-          {isFooterResumeOpen && siteOwnerResumePath && (
-            <React.Suspense fallback={null}>
-              <ResumeModal
-                isOpen={isFooterResumeOpen}
-                onClose={() => setIsFooterResumeOpen(false)}
-                resumeUrl={siteOwnerResumePath}
-              />
-            </React.Suspense>
-          )}
-        </section>
+        <PortfolioClosing
+          resumePath={siteOwner.resumePath}
+          email={siteOwner.email}
+        />
       </main>
 
       <p className="site-signoff">Designed with care, shaped with AI.</p>
 
-        <button
-          type="button"
-          className={`smart-search-launcher ${isSmartSearchOpen ? 'open' : ''}`}
-          aria-label={isSmartSearchOpen ? 'Close AI search' : 'Open AI search'}
-          aria-expanded={isSmartSearchOpen}
-          onClick={() => setIsSmartSearchOpen((current) => !current)}
-        >
-          <span className="smart-search-launcher-mark" aria-hidden="true">
-            {isSmartSearchOpen ? (
-              <span className="smart-search-launcher-close-glyph">X</span>
-            ) : (
-              <>
-                <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-                  <path d="M10.5 4.75a5.75 5.75 0 1 0 0 11.5a5.75 5.75 0 0 0 0-11.5Zm0-1.5a7.25 7.25 0 1 1 0 14.5a7.25 7.25 0 0 1 0-14.5Zm6.31 12.5l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 1.06-1.06Z" />
-                </svg>
-                <span>AI</span>
-              </>
-            )}
-          </span>
-          <span className="smart-search-launcher-label">{isSmartSearchOpen ? 'Close' : 'AI Search'}</span>
-          {!isSmartSearchOpen ? (
-            <span className="smart-search-launcher-context">{smartSearchContext.label}</span>
-          ) : null}
-        </button>
+      <button
+        type="button"
+        className={`smart-search-launcher ${isSmartSearchOpen ? 'open' : ''}`}
+        aria-label={isSmartSearchOpen ? 'Close AI search' : 'Open AI search'}
+        aria-expanded={isSmartSearchOpen}
+        onClick={() => setIsSmartSearchOpen((current) => !current)}
+      >
+        <span className="smart-search-launcher-mark" aria-hidden="true">
+          {isSmartSearchOpen ? (
+            <span className="smart-search-launcher-close-glyph">X</span>
+          ) : (
+            <>
+              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                <path d="M10.5 4.75a5.75 5.75 0 1 0 0 11.5a5.75 5.75 0 0 0 0-11.5Zm0-1.5a7.25 7.25 0 1 1 0 14.5a7.25 7.25 0 0 1 0-14.5Zm6.31 12.5l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 1.06-1.06Z" />
+              </svg>
+              <span>AI</span>
+            </>
+          )}
+        </span>
+        <span className="smart-search-launcher-label">{isSmartSearchOpen ? 'Close' : 'AI Search'}</span>
+        {!isSmartSearchOpen ? (
+          <span className="smart-search-launcher-context">{smartSearchContext.label}</span>
+        ) : null}
+      </button>
 
       {isSmartSearchOpen && (
         <React.Suspense fallback={null}>

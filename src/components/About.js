@@ -6,46 +6,25 @@ import DownloadButton from './DownloadButton';
 import ResumeModal from './ResumeModal';
 import { getProfile } from '../services/portfolio';
 import { trackPortfolioEvent } from '../services/analytics';
+import { useAsyncData } from '../hooks/useAsyncData';
+import { useClipboard } from '../hooks/useClipboard';
 
 const iconMap = {
   github: faGithub,
   linkedin: faLinkedin
 };
 
+const STATS_ANIMATION_DURATION_MS = 960;
+const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
+
 const About = () => {
-  const [profile, setProfile] = useState(null);
-  const [hasError, setHasError] = useState(false);
+  const { data: profile, hasError } = useAsyncData(getProfile);
+  const { isCopied: copiedEmail, copyText: copyEmailText } = useClipboard(2200);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
-  const [copiedEmail, setCopiedEmail] = useState(false);
   const [issuesSolvedCount, setIssuesSolvedCount] = useState(0);
   const [shouldAnimateStats, setShouldAnimateStats] = useState(false);
   const statsRef = useRef(null);
   const hasAnimatedStatsRef = useRef(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadProfile = async () => {
-      try {
-        const nextProfile = await getProfile();
-        if (isMounted && nextProfile) {
-          setProfile(nextProfile);
-          setHasError(false);
-        }
-      } catch (error) {
-        console.error('Failed to load profile from Supabase.', error);
-        if (isMounted) {
-          setHasError(true);
-        }
-      }
-    };
-
-    loadProfile();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (!profile?.issuesSolvedTarget || hasAnimatedStatsRef.current) {
@@ -69,13 +48,10 @@ const About = () => {
         }, 180);
         observer.disconnect();
       },
-      {
-        threshold: 0.55
-      }
+      { threshold: 0.55 }
     );
 
     observer.observe(statsElement);
-
     return () => observer.disconnect();
   }, [profile?.issuesSolvedTarget]);
 
@@ -86,20 +62,14 @@ const About = () => {
       return undefined;
     }
 
-    const animationDuration = 960;
     const animationStart = window.performance.now();
-    setIssuesSolvedCount(0);
-
-    const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
     let frameId;
 
     const tick = (timestamp) => {
       const elapsed = timestamp - animationStart;
-      const progress = Math.min(elapsed / animationDuration, 1);
+      const progress = Math.min(elapsed / STATS_ANIMATION_DURATION_MS, 1);
       const easedProgress = easeOutCubic(progress);
-      const nextValue = Math.round(targetValue * easedProgress);
-
-      setIssuesSolvedCount(nextValue);
+      setIssuesSolvedCount(Math.round(targetValue * easedProgress));
 
       if (progress < 1) {
         frameId = window.requestAnimationFrame(tick);
@@ -107,21 +77,15 @@ const About = () => {
     };
 
     frameId = window.requestAnimationFrame(tick);
-
     return () => window.cancelAnimationFrame(frameId);
   }, [profile?.issuesSolvedTarget, shouldAnimateStats]);
 
   const handleCopyEmail = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    if (!profile?.email) {
-      return;
+    if (profile?.email) {
+      copyEmailText(profile.email);
     }
-
-    navigator.clipboard.writeText(profile.email).then(() => {
-      setCopiedEmail(true);
-      window.setTimeout(() => setCopiedEmail(false), 2200);
-    });
   };
 
   const handlePreviewResume = () => {
@@ -182,6 +146,10 @@ const About = () => {
     );
   }
 
+  const bioLines = String(profile.bio ?? '')
+    .split('\n')
+    .filter(Boolean);
+
   return (
     <section className="about">
       <div className="about-hero">
@@ -208,23 +176,13 @@ const About = () => {
             <span className="about-kicker">Backend engineer</span>
             <h1>{profile.fullName}</h1>
             <h2>{profile.headline}</h2>
-            {(() => {
-              const bioLines = String(profile.bio ?? '')
-                .split('\n')
-                .filter(Boolean);
-
-              if (bioLines.length === 0) {
-                return null;
-              }
-
-              return (
-                <p className="about-lead">
-                  {bioLines.map((line) => (
-                    <span key={line}>{line}</span>
-                  ))}
-                </p>
-              );
-            })()}
+            {bioLines.length > 0 ? (
+              <p className="about-lead">
+                {bioLines.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </p>
+            ) : null}
           </div>
 
           <div ref={statsRef} className="about-stats hero-reveal hero-reveal-stats">

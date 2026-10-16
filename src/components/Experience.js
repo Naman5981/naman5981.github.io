@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import '../styles/Experience.css';
 import { getExperiences } from '../services/portfolio';
+import { useAsyncData } from '../hooks/useAsyncData';
 
-const CompanyLogo = ({ src, alt, company }) => {
-  const [hasError, setHasError] = useState(false);
-  const fallbackLabelMap = {
-    'Infosys Limited': 'Infosys',
-    'Tech Mahindra': 'TechM',
-    'Xebia (AU Small Finance Bank)': 'Xebia'
-  };
-  const fallbackLabel =
+const fallbackLabelMap = {
+  'Infosys Limited': 'Infosys',
+  'Tech Mahindra': 'TechM',
+  'Xebia (AU Small Finance Bank)': 'Xebia'
+};
+
+const getCompanyFallbackLabel = (company) => {
+  return (
     fallbackLabelMap[company] ??
     company
       .split(/\s+/)
@@ -17,7 +18,13 @@ const CompanyLogo = ({ src, alt, company }) => {
       .slice(0, 2)
       .map((part) => part[0])
       .join('')
-      .toUpperCase();
+      .toUpperCase()
+  );
+};
+
+const CompanyLogo = ({ src, alt, company }) => {
+  const [hasError, setHasError] = useState(false);
+  const fallbackLabel = getCompanyFallbackLabel(company);
 
   if (!src || hasError) {
     return (
@@ -29,7 +36,6 @@ const CompanyLogo = ({ src, alt, company }) => {
 
   return <img className="company-logo" src={src} alt={alt} loading="lazy" onError={() => setHasError(true)} />;
 };
-
 
 const companyImpactBadges = {
   'Xebia (AU Small Finance Bank)': [
@@ -54,33 +60,7 @@ const companyImpactBadges = {
 };
 
 const Experience = () => {
-  const [experiences, setExperiences] = useState(null);
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadExperiences = async () => {
-      try {
-        const nextExperiences = await getExperiences();
-        if (isMounted) {
-          setExperiences(nextExperiences);
-          setHasError(false);
-        }
-      } catch (error) {
-        console.error('Failed to load experiences from Supabase.', error);
-        if (isMounted) {
-          setHasError(true);
-        }
-      }
-    };
-
-    loadExperiences();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { data: experiences, hasError } = useAsyncData(getExperiences);
 
   if (hasError) {
     return (

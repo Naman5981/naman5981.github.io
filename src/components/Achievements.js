@@ -1,35 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import '../styles/Achievements.css';
 import { getAchievements, getCachedAchievements } from '../services/portfolio';
+import { useAsyncData } from '../hooks/useAsyncData';
 
 const Achievements = () => {
-  const [achievements, setAchievements] = useState(() => getCachedAchievements());
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadAchievements = async () => {
-      try {
-        const nextAchievements = await getAchievements();
-        if (isMounted) {
-          setAchievements(nextAchievements);
-          setHasError(false);
-        }
-      } catch (error) {
-        console.error('Failed to load achievements from Supabase.', error);
-        if (isMounted) {
-          setHasError(true);
-        }
-      }
-    };
-
-    loadAchievements();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { data: achievements, hasError } = useAsyncData(getAchievements, getCachedAchievements());
 
   if (hasError) {
     return (

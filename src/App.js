@@ -349,7 +349,10 @@ function App() {
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
+    let frameId = null;
+
     const updateScrollProgress = () => {
+      frameId = null;
       const scrollTop = window.scrollY;
       const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
 
@@ -362,13 +365,23 @@ function App() {
       setScrollProgress(nextProgress);
     };
 
+    const handleScrollOrResize = () => {
+      if (frameId !== null) {
+        return;
+      }
+      frameId = window.requestAnimationFrame(updateScrollProgress);
+    };
+
     updateScrollProgress();
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
-    window.addEventListener('resize', updateScrollProgress);
+    window.addEventListener('scroll', handleScrollOrResize, { passive: true });
+    window.addEventListener('resize', handleScrollOrResize);
 
     return () => {
-      window.removeEventListener('scroll', updateScrollProgress);
-      window.removeEventListener('resize', updateScrollProgress);
+      window.removeEventListener('scroll', handleScrollOrResize);
+      window.removeEventListener('resize', handleScrollOrResize);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
     };
   }, []);
 

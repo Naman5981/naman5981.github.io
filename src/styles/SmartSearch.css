@@ -17,7 +17,7 @@
   top: auto;
   left: auto;
   transform: translateY(18px) scale(0.92);
-  filter: blur(12px);
+  filter: blur(6px);
   transform-origin: bottom right;
   z-index: 27;
   width: min(430px, calc(100vw - 32px));
@@ -66,23 +66,18 @@
   z-index: 26;
   border: 0;
   background: rgba(6, 10, 18, 0.18);
-  backdrop-filter: blur(0) saturate(1);
-  -webkit-backdrop-filter: blur(0) saturate(1);
+  backdrop-filter: blur(8px) saturate(1.01);
+  -webkit-backdrop-filter: blur(8px) saturate(1.01);
   opacity: 0;
   cursor: pointer;
   pointer-events: none;
-  transition:
-    opacity var(--motion-duration-panel) ease,
-    backdrop-filter var(--motion-duration-panel) var(--motion-ease-standard),
-    -webkit-backdrop-filter var(--motion-duration-panel) var(--motion-ease-standard);
-  will-change: opacity, backdrop-filter;
+  transition: opacity var(--motion-duration-panel) ease;
+  will-change: opacity;
 }
 
 .smart-search-backdrop.open {
   opacity: 1;
   pointer-events: auto;
-  backdrop-filter: blur(8px) saturate(1.01);
-  -webkit-backdrop-filter: blur(8px) saturate(1.01);
 }
 
 .smart-search-launcher {

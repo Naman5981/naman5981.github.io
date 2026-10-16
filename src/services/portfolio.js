@@ -178,6 +178,8 @@ export const getProfile = async () => {
         yearsExperienceLabel: data.years_experience_label,
         issuesSolvedTarget: data.issues_solved_target ?? 0,
         coreDomainsCount: data.core_domains_count,
+        peakConcurrencyLabel: data.peak_concurrency_label ?? '1M+',
+        peakConcurrencySubtext: data.peak_concurrency_subtext ?? 'Peak Scale',
         backendFocusLabel: data.backend_focus_label,
         profileImagePath: data.profile_image_path,
         resumePath: data.resume_path,

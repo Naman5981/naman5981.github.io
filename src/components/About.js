@@ -199,8 +199,8 @@ const About = () => {
               <span>Core Domains</span>
             </div>
             <div className="about-stat">
-              <strong>{profile.backendFocusLabel}</strong>
-              <span>Backend Focus</span>
+              <strong>{profile.peakConcurrencyLabel ?? profile.backendFocusLabel ?? '1M+'}</strong>
+              <span>{profile.peakConcurrencySubtext ?? 'Peak Scale'}</span>
             </div>
           </div>
 

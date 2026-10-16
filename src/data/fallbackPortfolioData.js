@@ -9,6 +9,8 @@ export const fallbackProfile = {
   yearsExperienceLabel: '5+',
   issuesSolvedTarget: 110,
   coreDomainsCount: 3,
+  peakConcurrencyLabel: '1M+',
+  peakConcurrencySubtext: 'Peak Scale',
   backendFocusLabel: '100%',
   profileImagePath: '/profile.jpg',
   resumePath: '/Naman_Sanadhya_Resume.pdf',

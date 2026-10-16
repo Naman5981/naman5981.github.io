@@ -131,9 +131,9 @@ function App() {
     };
   }, [isSmartSearchOpen]);
 
-  // 3. Active section observer
+  // 3. Active section observer: synchronously binds to active tab and about section
   useEffect(() => {
-    const sectionIds = navigationSections.map((section) => section.id);
+    const sectionIds = ['about', activePortfolioTab];
     const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
 
     if (!sections.length) {
@@ -147,7 +147,8 @@ function App() {
           .sort((left, right) => right.intersectionRatio - left.intersectionRatio);
 
         if (visibleEntries.length > 0) {
-          setActiveSection(visibleEntries[0].target.id);
+          const visibleId = visibleEntries[0].target.id;
+          setActiveSection(visibleId === 'about' ? 'about' : activePortfolioTab);
         }
       },
       { rootMargin: '-22% 0px -58% 0px', threshold: [0.15, 0.32, 0.5] }
@@ -155,7 +156,7 @@ function App() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [activePortfolioTab]);
 
   // 4. Analytics: track section view
   useEffect(() => {
@@ -330,6 +331,7 @@ function App() {
       current[nextTabId] ? current : { ...current, [nextTabId]: true }
     );
     setActivePortfolioTab(nextTabId);
+    setActiveSection(nextTabId);
 
     if (transitionTimeoutRef.current) {
       window.clearTimeout(transitionTimeoutRef.current);

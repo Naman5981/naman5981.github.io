@@ -1,7 +1,7 @@
 @import './colors.css';
 
 .education-container {
-  padding: 20px 18px;
+  padding: 20px 16px;
   border-radius: var(--card-radius-md);
 }
 
@@ -13,8 +13,8 @@
 }
 
 .education-block {
-  margin-bottom: 14px;
-  padding: 14px 14px 12px;
+  margin-bottom: 16px;
+  padding: 16px;
   border-radius: var(--card-radius-md);
   background: linear-gradient(180deg, color-mix(in srgb, var(--card-background-soft) 88%, transparent 12%), var(--card-background-softer));
   border: 1px solid var(--soft-border-color);

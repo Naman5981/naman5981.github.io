@@ -7,8 +7,8 @@
 .projects-header {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 22px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .projects-header h2 {
@@ -31,14 +31,14 @@
 .project-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 20px;
 }
 
 .project {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
   min-height: 100%;
   padding: var(--card-padding-lg);
   border-radius: var(--card-radius-lg);
@@ -59,8 +59,8 @@
 
 .project-featured {
   grid-column: 1 / -1;
-  padding: 26px;
-  border-radius: 26px;
+  padding: 24px;
+  border-radius: 24px;
 }
 
 .project-standard {

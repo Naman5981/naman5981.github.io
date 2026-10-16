@@ -65,18 +65,31 @@
   --type-heading-tight: 1.04;
   --type-heading-base: 1.14;
   --type-meta-size: 0.74rem;
+
+  /* Deterministic 8-pt Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
   --motion-ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-ease-emphasis: cubic-bezier(0.2, 0.9, 0.24, 1);
   --motion-duration-reveal: 620ms;
   --motion-duration-panel: 520ms;
   --motion-duration-emphasis: 220ms;
   --card-radius-xl: 28px;
-  --card-radius-lg: 22px;
-  --card-radius-md: 18px;
-  --card-radius-sm: 14px;
+  --card-radius-lg: 24px;
+  --card-radius-md: 16px;
+  --card-radius-sm: 12px;
   --card-padding-lg: 24px;
-  --card-padding-md: 18px;
-  --card-padding-sm: 14px;
+  --card-padding-md: 16px;
+  --card-padding-sm: 12px;
   --icon-background: rgba(237, 242, 248, 0.04);
   --icon-background-hover: rgba(210, 160, 106, 0.075);
   --hero-subtitle-color: rgba(237, 242, 248, 0.88);
@@ -100,11 +113,11 @@
   --card-background-color: #efe7dc;
 
   --primary-text-color: #212a36;
-  --secondary-text-color: #6f6b67;
-  --highlight-text-color: #a96e3e;
+  --secondary-text-color: #555e6c;
+  --highlight-text-color: #945928;
   --link-hover-color: #87562e;
-  --accent-strong: #a96e3e;
-  --accent-text-subtle: #b67b4b;
+  --accent-strong: #945928;
+  --accent-text-subtle: #8a5326;
   --accent-border-strong: rgba(169, 110, 62, 0.18);
   --accent-border-soft: rgba(169, 110, 62, 0.1);
   --accent-surface-soft: rgba(169, 110, 62, 0.05);
@@ -157,12 +170,12 @@
   --motion-duration-panel: 520ms;
   --motion-duration-emphasis: 220ms;
   --card-radius-xl: 28px;
-  --card-radius-lg: 22px;
-  --card-radius-md: 18px;
-  --card-radius-sm: 14px;
+  --card-radius-lg: 24px;
+  --card-radius-md: 16px;
+  --card-radius-sm: 12px;
   --card-padding-lg: 24px;
-  --card-padding-md: 18px;
-  --card-padding-sm: 14px;
+  --card-padding-md: 16px;
+  --card-padding-sm: 12px;
   --icon-background: rgba(255, 252, 248, 0.92);
   --icon-background-hover: rgba(169, 110, 62, 0.06);
   --hero-subtitle-color: rgba(33, 42, 54, 0.82);

@@ -352,9 +352,9 @@
 }
 
 .copy-email-btn.is-copied {
-  background: color-mix(in srgb, #10b981 18%, transparent);
-  color: #10b981;
-  border-color: rgba(16, 185, 129, 0.4);
+  background: var(--color-success-bg, color-mix(in srgb, #10b981 18%, transparent));
+  color: var(--color-success, #10b981);
+  border-color: var(--color-success-border, rgba(16, 185, 129, 0.4));
 }
 
 .icon-link {

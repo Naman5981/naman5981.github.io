@@ -401,9 +401,9 @@
 }
 
 .impact-badge-impact {
-  background: color-mix(in srgb, #10b981 14%, transparent);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.32);
+  background: var(--color-success-bg, color-mix(in srgb, #10b981 14%, transparent));
+  color: var(--color-success, #10b981);
+  border: 1px solid var(--color-success-border, rgba(16, 185, 129, 0.32));
 }
 
 .impact-badge-security {
